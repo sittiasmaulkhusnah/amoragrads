@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amora Grads — Studio Foto Wisuda &amp; Momen Spesial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --cream: #FAF6F1;
+  --cream-2: #F3ECE4;
+  --ink: #211B18;
+  --ink-soft: #6E6560;
+  --red: #B3282D;
+  --red-dark: #8A1F23;
+  --rose: #F0DEDB;
+  --line: #E6DCD3;
+  --white: #FFFDFB;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Manrope', sans-serif;
+
+  --radius-s: 4px;
+  --radius-m: 10px;
+  --container: 480px;
+  --container-lg: 1180px;
+}
+
+*{ box-sizing: border-box; }
+html{ -webkit-text-size-adjust: 100%; }
+
+body{
+  margin:0;
+  background: var(--cream-2);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a{ color: inherit; text-decoration: none; }
+ul, ol{ list-style: none; margin:0; padding:0; }
+h1,h2,h3{ margin:0; font-family: var(--font-display); font-weight: 500; }
+p{ margin:0; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+:focus-visible{
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+/* ============ FRAME ============ */
+.frame{
+  max-width: var(--container);
+  margin: 0 auto;
+  background: var(--cream);
+  min-height: 100vh;
+  box-shadow: 0 0 60px rgba(33,27,24,0.08);
+  overflow: hidden;
+}
+
+/* ============ NAV ============ */
+.nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 18px 20px;
+  position: relative;
+  z-index: 20;
+}
+
+.nav__logo{ display:flex; align-items:center; gap:8px; }
+.nav__logo-mark{
+  width: 30px; height:30px;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 15px;
+  display:flex; align-items:center; justify-content:center;
+}
+.nav__logo-text{ font-family: var(--font-display); font-size: 18px; letter-spacing: 0.01em; }
+
+.menu-toggle-input{ display:none; }
+
+.nav__burger{
+  display:flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 6px;
+  cursor: pointer;
+}
+.nav__burger span{
+  width: 20px; height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.nav__menu{
+  position: absolute;
+  top: 100%;
+  left: 0; right: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+  display:flex;
+  flex-direction: column;
+  padding: 8px 20px 18px;
+  gap: 2px;
+  transform: translateY(-8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .22s ease, opacity .22s ease;
+}
+.nav__menu a{ padding: 12px 4px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.nav__menu a:last-of-type{ border-bottom: none; }
+
+.menu-toggle-input:checked ~ .nav__menu{ transform: translateY(0); opacity: 1; pointer-events: auto; }
+.menu-toggle-input:checked ~ .nav__burger span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.menu-toggle-input:checked ~ .nav__burger span:nth-child(2){ opacity: 0; }
+.menu-toggle-input:checked ~ .nav__burger span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+.nav__menu-cta{ margin-top: 8px; color: var(--red); font-weight: 700; }
+
+/* ============ BUTTONS ============ */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  border-radius: var(--radius-s);
+  font-weight: 600;
+  font-size: 15px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease;
+}
+.btn--primary{ background: var(--red); color: var(--white); }
+.btn--primary:hover{ background: var(--red-dark); }
+.btn--ghost{ border-color: var(--ink); color: var(--ink); }
+.btn--ghost:hover{ background: var(--ink); color: var(--white); }
+.btn--light{ background: var(--white); color: var(--red-dark); }
+.btn--light:hover{ background: var(--rose); }
+
+/* ============ HERO ============ */
+.hero{ padding: 12px 20px 0; }
+.hero__kicker{ font-size: 14px; color: var(--red-dark); font-weight: 600; margin-bottom: 14px; }
+.hero__title{ font-size: 34px; line-height: 1.18; letter-spacing: -0.01em; margin-bottom: 16px; max-width: 15ch; }
+.hero__desc{ font-size: 15.5px; color: var(--ink-soft); max-width: 34ch; margin-bottom: 24px; }
+.hero__actions{ display:flex; gap: 10px; flex-wrap: wrap; margin-bottom: 36px; }
+
+.hero__stack{ position: relative; height: 260px; margin: 0 8px; }
+.polaroid{
+  position: absolute;
+  background: var(--white);
+  padding: 8px 8px 20px;
+  border-radius: 2px;
+  box-shadow: 0 14px 30px rgba(33,27,24,0.14);
+}
+.polaroid__photo{ width: 100%; height: 100%; border-radius: 1px; filter: url(#grain); }
+.polaroid--1{ width: 44%; height: 210px; left: 0; top: 30px; transform: rotate(-7deg); z-index: 1; }
+.polaroid--2{ width: 46%; height: 220px; right: 4%; top: 0; transform: rotate(5deg); z-index: 2; }
+.polaroid--3{ width: 40%; height: 170px; left: 26%; bottom: 0; transform: rotate(-2deg); z-index: 3; }
+.polaroid__pin{ position:absolute; top: 14px; right: 18px; width: 12px; height:12px; border-radius: 50%; background: var(--red); box-shadow: 0 2px 4px rgba(0,0,0,0.25); }
+
+/* ============ STATS ============ */
+.stats{ display:flex; margin: 40px 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stats__item{ flex:1; padding: 18px 6px; text-align: center; border-left: 1px solid var(--line); }
+.stats__item:first-child{ border-left: none; }
+.stats__num{ display:block; font-family: var(--font-display); font-size: 22px; color: var(--red-dark); }
+.stats__label{ display:block; font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
+
+/* ============ SECTIONS ============ */
+.section{ padding: 48px 0 8px; }
+.section__head{ padding: 0 20px; margin-bottom: 20px; }
+.section__head h2{ font-size: 24px; line-height: 1.25; margin-bottom: 6px; }
+.section__head p{ color: var(--ink-soft); font-size: 14.5px; max-width: 34ch; }
+
+/* Horizontal scroll rows (mobile) */
+.scroll-row{ display:flex; gap: 14px; overflow-x: auto; padding: 4px 20px 12px; scroll-snap-type: x mandatory; }
+.scroll-row::-webkit-scrollbar{ display:none; }
+
+.pkg-card{ display:block; text-decoration:none; color:inherit; border: 1px solid var(--line); border-radius: var(--radius-m); padding: 12px; background: var(--white); flex: 0 0 68%; scroll-snap-align: start; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.pkg-card:hover{ border-color: var(--red); }
+.pkg-card__photo{ width:100%; height: 130px; border-radius: var(--radius-s); margin-bottom: 12px; filter: url(#grain); }
+.pkg-card h3{ font-size: 17px; margin-bottom: 4px; }
+.pkg-card p{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 10px; min-height: 34px; }
+.pkg-card__price{ font-weight: 700; color: var(--red-dark); font-size: 14px; }
+
+/* Gallery */
+.gallery{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px; }
+.gallery__item{ border-radius: var(--radius-s); height: 150px; width: 100%; display: block; object-fit: cover; object-position: center; filter: url(#grain); }
+.gallery__item--tall{ height: 230px; }
+
+/* Feature list */
+.feature-list{ padding: 0 20px; }
+.feature-list__item{ display:flex; gap: 14px; padding: 18px 0; border-top: 1px solid var(--line); }
+.feature-list__item:first-child{ border-top: none; }
+.feature-list__icon{ width: 26px; height: 26px; color: var(--red); flex-shrink: 0; margin-top: 2px; }
+.feature-list__item h3{ font-size: 16px; margin-bottom: 3px; }
+.feature-list__item p{ font-size: 13.5px; color: var(--ink-soft); }
+
+/* Steps */
+.steps{ padding: 0 20px; position: relative; }
+.steps__item{ display:flex; gap: 16px; position: relative; padding-bottom: 30px; }
+.steps__item:last-child{ padding-bottom: 0; }
+.steps__item::before{ content:''; position:absolute; left: 15px; top: 34px; bottom: 0; width: 1px; background: var(--line); }
+.steps__item:last-child::before{ display:none; }
+.steps__num{ flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--red); color: var(--red-dark); font-family: var(--font-display); display:flex; align-items:center; justify-content:center; font-size: 14px; background: var(--cream); position: relative; z-index: 1; }
+.steps__item h3{ font-size: 16px; margin-bottom: 3px; }
+.steps__item p{ font-size: 13.5px; color: var(--ink-soft); }
+
+/* Testimonials */
+.testi-card{ flex: 0 0 78%; scroll-snap-align: start; background: var(--rose); border-radius: var(--radius-m); padding: 20px; }
+.testi-card__quote{ font-family: var(--font-display); font-style: italic; font-size: 16.5px; line-height: 1.4; margin-bottom: 16px; }
+.testi-card__name{ font-weight: 700; font-size: 13.5px; }
+.testi-card__role{ font-size: 12.5px; color: var(--ink-soft); }
+
+/* ============ CTA ============ */
+.cta{ margin: 48px 20px 0; background: var(--red); color: var(--white); border-radius: var(--radius-m); padding: 32px 22px; text-align: left; }
+.cta h2{ font-size: 22px; margin-bottom: 8px; }
+.cta p{ font-size: 14px; opacity: 0.9; margin-bottom: 20px; max-width: 32ch; }
+
+/* ============ FOOTER ============ */
+.footer{ padding: 40px 20px 28px; margin-top: 44px; }
+.footer__brand{ display:flex; align-items:center; gap:8px; margin-bottom: 10px; }
+.footer__desc{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 18px; max-width: 30ch; }
+.footer__contact{ display:flex; flex-direction: column; gap: 8px; font-size: 14px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.footer__contact a:hover{ color: var(--red-dark); }
+.footer__copy{ font-size: 12px; color: var(--ink-soft); }
+
+/* =========================================================
+   DESKTOP  (min-width: 900px)
+   Layout switches from a single mobile "frame" column to a
+   full-width editorial layout with a centered content rail.
+   ========================================================= */
+@media (min-width: 900px){
+
+  body{ background: var(--cream-2); }
+
+  .frame{
+    max-width: none;
+    box-shadow: none;
+    background: var(--cream);
+  }
+
+  /* --- shared content rail --- */
+  .nav, .hero, .stats, .section__head, .feature-list, .steps,
+  .footer{
+    max-width: var(--container-lg);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* --- nav --- */
+  .nav{ padding: 26px 40px; }
+  .nav__burger, .menu-toggle-input{ display:none; }
+  .nav__menu{
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+    background: transparent;
+    border-bottom: none;
+    padding: 0;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nav__menu a{ padding: 0; border-bottom: none; font-size: 14.5px; font-weight: 600; color: var(--ink-soft); }
+  .nav__menu a:hover{ color: var(--ink); }
+  .nav__menu-cta{
+    margin-top: 0;
+    color: var(--white) !important;
+    background: var(--red);
+    padding: 10px 18px;
+    border-radius: var(--radius-s);
+  }
+  .nav__menu-cta:hover{ background: var(--red-dark); color: var(--white) !important; }
+
+  /* --- hero: split into text / collage --- */
+  .hero{
+    display: grid;
+    grid-template-columns: 1fr 0.9fr;
+    align-items: center;
+    gap: 60px;
+    padding: 40px 40px 0;
+  }
+  .hero__kicker{ font-size: 15px; }
+  .hero__title{ font-size: 54px; max-width: 11ch; margin-bottom: 22px; }
+  .hero__desc{ font-size: 17px; max-width: 38ch; margin-bottom: 32px; }
+  .hero__actions{ margin-bottom: 0; }
+  .hero__stack{ height: 460px; margin: 0; }
+  .polaroid--1{ width: 46%; height: 300px; left: 4%; top: 60px; }
+  .polaroid--2{ width: 48%; height: 320px; right: 0; top: 10px; }
+  .polaroid--3{ width: 42%; height: 240px; left: 28%; bottom: -10px; }
+
+  /* --- stats --- */
+  .stats{ margin-top: 70px; padding: 0 40px; }
+  .stats__item{ padding: 26px 12px; }
+  .stats__num{ font-size: 30px; }
+  .stats__label{ font-size: 13.5px; }
+
+  /* --- section heads --- */
+  .section{ padding: 88px 0 8px; }
+  .section__head{ padding: 0 40px; margin-bottom: 36px; display:flex; align-items:flex-end; justify-content:space-between; gap: 40px; }
+  .section__head h2{ font-size: 34px; max-width: 16ch; }
+  .section__head p{ font-size: 15.5px; max-width: 38ch; margin-left: auto; }
+
+  /* --- packages: grid instead of scroll --- */
+  .scroll-row{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    overflow: visible;
+    max-width: var(--container-lg);
+    margin: 0 auto;
+    padding: 4px 40px 12px;
+  }
+  .pkg-card{ padding: 16px; transition: transform .18s ease, box-shadow .18s ease; }
+  .pkg-card:hover{ transform: translateY(-4px); box-shadow: 0 16px 30px rgba(33,27,24,0.1); }
+  .pkg-card__photo{ height: 160px; }
+
+  /* --- gallery: keep the mobile 2-col masonry feel, just sized up with room to breathe --- */
+  .gallery{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 40px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  .gallery__item{ height: 260px; }
+  .gallery__item--tall{ height: 400px; }
+
+  /* --- features: 2-col grid --- */
+  .feature-list{ padding: 0 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
+  .feature-list__item{ padding: 26px 0; }
+  .feature-list__item:nth-child(2){ border-top: none; }
+  .feature-list__icon{ width: 30px; height: 30px; }
+  .feature-list__item h3{ font-size: 17.5px; }
+  .feature-list__item p{ font-size: 14.5px; max-width: 34ch; }
+
+  /* --- steps: horizontal --- */
+  .steps{
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .steps__item{ flex-direction: column; gap: 18px; padding-bottom: 0; }
+  .steps__item::before{ left: 15px; top: 46px; right: -28px; bottom: auto; width: auto; height: 1px; }
+  .steps__item:nth-child(3)::before{ display:none; }
+
+  /* --- testimonials: 3-col grid --- */
+  .scroll-row--testi{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: var(--container-lg);
+    margin: 0 auto;
+    padding: 4px 40px 12px;
+  }
+  .testi-card{ display:flex; flex-direction: column; justify-content: space-between; }
+  .testi-card__quote{ font-size: 18px; }
+
+  /* --- cta --- */
+  .cta{
+    max-width: var(--container-lg);
+    margin: 88px auto 0;
+    padding: 56px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    text-align: left;
+  }
+  .cta h2{ font-size: 32px; margin-bottom: 8px; }
+  .cta p{ font-size: 15px; margin-bottom: 0; }
+  .cta .btn{ flex-shrink: 0; }
+
+  /* --- footer: multi column --- */
+  .footer{
+    padding: 64px 40px 32px;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .footer__brand{ margin-bottom: 14px; }
+  .footer__desc{ max-width: none; margin-bottom: 0; }
+  .footer__contact{ border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+  .footer__copy{ grid-column: 1 / -1; padding-top: 24px; border-top: 1px solid var(--line); }
+}
+
+@media (min-width: 1280px){
+  .hero__title{ font-size: 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Grain texture used across the page -->
+<svg width="0" height="0" style="position:absolute">
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise"/>
+    <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0"/>
+    <feComposite operator="over" in2="SourceGraphic"/>
+  </filter>
+</svg>
+
+<div class="frame">
+
+  <!-- NAV -->
+  <header class="nav">
+    <a href="#" class="nav__logo">
+      <span class="nav__logo-mark">A</span>
+      <span class="nav__logo-text">Amora Grads</span>
+    </a>
+    <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
+    <label for="menu-toggle" class="nav__burger" aria-label="Buka menu">
+      <span></span><span></span><span></span>
+    </label>
+    <nav class="nav__menu">
+      <a href="#paket">Paket</a>
+      <a href="#galeri">Galeri</a>
+      <a href="#cara-booking">Cara booking</a>
+      <a href="#testimoni">Testimoni</a>
+      <a href="#kontak" class="nav__menu-cta">Hubungi kami</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__copy">
+      <p class="hero__kicker">Studio foto wisuda &amp; momen kelulusan</p>
+      <h1 class="hero__title">Abadikan momen kelulusanmu.</h1>
+      <p class="hero__desc">Amora Grads bantu kamu mengabadikan hari kelulusan dengan hasil yang natural, hangat, dan tetap kamu banget.</p>
+      <div class="hero__actions">
+        <a href="#paket" class="btn btn--primary">Booking sekarang</a>
+        <a href="#galeri" class="btn btn--ghost">Lihat hasil</a>
+      </div>
+    </div>
+
+    <div class="hero__stack" aria-hidden="true">
+      <div class="polaroid polaroid--1">
+        <img class="polaroid__photo" src="aset/foto 1.png" alt="">
+      </div>
+      <div class="polaroid polaroid--2">
+        <img class="polaroid__photo" src="aset/foto 2.png" alt="">
+        <span class="polaroid__pin"></span>
+      </div>
+      <div class="polaroid polaroid--3">
+        <img class="polaroid__photo" src="aset/foto 3.jpeg" alt="">
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stats__item">
+      <span class="stats__num">100+</span>
+      <span class="stats__label">wisudawan terlayani</span>
+    </div>
+    <div class="stats__item">
+      <span class="stats__num">4.9</span>
+      <span class="stats__label">rating dari klien</span>
+    </div>
+    <div class="stats__item">
+      <span class="stats__num">3 th</span>
+      <span class="stats__label">pengalaman studio</span>
+    </div>
+  </section>
+
+  <!-- PAKET -->
+  <section class="section" id="paket">
+    <div class="section__head">
+      <h2>Paket yang bisa kamu pilih</h2>
+      <p>Sesuaikan dengan kebutuhan momenmu, semua sudah termasuk hasil edit.</p>
+    </div>
+
+    <div class="scroll-row">
+      <a class="pkg-card" href="detail.html">
+        <img class="pkg-card__photo" src="aset/paket 1.png" alt="Wisuda Solo">
+        <h3>GRADS I</h3>
+        <p>1 Hour Session, 25 foto edit, Multiple spot.</p>
+        <span class="pkg-card__price">Rp350.000</span>
+      </a>
+
+      <article class="pkg-card">
+        <img class="pkg-card__photo" src="aset/paket 2.jpeg" alt="Wisuda Squad">
+        <h3>GRADS II</h3>
+        <p>Family &amp; Friends, 1 Hour Session, 40 foto edit.</p>
+        <span class="pkg-card__price">Rp400.000</span>
+      </article>
+
+      <article class="pkg-card">
+        <img class="pkg-card__photo" src="aset/paket 3.jpeg" alt="Wisuda bersama keluarga">
+        <h3>Couple &amp; Bestie</h3>
+        <p>2 Graduation, 1 Hour Session, 60 foto edit.</p>
+        <span class="pkg-card__price">Rp700.000</span>
+      </article>
+
+      <article class="pkg-card">
+        <img class="pkg-card__photo" src="aset/paket 4.jpeg" alt="Prewedding">
+        <h3>Group</h3>
+        <p>1,5 Hour Session, Unlimited Edited, Multiple Spot.</p>
+        <span class="pkg-card__price">Rp150.000</span>
+      </article>
+    </div>
+  </section>
+
+  <!-- GALERI -->
+  <section class="section" id="galeri">
+    <div class="section__head">
+      <h2>Beberapa hasil foto kami</h2>
+      <p>Setiap sesi kami perlakukan beda, sesuai cerita yang mau disampaikan.</p>
+    </div>
+
+    <div class="gallery">
+      <img class="gallery__item gallery__item--tall" src="aset/porto 1.jpeg" alt="Hasil foto wisuda">
+      <img class="gallery__item" src="aset/porto 2.jpeg" alt="Hasil foto wisuda">
+      <img class="gallery__item" src="aset/porto 3.jpeg" alt="Hasil foto">
+      <img class="gallery__item gallery__item--tall" src="aset/porto 4.jpeg" alt="Hasil foto">
+      <img class="gallery__item" src="aset/porto 5.jpeg" alt="Hasil foto">
+      <img class="gallery__item" src="aset/porto 6.jpeg" alt="Hasil foto">
+    </div>
+  </section>
+
+  <!-- KENAPA PILIH KAMI -->
+  <section class="section" id="kenapa">
+    <div class="section__head">
+      <h2>Kenapa pilih Amora Grads</h2>
+    </div>
+
+    <ul class="feature-list">
+      <li class="feature-list__item">
+        <svg class="feature-list__icon" viewBox="0 0 24 24" fill="none"><path d="M4 8h3l2-3h6l2 3h3v11H4V8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg>
+        <div>
+          <h3>Fotografer berpengalaman</h3>
+          <p>Tim kami sudah menangani ratusan sesi wisuda dari berbagai kampus.</p>
+        </div>
+      </li>
+      <li class="feature-list__item">
+        <svg class="feature-list__icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <div>
+          <h3>Hasil edit cepat</h3>
+          <p>Foto sudah diedit dan dikirim maksimal 3 hari setelah sesi.</p>
+        </div>
+      </li>
+      <li class="feature-list__item">
+        <svg class="feature-list__icon" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.6-9.3-9.1C1.2 8.6 3 5.5 6.2 5.2c1.9-.2 3.4.8 4.5 2.2 1.1-1.4 2.6-2.4 4.5-2.2 3.2.3 5 3.4 3.5 6.7C19 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <div>
+          <h3>Ramah budget mahasiswa</h3>
+          <p>Paket disusun supaya tetap terjangkau tanpa mengurangi kualitas.</p>
+        </div>
+      </li>
+      <li class="feature-list__item">
+        <svg class="feature-list__icon" viewBox="0 0 24 24" fill="none"><path d="M12 2.5c-4 4-6 7.4-6 10.3a6 6 0 0 0 12 0c0-2.9-2-6.3-6-10.3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <div>
+          <h3>Bisa jemput lokasi</h3>
+          <p>Sesi bisa dilakukan di kampus, taman kota, atau lokasi favoritmu.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- CARA BOOKING -->
+  <section class="section" id="cara-booking">
+    <div class="section__head">
+      <h2>Cara booking, cuma 3 langkah</h2>
+    </div>
+
+    <ol class="steps">
+      <li class="steps__item">
+        <span class="steps__num">1</span>
+        <div>
+          <h3>Chat kami</h3>
+          <p>Hubungi Amora Grads untuk cek jadwal.</p>
+        </div>
+      </li>
+      <li class="steps__item">
+        <span class="steps__num">2</span>
+        <div>
+          <h3>Pilih paket &amp; tanggal</h3>
+          <p>Sesuaikan paket dan tentukan lokasi serta waktu sesi foto.</p>
+        </div>
+      </li>
+      <li class="steps__item">
+        <span class="steps__num">3</span>
+        <div>
+          <h3>Sesi foto &amp; terima hasil</h3>
+          <p>Nikmati sesi fotonya, hasil edit dikirim ke email atau drive-mu.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- TESTIMONI -->
+  <section class="section" id="testimoni">
+    <div class="section__head">
+      <h2>Kata mereka yang sudah wisuda</h2>
+    </div>
+
+    <div class="scroll-row scroll-row--testi">
+      <article class="testi-card">
+        <p class="testi-card__quote">Fotografernya sabar banget arahin pose, hasilnya juga natural nggak kaku.</p>
+        <div>
+          <p class="testi-card__name">Dinda R.</p>
+          <p class="testi-card__role">Wisuda UNHAS, 2025</p>
+        </div>
+      </article>
+      <article class="testi-card">
+        <p class="testi-card__quote">Booking gampang, harga jelas, hasil editnya cepat sampai. Puas!</p>
+        <div>
+          <p class="testi-card__name">Fajar M.</p>
+          <p class="testi-card__role">Wisuda Squad, 2025</p>
+        </div>
+      </article>
+      <article class="testi-card">
+        <p class="testi-card__quote">Suka sama konsepnya, foto keluarga jadi kelihatan hangat dan rapi.</p>
+        <div>
+          <p class="testi-card__name">Keluarga Amir</p>
+          <p class="testi-card__role">Paket Keluarga, 2024</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div>
+      <h2>Jadwal wisuda sudah dekat?</h2>
+      <p>Amankan slot sesi fotomu sekarang, sebelum tanggal favoritmu diambil orang lain.</p>
+    </div>
+    <a href="#kontak" class="btn btn--light">Booking Sekarang</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="kontak">
+    <div>
+      <div class="footer__brand">
+        <span class="nav__logo-mark">A</span>
+        <span class="nav__logo-text">Amora Grads</span>
+      </div>
+      <p class="footer__desc">Studio foto wisuda dan momen spesial, berbasis di Makassar.</p>
+    </div>
+
+    <div class="footer__contact">
+      <a href="#">0812-9677-2025</a>
+      <a href="#">@amoragrads</a>
+      <a href="#">hello@amoragrads.id</a>
+    </div>
+
+    <p class="footer__copy">© 2026 Amora Grads. Semua hak cipta dilindungi.</p>
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.nav__menu a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      var mt = document.getElementById('menu-toggle');
+      if (mt) mt.checked = false;
+    });
+  });
+</script>
+
+</body>
+</html>
