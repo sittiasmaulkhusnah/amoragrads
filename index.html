@@ -25,6 +25,7 @@
 
   --radius-s: 4px;
   --radius-m: 10px;
+  --radius-btn: 9px;
   --container: 480px;
   --container-lg: 1180px;
 }
@@ -76,17 +77,8 @@ p{ margin:0; }
   z-index: 20;
 }
 
-.nav__logo{ display:flex; align-items:center; gap:8px; }
-.nav__logo-mark{
-  width: 30px; height:30px;
-  border-radius: 50%;
-  background: var(--red);
-  color: var(--white);
-  font-family: var(--font-display);
-  font-size: 15px;
-  display:flex; align-items:center; justify-content:center;
-}
-.nav__logo-text{ font-family: var(--font-display); font-size: 18px; letter-spacing: 0.01em; }
+.nav__logo{ display:flex; align-items:center; }
+.nav__logo-img{ height: 28px; width: auto; display: block; }
 
 .menu-toggle-input{ display:none; }
 
@@ -121,13 +113,17 @@ p{ margin:0; }
 }
 .nav__menu a{ padding: 12px 4px; border-bottom: 1px solid var(--line); font-size: 15px; }
 .nav__menu a:last-of-type{ border-bottom: none; }
+.nav__menu a.active{ color: var(--red-dark); }
 
 .menu-toggle-input:checked ~ .nav__menu{ transform: translateY(0); opacity: 1; pointer-events: auto; }
 .menu-toggle-input:checked ~ .nav__burger span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
 .menu-toggle-input:checked ~ .nav__burger span:nth-child(2){ opacity: 0; }
 .menu-toggle-input:checked ~ .nav__burger span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
 
-.nav__menu-cta{ margin-top: 8px; color: var(--red); font-weight: 700; }
+.nav__menu-cta{ margin-top: 10px; display:flex; align-items:center; justify-content:center; gap:8px; }
+.nav__menu-cta svg{ width:14px; height:14px; flex-shrink:0; }
+.nav__menu a.nav__menu-cta{ padding: 10px 18px; border-bottom: none; color: var(--white); font-size: 13px; font-weight: 700; }
+.nav__menu a.nav__menu-cta:hover{ color: var(--white); }
 
 /* ============ BUTTONS ============ */
 .btn{
@@ -135,19 +131,19 @@ p{ margin:0; }
   align-items: center;
   justify-content: center;
   padding: 13px 22px;
-  border-radius: var(--radius-s);
-  font-weight: 600;
+  border-radius: var(--radius-btn);
+  font-weight: 700;
   font-size: 15px;
-  border: 1px solid transparent;
+  border: 1.4px solid transparent;
   white-space: nowrap;
   cursor: pointer;
-  transition: transform .15s ease, background .15s ease;
+  transition: transform .15s ease, background .15s ease, color .15s ease;
 }
-.btn--primary{ background: var(--red); color: var(--white); }
-.btn--primary:hover{ background: var(--red-dark); }
-.btn--ghost{ border-color: var(--ink); color: var(--ink); }
-.btn--ghost:hover{ background: var(--ink); color: var(--white); }
-.btn--light{ background: var(--white); color: var(--red-dark); }
+.btn--primary{ background: var(--red); color: var(--white); border-color: var(--red); }
+.btn--primary:hover{ background: var(--red-dark); border-color: var(--red-dark); }
+.btn--ghost{ border-color: var(--red); color: var(--red-dark); }
+.btn--ghost:hover{ background: var(--red); color: var(--white); }
+.btn--light{ background: var(--white); color: var(--red-dark); border-color: var(--white); }
 .btn--light:hover{ background: var(--rose); }
 
 /* ============ HERO ============ */
@@ -190,23 +186,43 @@ p{ margin:0; }
 
 .pkg-card{ display:block; text-decoration:none; color:inherit; border: 1px solid var(--line); border-radius: var(--radius-m); padding: 12px; background: var(--white); flex: 0 0 68%; scroll-snap-align: start; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
 .pkg-card:hover{ border-color: var(--red); }
-.pkg-card__photo{ width:100%; height: 130px; border-radius: var(--radius-s); margin-bottom: 12px; filter: url(#grain); }
+.pkg-card__photo{ width:100%; height: 130px; border-radius: var(--radius-s); margin-bottom: 12px; filter: url(#grain); object-fit: cover; }
 .pkg-card h3{ font-size: 17px; margin-bottom: 4px; }
 .pkg-card p{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 10px; min-height: 34px; }
 .pkg-card__price{ font-weight: 700; color: var(--red-dark); font-size: 14px; }
 
-/* Gallery */
-.gallery{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px; }
-.gallery__item{ border-radius: var(--radius-s); height: 150px; width: 100%; display: block; object-fit: cover; object-position: center; filter: url(#grain); }
-.gallery__item--tall{ height: 230px; }
+/* Tombol "lihat semua paket" di bawah baris preview */
+.pkg-more{ padding: 4px 20px 0; text-align: center; }
 
-/* Feature list */
-.feature-list{ padding: 0 20px; }
-.feature-list__item{ display:flex; gap: 14px; padding: 18px 0; border-top: 1px solid var(--line); }
-.feature-list__item:first-child{ border-top: none; }
-.feature-list__icon{ width: 26px; height: 26px; color: var(--red); flex-shrink: 0; margin-top: 2px; }
-.feature-list__item h3{ font-size: 16px; margin-bottom: 3px; }
-.feature-list__item p{ font-size: 13.5px; color: var(--ink-soft); }
+/* Gallery — mosaic */
+.gallery{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 100px;
+  gap: 10px;
+  padding: 0 20px;
+}
+.gallery__item{
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-m);
+  background: var(--cream-2);
+}
+.gallery__item img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 25%; /* jaga wajah tetap terlihat */
+  filter: url(#grain);
+  transition: transform .5s ease;
+}
+.gallery__item:hover img{ transform: scale(1.05); }
+
+/* Mobile: tinggi-kecil-kecil / lebar penuh / tinggi-tinggi */
+.g1{ grid-row: span 2; }
+.g4{ grid-column: 1 / -1; grid-row: span 2; }
+.g5, .g6{ grid-row: span 2; }
 
 /* Steps */
 .steps{ padding: 0 20px; position: relative; }
@@ -231,11 +247,23 @@ p{ margin:0; }
 
 /* ============ FOOTER ============ */
 .footer{ padding: 40px 20px 28px; margin-top: 44px; }
-.footer__brand{ display:flex; align-items:center; gap:8px; margin-bottom: 10px; }
+.footer__brand{ display:flex; align-items:center; margin-bottom: 10px; }
+.footer__brand .nav__logo-img{ height: 34px; }
 .footer__desc{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 18px; max-width: 30ch; }
-.footer__contact{ display:flex; flex-direction: column; gap: 8px; font-size: 14px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.footer__col-title{ font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); margin-bottom: 10px; }
+.footer__contact{ display:flex; flex-direction: column; gap: 8px; font-size: 14px; margin-bottom: 24px; }
 .footer__contact a:hover{ color: var(--red-dark); }
-.footer__copy{ font-size: 12px; color: var(--ink-soft); }
+.footer__social{ display:flex; gap: 10px; margin-bottom: 24px; }
+.footer__social a{
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--line);
+  display:flex; align-items:center; justify-content:center;
+  color: var(--ink);
+  transition: border-color .2s ease, color .2s ease, background .2s ease;
+}
+.footer__social a:hover{ border-color: var(--red); color: var(--red-dark); background: var(--rose); }
+.footer__social svg{ width: 17px; height: 17px; }
+.footer__copy{ font-size: 12px; color: var(--ink-soft); padding-top: 24px; border-top: 1px solid var(--line); }
 
 /* =========================================================
    DESKTOP  (min-width: 900px)
@@ -253,7 +281,7 @@ p{ margin:0; }
   }
 
   /* --- shared content rail --- */
-  .nav, .hero, .stats, .section__head, .feature-list, .steps,
+  .nav, .hero, .stats, .section__head, .steps,
   .footer{
     max-width: var(--container-lg);
     margin-left: auto;
@@ -262,6 +290,7 @@ p{ margin:0; }
 
   /* --- nav --- */
   .nav{ padding: 26px 40px; }
+  .nav__logo-img{ height: 32px; }
   .nav__burger, .menu-toggle-input{ display:none; }
   .nav__menu{
     position: static;
@@ -277,14 +306,9 @@ p{ margin:0; }
   }
   .nav__menu a{ padding: 0; border-bottom: none; font-size: 14.5px; font-weight: 600; color: var(--ink-soft); }
   .nav__menu a:hover{ color: var(--ink); }
-  .nav__menu-cta{
-    margin-top: 0;
-    color: var(--white) !important;
-    background: var(--red);
-    padding: 10px 18px;
-    border-radius: var(--radius-s);
-  }
-  .nav__menu-cta:hover{ background: var(--red-dark); color: var(--white) !important; }
+  .nav__menu-cta{ margin-top: 0; }
+  .nav__menu a.nav__menu-cta{ padding: 10px 18px; color: var(--white); font-weight: 700; }
+  .nav__menu a.nav__menu-cta:hover{ color: var(--white); }
 
   /* --- hero: split into text / collage --- */
   .hero{
@@ -328,24 +352,24 @@ p{ margin:0; }
   .pkg-card:hover{ transform: translateY(-4px); box-shadow: 0 16px 30px rgba(33,27,24,0.1); }
   .pkg-card__photo{ height: 160px; }
 
-  /* --- gallery: keep the mobile 2-col masonry feel, just sized up with room to breathe --- */
+  .pkg-more{ padding: 8px 40px 0; text-align: center; }
+
+  /* --- gallery: mosaik 4 kolom --- */
   .gallery{
-    max-width: 760px;
+    max-width: var(--container-lg);
     margin: 0 auto;
     padding: 0 40px;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 250px 250px 300px;
+    grid-auto-rows: auto;
+    gap: 16px;
   }
-  .gallery__item{ height: 260px; }
-  .gallery__item--tall{ height: 400px; }
-
-  /* --- features: 2-col grid --- */
-  .feature-list{ padding: 0 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
-  .feature-list__item{ padding: 26px 0; }
-  .feature-list__item:nth-child(2){ border-top: none; }
-  .feature-list__icon{ width: 30px; height: 30px; }
-  .feature-list__item h3{ font-size: 17.5px; }
-  .feature-list__item p{ font-size: 14.5px; max-width: 34ch; }
+  .g1{ grid-column: 1 / 3; grid-row: 1 / 3; }  /* foto utama besar */
+  .g2{ grid-column: 3;     grid-row: 1; }
+  .g3{ grid-column: 4;     grid-row: 1 / 3; }  /* tinggi */
+  .g4{ grid-column: 3;     grid-row: 2; }
+  .g5{ grid-column: 1 / 3; grid-row: 3; }      /* lebar */
+  .g6{ grid-column: 3 / 5; grid-row: 3; }      /* lebar */
 
   /* --- steps: horizontal --- */
   .steps{
@@ -384,7 +408,7 @@ p{ margin:0; }
   .cta p{ font-size: 15px; margin-bottom: 0; }
   .cta .btn{ flex-shrink: 0; }
 
-  /* --- footer: multi column --- */
+  /* --- footer: multi column, social block sits bottom-right --- */
   .footer{
     padding: 64px 40px 32px;
     display: grid;
@@ -394,8 +418,11 @@ p{ margin:0; }
   }
   .footer__brand{ margin-bottom: 14px; }
   .footer__desc{ max-width: none; margin-bottom: 0; }
-  .footer__contact{ border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
-  .footer__copy{ grid-column: 1 / -1; padding-top: 24px; border-top: 1px solid var(--line); }
+  .footer__contact{ margin-bottom: 0; }
+  .footer__col--social{ align-self: end; }
+  .footer__col--social .footer__col-title{ text-align: right; }
+  .footer__col--social .footer__social{ justify-content: flex-end; margin-bottom: 0; }
+  .footer__copy{ grid-column: 1 / -1; }
 }
 
 @media (min-width: 1280px){
@@ -419,19 +446,20 @@ p{ margin:0; }
   <!-- NAV -->
   <header class="nav">
     <a href="#" class="nav__logo">
-      <span class="nav__logo-mark">A</span>
-      <span class="nav__logo-text">Amora Grads</span>
+      <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
     </a>
     <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
     <label for="menu-toggle" class="nav__burger" aria-label="Buka menu">
       <span></span><span></span><span></span>
     </label>
     <nav class="nav__menu">
-      <a href="#paket">Paket</a>
-      <a href="#galeri">Galeri</a>
-      <a href="#cara-booking">Cara booking</a>
-      <a href="#testimoni">Testimoni</a>
-      <a href="#kontak" class="nav__menu-cta">Hubungi kami</a>
+      <a href="#" class="active">Home</a>
+      <a href="katalog.html">Katalog</a>
+      <a href="#kontak">Hubungi kami</a>
+      <a href="login.html" class="btn btn--primary nav__menu-cta js-account-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span class="js-account-label">Login</span>
+      </a>
     </nav>
   </header>
 
@@ -442,7 +470,7 @@ p{ margin:0; }
       <h1 class="hero__title">Abadikan momen kelulusanmu.</h1>
       <p class="hero__desc">Amora Grads bantu kamu mengabadikan hari kelulusan dengan hasil yang natural, hangat, dan tetap kamu banget.</p>
       <div class="hero__actions">
-        <a href="#paket" class="btn btn--primary">Booking sekarang</a>
+        <a href="katalog.html" class="btn btn--primary">Booking sekarang</a>
         <a href="#galeri" class="btn btn--ghost">Lihat hasil</a>
       </div>
     </div>
@@ -477,41 +505,18 @@ p{ margin:0; }
     </div>
   </section>
 
-  <!-- PAKET -->
+  <!-- PAKET / KATALOG: 4 paket pertama, datanya diambil dari paket.js supaya
+       selalu sinkron dengan katalog.html. Klik kartu → detail paket itu. -->
   <section class="section" id="paket">
     <div class="section__head">
       <h2>Paket yang bisa kamu pilih</h2>
       <p>Sesuaikan dengan kebutuhan momenmu, semua sudah termasuk hasil edit.</p>
     </div>
 
-    <div class="scroll-row">
-      <a class="pkg-card" href="detail.html">
-        <img class="pkg-card__photo" src="aset/paket 1.png" alt="Wisuda Solo">
-        <h3>GRADS I</h3>
-        <p>1 Hour Session, 25 foto edit, Multiple spot.</p>
-        <span class="pkg-card__price">Rp350.000</span>
-      </a>
+    <div class="scroll-row" id="pkgPreviewRow"></div>
 
-      <article class="pkg-card">
-        <img class="pkg-card__photo" src="aset/paket 2.jpeg" alt="Wisuda Squad">
-        <h3>GRADS II</h3>
-        <p>Family &amp; Friends, 1 Hour Session, 40 foto edit.</p>
-        <span class="pkg-card__price">Rp400.000</span>
-      </article>
-
-      <article class="pkg-card">
-        <img class="pkg-card__photo" src="aset/paket 3.jpeg" alt="Wisuda bersama keluarga">
-        <h3>Couple &amp; Bestie</h3>
-        <p>2 Graduation, 1 Hour Session, 60 foto edit.</p>
-        <span class="pkg-card__price">Rp700.000</span>
-      </article>
-
-      <article class="pkg-card">
-        <img class="pkg-card__photo" src="aset/paket 4.jpeg" alt="Prewedding">
-        <h3>Group</h3>
-        <p>1,5 Hour Session, Unlimited Edited, Multiple Spot.</p>
-        <span class="pkg-card__price">Rp150.000</span>
-      </article>
+    <div class="pkg-more">
+      <a href="katalog.html" class="btn btn--ghost">Lihat Semua Paket</a>
     </div>
   </section>
 
@@ -523,79 +528,41 @@ p{ margin:0; }
     </div>
 
     <div class="gallery">
-      <img class="gallery__item gallery__item--tall" src="aset/porto 1.jpeg" alt="Hasil foto wisuda">
-      <img class="gallery__item" src="aset/porto 2.jpeg" alt="Hasil foto wisuda">
-      <img class="gallery__item" src="aset/porto 3.jpeg" alt="Hasil foto">
-      <img class="gallery__item gallery__item--tall" src="aset/porto 4.jpeg" alt="Hasil foto">
-      <img class="gallery__item" src="aset/porto 5.jpeg" alt="Hasil foto">
-      <img class="gallery__item" src="aset/porto 6.jpeg" alt="Hasil foto">
+      <figure class="gallery__item g1"><img src="aset/porto 1.jpeg" alt="Hasil foto wisuda" loading="lazy"></figure>
+      <figure class="gallery__item g2"><img src="aset/porto 2.jpeg" alt="Hasil foto wisuda" loading="lazy"></figure>
+      <figure class="gallery__item g3"><img src="aset/porto 3.png" alt="Hasil foto" loading="lazy"></figure>
+      <figure class="gallery__item g4"><img src="aset/porto 4.png" alt="Hasil foto" loading="lazy"></figure>
+      <figure class="gallery__item g5"><img src="aset/porto 5.jpeg" alt="Hasil foto" loading="lazy"></figure>
+      <figure class="gallery__item g6"><img src="aset/porto 6.png" alt="Hasil foto" loading="lazy"></figure>
     </div>
-  </section>
-
-  <!-- KENAPA PILIH KAMI -->
-  <section class="section" id="kenapa">
-    <div class="section__head">
-      <h2>Kenapa pilih Amora Grads</h2>
-    </div>
-
-    <ul class="feature-list">
-      <li class="feature-list__item">
-        <svg class="feature-list__icon" viewBox="0 0 24 24" fill="none"><path d="M4 8h3l2-3h6l2 3h3v11H4V8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg>
-        <div>
-          <h3>Fotografer berpengalaman</h3>
-          <p>Tim kami sudah menangani ratusan sesi wisuda dari berbagai kampus.</p>
-        </div>
-      </li>
-      <li class="feature-list__item">
-        <svg class="feature-list__icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        <div>
-          <h3>Hasil edit cepat</h3>
-          <p>Foto sudah diedit dan dikirim maksimal 3 hari setelah sesi.</p>
-        </div>
-      </li>
-      <li class="feature-list__item">
-        <svg class="feature-list__icon" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.6-9.3-9.1C1.2 8.6 3 5.5 6.2 5.2c1.9-.2 3.4.8 4.5 2.2 1.1-1.4 2.6-2.4 4.5-2.2 3.2.3 5 3.4 3.5 6.7C19 16.4 12 21 12 21z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-        <div>
-          <h3>Ramah budget mahasiswa</h3>
-          <p>Paket disusun supaya tetap terjangkau tanpa mengurangi kualitas.</p>
-        </div>
-      </li>
-      <li class="feature-list__item">
-        <svg class="feature-list__icon" viewBox="0 0 24 24" fill="none"><path d="M12 2.5c-4 4-6 7.4-6 10.3a6 6 0 0 0 12 0c0-2.9-2-6.3-6-10.3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
-        <div>
-          <h3>Bisa jemput lokasi</h3>
-          <p>Sesi bisa dilakukan di kampus, taman kota, atau lokasi favoritmu.</p>
-        </div>
-      </li>
-    </ul>
   </section>
 
   <!-- CARA BOOKING -->
   <section class="section" id="cara-booking">
     <div class="section__head">
-      <h2>Cara booking, cuma 3 langkah</h2>
+      <h2>Booking online, cuma 3 langkah</h2>
     </div>
 
     <ol class="steps">
       <li class="steps__item">
         <span class="steps__num">1</span>
         <div>
-          <h3>Chat kami</h3>
-          <p>Hubungi Amora Grads untuk cek jadwal.</p>
+          <h3>Buka katalog</h3>
+          <p>Lihat semua pilihan paket foto wisuda kami di halaman katalog.</p>
         </div>
       </li>
       <li class="steps__item">
         <span class="steps__num">2</span>
         <div>
-          <h3>Pilih paket &amp; tanggal</h3>
-          <p>Sesuaikan paket dan tentukan lokasi serta waktu sesi foto.</p>
+          <h3>Cek detail paket</h3>
+          <p>Klik paket yang kamu suka untuk lihat foto, harga, dan ketentuannya.</p>
         </div>
       </li>
       <li class="steps__item">
         <span class="steps__num">3</span>
         <div>
-          <h3>Sesi foto &amp; terima hasil</h3>
-          <p>Nikmati sesi fotonya, hasil edit dikirim ke email atau drive-mu.</p>
+          <h3>Booking &amp; chat kami</h3>
+          <p>Pilih tanggal & jam yang tersedia, lalu chat kami untuk konfirmasi dan atur detail sesi.</p>
         </div>
       </li>
     </ol>
@@ -611,22 +578,22 @@ p{ margin:0; }
       <article class="testi-card">
         <p class="testi-card__quote">Fotografernya sabar banget arahin pose, hasilnya juga natural nggak kaku.</p>
         <div>
-          <p class="testi-card__name">Dinda R.</p>
-          <p class="testi-card__role">Wisuda UNHAS, 2025</p>
+          <p class="testi-card__name">Hasira</p>
+          <p class="testi-card__role">Wisuda UNM, 2025</p>
         </div>
       </article>
       <article class="testi-card">
         <p class="testi-card__quote">Booking gampang, harga jelas, hasil editnya cepat sampai. Puas!</p>
         <div>
-          <p class="testi-card__name">Fajar M.</p>
+          <p class="testi-card__name">Aidil</p>
           <p class="testi-card__role">Wisuda Squad, 2025</p>
         </div>
       </article>
       <article class="testi-card">
-        <p class="testi-card__quote">Suka sama konsepnya, foto keluarga jadi kelihatan hangat dan rapi.</p>
+        <p class="testi-card__quote">Suka sama konsepnya, foto keluarga juga jadi kelihatan hangat dan rapi.</p>
         <div>
-          <p class="testi-card__name">Keluarga Amir</p>
-          <p class="testi-card__role">Paket Keluarga, 2024</p>
+          <p class="testi-card__name">Mely</p>
+          <p class="testi-card__role">Wisuda UNM, 2024</p>
         </div>
       </article>
     </div>
@@ -638,23 +605,40 @@ p{ margin:0; }
       <h2>Jadwal wisuda sudah dekat?</h2>
       <p>Amankan slot sesi fotomu sekarang, sebelum tanggal favoritmu diambil orang lain.</p>
     </div>
-    <a href="#kontak" class="btn btn--light">Booking Sekarang</a>
+    <a href="katalog.html" target="_blank" rel="noopener" class="btn btn--light">Booking Sekarang</a>
   </section>
 
   <!-- FOOTER -->
   <footer class="footer" id="kontak">
-    <div>
+    <div class="footer__col footer__col--brand">
       <div class="footer__brand">
-        <span class="nav__logo-mark">A</span>
-        <span class="nav__logo-text">Amora Grads</span>
+        <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
       </div>
-      <p class="footer__desc">Studio foto wisuda dan momen spesial, berbasis di Makassar.</p>
+      <p class="footer__desc">Jasa foto wisuda dan momen spesial, berbasis di Makassar.</p>
     </div>
 
-    <div class="footer__contact">
-      <a href="#">0812-9677-2025</a>
-      <a href="#">@amoragrads</a>
-      <a href="#">hello@amoragrads.id</a>
+    <div class="footer__col footer__col--contact">
+      <p class="footer__col-title">Navigasi</p>
+      <div class="footer__contact">
+        <a href="index.html" target="_blank" rel="noopener">Home</a>
+        <a href="katalog.html" target="_blank" rel="noopener">Katalog</a>
+        <a href="index.html#kontak" target="_blank" rel="noopener">Email</a>
+      </div>
+    </div>
+
+    <div class="footer__col footer__col--social">
+      <p class="footer__col-title">Ikuti kami</p>
+      <div class="footer__social">
+        <a href="https://www.instagram.com/amora.grads?stkn=MTlrM3E0NWhmdmF5YQ==" target="_blank" rel="noopener" aria-label="Instagram Amora Grads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@amoragrads?_r=1&_t=ZS-99zE1fHhkta" target="_blank" rel="noopener" aria-label="TikTok Amora Grads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4v9.2a3.8 3.8 0 1 1-3-3.71"/><path d="M16 4c.4 2.2 2 3.8 4 4.1"/></svg>
+        </a>
+        <a href="https://wa.me/6281356352104" target="_blank" rel="noopener" aria-label="WhatsApp Amora Grads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.3-4A8 8 0 1 1 9 19.4L4 20z"/><path d="M8.5 9.7c0 3.4 2.9 6.1 6.3 6.1"/></svg>
+        </a>
+      </div>
     </div>
 
     <p class="footer__copy">© 2026 Amora Grads. Semua hak cipta dilindungi.</p>
@@ -662,7 +646,35 @@ p{ margin:0; }
 
 </div>
 
+<!-- Data paket (dipakai untuk preview 4 paket di atas, biar sinkron dengan katalog.html) -->
+<script src="paket.js"></script>
 <script>
+  /* Render 4 paket pertama dari paket.js sebagai preview di homepage */
+  function renderPkgPreview(){
+    var row = document.getElementById('pkgPreviewRow');
+    if (!row || typeof PACKAGES === 'undefined') return;
+    row.innerHTML = PACKAGES.slice(0, 4).map(function (p) {
+      return '<a class="pkg-card" href="detail.html?paket=' + encodeURIComponent(p.id) + '">' +
+        '<img class="pkg-card__photo" src="' + p.img + '" alt="' + p.name + '">' +
+        '<h3>' + p.name + '</h3>' +
+        '<p>' + (p.subtitle || p.desc) + '</p>' +
+        '<span class="pkg-card__price">Rp' + p.price + '</span>' +
+      '</a>';
+    }).join('');
+  }
+  renderPkgPreview();
+
+  /* Status akun: dibaca dari login.html */
+  var isLoggedIn = false;
+  try { isLoggedIn = localStorage.getItem('amoraLoggedIn') === '1'; } catch (e) {}
+
+  document.querySelectorAll('.js-account-label').forEach(function (el) {
+    el.textContent = isLoggedIn ? 'Profil' : 'Login';
+  });
+  document.querySelectorAll('.js-account-link').forEach(function (a) {
+    a.setAttribute('href', isLoggedIn ? 'profil.html' : 'login.html');
+  });
+
   document.querySelectorAll('.nav__menu a').forEach(function (link) {
     link.addEventListener('click', function () {
       var mt = document.getElementById('menu-toggle');

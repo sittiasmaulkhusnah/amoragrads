@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Katalog Paket — Amora Grads</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS (disamakan dengan index.html) ============ */
+:root{
+  --cream: #FAF6F1;
+  --cream-2: #F3ECE4;
+  --cream-card: #FFFDFB;
+  --ink: #211B18;
+  --ink-soft: #6E6560;
+  --red: #B3282D;
+  --red-dark: #8A1F23;
+  --rose: #F0DEDB;
+  --line: #E6DCD3;
+  --white: #FFFDFB;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Manrope', sans-serif;
+
+  --radius-s: 4px;
+  --radius-m: 10px;
+  --radius-card: 16px;
+  --radius-btn: 9px;
+  --container: 480px;
+  --container-lg: 1180px;
+}
+
+*{ box-sizing: border-box; }
+html{ -webkit-text-size-adjust: 100%; }
+
+body{
+  margin:0;
+  background: var(--cream-2);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a{ color: inherit; text-decoration: none; }
+ul, ol{ list-style: none; margin:0; padding:0; }
+h1,h2,h3{ margin:0; font-family: var(--font-display); font-weight: 500; }
+p{ margin:0; }
+img{ display:block; max-width:100%; }
+button{ font-family: inherit; cursor: pointer; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+:focus-visible{
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+/* ============ FRAME (sama seperti index.html) ============ */
+.frame{
+  max-width: var(--container);
+  margin: 0 auto;
+  background: var(--cream);
+  min-height: 100vh;
+  box-shadow: 0 0 60px rgba(33,27,24,0.08);
+  overflow: hidden;
+}
+
+/* ============ NAV (struktur sama seperti index.html) ============ */
+.nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 18px 20px;
+  position: relative;
+  z-index: 20;
+}
+
+.nav__logo{ display:flex; align-items:center; }
+.nav__logo-img{ height: 28px; width: auto; display: block; }
+
+.menu-toggle-input{ display:none; }
+
+.nav__burger{
+  display:flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 6px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.nav__burger span{
+  width: 20px; height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.nav__menu{
+  position: absolute;
+  top: 100%;
+  left: 0; right: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+  display:flex;
+  flex-direction: column;
+  padding: 8px 20px 18px;
+  gap: 2px;
+  transform: translateY(-8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .22s ease, opacity .22s ease;
+}
+.nav__menu a{ padding: 12px 4px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.nav__menu a:last-of-type{ border-bottom: none; }
+.nav__menu a.active{ color: var(--red-dark); }
+
+.menu-toggle-input:checked ~ .nav__menu{ transform: translateY(0); opacity: 1; pointer-events: auto; }
+.menu-toggle-input:checked ~ .nav__burger span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.menu-toggle-input:checked ~ .nav__burger span:nth-child(2){ opacity: 0; }
+.menu-toggle-input:checked ~ .nav__burger span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+.nav__menu-cta{ margin-top: 10px; display:flex; align-items:center; justify-content:center; gap:8px; }
+.nav__menu-cta svg{ width:14px; height:14px; flex-shrink:0; }
+.nav__menu a.nav__menu-cta{ padding: 10px 18px; border-bottom: none; color: var(--white); font-size: 13px; font-weight: 700; }
+.nav__menu a.nav__menu-cta:hover{ color: var(--white); }
+
+/* ============ BUTTONS — tema/model dari katalog paket (pill, bold, radius 8–9px) ============ */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: var(--radius-btn);
+  font-weight: 700;
+  font-size: 13px;
+  border: 1.4px solid transparent;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease, color .15s ease;
+}
+.btn--primary{ background: var(--red); color: var(--white); border-color: var(--red); }
+.btn--primary:hover{ background: var(--red-dark); border-color: var(--red-dark); }
+.btn--ghost{ border-color: var(--red); color: var(--red-dark); background: transparent; }
+.btn--ghost:hover{ background: var(--red); color: var(--white); }
+.btn--light{ background: var(--white); color: var(--red-dark); border-color: var(--white); }
+.btn--light:hover{ background: var(--rose); }
+
+/* ============ HALAMAN KATALOG ============ */
+.section{ padding: 40px 0 8px; }
+.section__head{ padding: 0 20px; margin-bottom: 20px; }
+.eyebrow{ font-size: 12px; font-weight: 700; letter-spacing: 2px; color: var(--red-dark); margin-bottom: 8px; }
+.section__head h2{ font-size: 26px; line-height: 1.2; margin-bottom: 6px; }
+.section__head p{ color: var(--ink-soft); font-size: 14.5px; max-width: 34ch; }
+
+/* Grid katalog: 7 kotak — MODEL/tata letak dipertahankan seperti aslinya */
+.grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 0 20px;
+}
+
+/* ============ CARD (model kartu tetap sama, warna disamakan) ============ */
+.card{
+  background: var(--cream-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  display:flex;
+  flex-direction: column;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(33,27,24,0.10);
+  border-color: var(--red);
+}
+
+.card-photo{ position: relative; aspect-ratio: 4 / 3; overflow: hidden; filter: url(#grain); }
+.card-photo img{ width:100%; height:100%; object-fit: cover; transition: transform .4s ease; }
+.card:hover .card-photo img{ transform: scale(1.04); }
+
+.badge{
+  position: absolute;
+  top: 12px; left: 12px;
+  background: var(--red);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 6px;
+  z-index: 2;
+}
+
+.card-body{ padding: 16px; display:flex; flex-direction: column; gap: 8px; }
+.card-body h3{ font-size: 17px; font-weight: 600; }
+
+.price-row{ display:flex; align-items: baseline; gap: 6px; margin-top: 2px; }
+.price{ font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--red-dark); }
+.price-unit{ font-size: 12px; color: var(--ink-soft); }
+
+.card-actions{ display:flex; gap: 8px; margin-top: 8px; }
+.card-actions .btn{ flex: 1; padding: 10px 0; font-size: 12.5px; }
+
+/* ============ CTA (tema disamakan dengan index.html) ============ */
+.cta{ margin: 40px 20px 0; background: var(--red); color: var(--white); border-radius: var(--radius-m); padding: 32px 22px; text-align: left; }
+.cta .eyebrow{ color: #F0C9C5; }
+.cta h2{ font-size: 22px; margin-bottom: 8px; color: var(--white); }
+.cta p{ font-size: 14px; opacity: 0.9; margin-bottom: 20px; max-width: 32ch; }
+
+/* ============ FOOTER (struktur sama seperti index.html) ============ */
+.footer{ padding: 40px 20px 28px; margin-top: 44px; }
+.footer__brand{ display:flex; align-items:center; margin-bottom: 10px; }
+.footer__brand .nav__logo-img{ height: 34px; }
+.footer__desc{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 18px; max-width: 30ch; }
+.footer__col-title{ font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); margin-bottom: 10px; }
+.footer__contact{ display:flex; flex-direction: column; gap: 8px; font-size: 14px; margin-bottom: 24px; }
+.footer__contact a:hover{ color: var(--red-dark); }
+.footer__social{ display:flex; gap: 10px; margin-bottom: 24px; }
+.footer__social a{
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--line);
+  display:flex; align-items:center; justify-content:center;
+  color: var(--ink);
+  transition: border-color .2s ease, color .2s ease, background .2s ease;
+}
+.footer__social a:hover{ border-color: var(--red); color: var(--red-dark); background: var(--rose); }
+.footer__social svg{ width: 17px; height: 17px; }
+.footer__copy{ font-size: 12px; color: var(--ink-soft); padding-top: 24px; border-top: 1px solid var(--line); }
+
+/* Tombol WA melayang (mobile) */
+.sticky-wa{
+  position: fixed;
+  bottom: 18px; right: 18px;
+  z-index: 80;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: #25D366;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 8px 20px rgba(33,27,24,.25);
+}
+.sticky-wa svg{ width: 24px; height: 24px; fill: #fff; }
+
+/* =========================================================
+   DESKTOP (min-width: 900px) — mengikuti pola rail index.html
+   ========================================================= */
+@media (min-width: 900px){
+
+  body{ background: var(--cream-2); }
+
+  .frame{ max-width: none; box-shadow: none; background: var(--cream); }
+
+  .nav, .section__head, .footer{
+    max-width: var(--container-lg);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .nav{ padding: 26px 40px; }
+  .nav__logo-img{ height: 32px; }
+  .nav__burger, .menu-toggle-input{ display:none; }
+  .nav__menu{
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
+    background: transparent;
+    border-bottom: none;
+    padding: 0;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nav__menu a{ padding: 0; border-bottom: none; font-size: 14.5px; font-weight: 600; color: var(--ink-soft); }
+  .nav__menu a:hover{ color: var(--ink); }
+  .nav__menu a.active{ color: var(--red-dark); }
+  .nav__menu-cta{ margin-top: 0; }
+  .nav__menu a.nav__menu-cta{ padding: 10px 18px; color: var(--white); font-weight: 700; }
+  .nav__menu a.nav__menu-cta:hover{ color: var(--white); }
+
+  .section{ padding: 80px 0 8px; }
+  .section__head{ padding: 0 40px; margin-bottom: 32px; display:flex; align-items:flex-end; justify-content:space-between; gap: 40px; }
+  .section__head h2{ font-size: 32px; max-width: 20ch; }
+  .section__head p{ font-size: 15px; max-width: 38ch; margin-left: auto; }
+
+  /* Grid 7 kotak: baris 4 + baris 3, model dipertahankan seperti versi asli */
+  .grid{
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+    max-width: var(--container-lg);
+    margin: 0 auto;
+    padding: 4px 40px 12px;
+  }
+  .card:nth-child(1){ grid-column: 1 / span 3; }
+  .card:nth-child(2){ grid-column: 4 / span 3; }
+  .card:nth-child(3){ grid-column: 7 / span 3; }
+  .card:nth-child(4){ grid-column: 10 / span 3; }
+  .card:nth-child(5){ grid-column: 2 / span 3; }
+  .card:nth-child(6){ grid-column: 5 / span 3; }
+  .card:nth-child(7){ grid-column: 8 / span 3; }
+
+  .cta{
+    max-width: var(--container-lg);
+    margin: 80px auto 0;
+    padding: 56px 60px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .cta h2{ font-size: 30px; }
+  .cta p{ font-size: 15px; margin-bottom: 0; }
+  .cta .btn{ flex-shrink: 0; padding: 13px 26px; font-size: 14px; }
+
+  .footer{
+    padding: 64px 40px 32px;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .footer__brand{ margin-bottom: 14px; }
+  .footer__desc{ max-width: none; margin-bottom: 0; }
+  .footer__contact{ margin-bottom: 0; }
+  .footer__col--social{ align-self: end; }
+  .footer__col--social .footer__col-title{ text-align: right; }
+  .footer__col--social .footer__social{ justify-content: flex-end; margin-bottom: 0; }
+  .footer__copy{ grid-column: 1 / -1; }
+
+  .sticky-wa{ display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Grain texture, sama seperti index.html -->
+<svg width="0" height="0" style="position:absolute">
+  <filter id="grain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise"/>
+    <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0"/>
+    <feComposite operator="over" in2="SourceGraphic"/>
+  </filter>
+</svg>
+
+<div class="frame">
+
+  <!-- NAV (struktur & style disamakan dengan index.html) -->
+  <header class="nav">
+    <a href="index.html" class="nav__logo">
+      <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
+    </a>
+    <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
+    <label for="menu-toggle" class="nav__burger" aria-label="Buka menu">
+      <span></span><span></span><span></span>
+    </label>
+    <nav class="nav__menu">
+      <a href="index.html">Home</a>
+      <a href="katalog.html" class="active">Katalog</a>
+      <a href="index.html#kontak">Hubungi kami</a>
+      <a href="login.html" class="btn btn--primary nav__menu-cta js-account-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span class="js-account-label">Login</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- KATALOG: model 7 kotak dipertahankan -->
+  <section class="section" id="paket">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">AMORA GRADS</p>
+        <h2>Katalog Paket</h2>
+        <p>Pilih paket fotografi wisuda sesuai kebutuhanmu, semua sudah termasuk hasil edit.</p>
+      </div>
+    </div>
+
+    <div class="grid" id="pkgGrid"></div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div>
+      <p class="eyebrow">SIAP BOOKING?</p>
+      <h2>Abadikan momen wisudamu bersama Amora Grads.</h2>
+      <p>Pilih paket dan amankan jadwal fotografermu sekarang.</p>
+    </div>
+    <a href="katalog.html" target="_blank" rel="noopener" class="btn btn--light">Booking Sekarang</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="kontak">
+    <div class="footer__col footer__col--brand">
+      <div class="footer__brand">
+        <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
+      </div>
+      <p class="footer__desc">Jasa foto wisuda dan momen spesial, berbasis di Makassar.</p>
+    </div>
+
+    <div class="footer__col footer__col--contact">
+      <p class="footer__col-title">Navigasi</p>
+      <div class="footer__contact">
+        <a href="index.html" target="_blank" rel="noopener">Home</a>
+        <a href="katalog.html" target="_blank" rel="noopener">Katalog</a>
+        <a href="index.html#kontak" target="_blank" rel="noopener">Email</a>
+      </div>
+    </div>
+
+    <div class="footer__col footer__col--social">
+      <p class="footer__col-title">Ikuti kami</p>
+      <div class="footer__social">
+        <a href="https://www.instagram.com/amora.grads?stkn=MTlrM3E0NWhmdmF5YQ==" target="_blank" rel="noopener" aria-label="Instagram Amora Grads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@amoragrads?_r=1&_t=ZS-99zE1fHhkta" target="_blank" rel="noopener" aria-label="TikTok Amora Grads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4v9.2a3.8 3.8 0 1 1-3-3.71"/><path d="M16 4c.4 2.2 2 3.8 4 4.1"/></svg>
+        </a>
+        <a href="https://wa.me/6281356352104" target="_blank" rel="noopener" aria-label="WhatsApp Amora Grads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.3-4A8 8 0 1 1 9 19.4L4 20z"/><path d="M8.5 9.7c0 3.4 2.9 6.1 6.3 6.1"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <p class="footer__copy">© 2026 Amora Grads. Semua hak cipta dilindungi.</p>
+  </footer>
+
+</div>
+
+<!-- Tombol WhatsApp melayang (mobile) -->
+<a href="https://wa.me/6281296772025" target="_blank" rel="noopener" class="sticky-wa" aria-label="Chat WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.28-1.38a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.13c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.98s.73-2.12 1-2.41c.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.58.82 2 .89 2.15.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.16-.29.36-.42.48-.14.14-.28.29-.12.56.16.28.7 1.16 1.51 1.88 1.04.93 1.91 1.22 2.19 1.36.28.14.44.12.6-.07.16-.19.68-.79.87-1.06.18-.28.36-.23.61-.14.24.09 1.55.73 1.82.86.26.14.44.2.5.31.07.12.07.68-.17 1.36z"/></svg>
+</a>
+
+<!-- Data paket & nomor WhatsApp (dipakai juga oleh detail.html) -->
+<script src="paket.js"></script>
+<script>
+/* ==================================================
+   RENDER KATALOG — data paket ada di paket.js
+   Lihat Detail → detail.html, Pesan → langsung ke WhatsApp
+================================================== */
+function renderPackages(){
+  document.getElementById("pkgGrid").innerHTML = PACKAGES.map(p => `
+    <div class="card">
+      <div class="card-photo">
+        ${p.badge ? `<span class="badge">${p.badge}</span>` : ""}
+        <img src="${p.img}" alt="${p.name}" loading="lazy">
+      </div>
+      <div class="card-body">
+        <h3>${p.name}</h3>
+        <div class="price-row">
+          <span class="price">Rp ${p.price}</span>
+          <span class="price-unit">/ sesi</span>
+        </div>
+        <div class="card-actions">
+          <a class="btn btn--ghost" href="detail.html?paket=${p.id}">Lihat Detail</a>
+          <a class="btn btn--primary" href="${waLink(p)}" target="_blank" rel="noopener">Pesan</a>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+renderPackages();
+
+document.querySelectorAll('.nav__menu a').forEach(function (link) {
+  link.addEventListener('click', function () {
+    var mt = document.getElementById('menu-toggle');
+    if (mt) mt.checked = false;
+  });
+});
+</script>
+
+<!-- Status login (Login → Profil), dipakai di semua halaman -->
+<script src="auth.js"></script>
+
+</body>
+</html>

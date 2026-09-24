@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GRADS I — Amora Grads</title>
+<title>Detail Paket — Amora Grads</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -25,23 +25,18 @@
 
   --radius-s: 4px;
   --radius-m: 10px;
+  --radius-btn: 9px;
   --container: 480px;
   --container-lg: 1180px;
 }
 
 *{ box-sizing: border-box; }
 html{ -webkit-text-size-adjust: 100%; }
-
 body{
-  margin:0;
-  background: var(--cream-2);
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.55;
+  margin:0; background: var(--cream-2); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
-
 a{ color: inherit; text-decoration: none; }
 ul, ol{ list-style: none; margin:0; padding:0; }
 h1,h2,h3{ margin:0; font-family: var(--font-display); font-weight: 500; }
@@ -50,25 +45,14 @@ p{ margin:0; }
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
-
 :focus-visible{ outline: 2px solid var(--red); outline-offset: 2px; }
 
-/* ============ FRAME ============ */
-.frame{
-  max-width: var(--container);
-  margin: 0 auto;
-  background: var(--cream);
-  min-height: 100vh;
-  box-shadow: 0 0 60px rgba(33,27,24,0.08);
-  overflow: hidden;
-}
+.frame{ max-width: var(--container); margin: 0 auto; background: var(--cream); min-height: 100vh; box-shadow: 0 0 60px rgba(33,27,24,0.08); overflow: hidden; }
 
 /* ============ NAV (sama dengan index.html) ============ */
 .nav{ display:flex; align-items:center; justify-content:space-between; padding: 18px 20px; position: relative; z-index: 20; }
-.nav__logo{ display:flex; align-items:center; gap:8px; }
-.nav__logo-mark{ width: 30px; height:30px; border-radius: 50%; background: var(--red); color: var(--white); font-family: var(--font-display); font-size: 15px; display:flex; align-items:center; justify-content:center; }
-.nav__logo-text{ font-family: var(--font-display); font-size: 18px; letter-spacing: 0.01em; }
-
+.nav__logo{ display:flex; align-items:center; }
+.nav__logo-img{ height: 28px; width: auto; display: block; }
 .menu-toggle-input{ display:none; }
 .nav__burger{ display:flex; flex-direction: column; gap: 5px; padding: 6px; cursor: pointer; }
 .nav__burger span{ width: 20px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform .2s ease, opacity .2s ease; }
@@ -82,44 +66,37 @@ p{ margin:0; }
 }
 .nav__menu a{ padding: 12px 4px; border-bottom: 1px solid var(--line); font-size: 15px; }
 .nav__menu a:last-of-type{ border-bottom: none; }
+.nav__menu a.active{ color: var(--red-dark); }
 
 .menu-toggle-input:checked ~ .nav__menu{ transform: translateY(0); opacity: 1; pointer-events: auto; }
 .menu-toggle-input:checked ~ .nav__burger span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
 .menu-toggle-input:checked ~ .nav__burger span:nth-child(2){ opacity: 0; }
 .menu-toggle-input:checked ~ .nav__burger span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
-.nav__menu-cta{ margin-top: 8px; color: var(--red); font-weight: 700; }
 
-/* ============ BUTTONS (sama dengan index.html) ============ */
-.btn{ display: inline-flex; align-items: center; justify-content: center; padding: 13px 22px; border-radius: var(--radius-s); font-weight: 600; font-size: 15px; border: 1px solid transparent; white-space: nowrap; cursor: pointer; transition: transform .15s ease, background .15s ease; }
-.btn--primary{ background: var(--red); color: var(--white); }
-.btn--primary:hover{ background: var(--red-dark); }
-.btn--ghost{ border-color: var(--ink); color: var(--ink); }
-.btn--ghost:hover{ background: var(--ink); color: var(--white); }
+.nav__menu-cta{ margin-top: 10px; display:flex; align-items:center; justify-content:center; gap:8px; }
+.nav__menu-cta svg{ width:14px; height:14px; flex-shrink:0; }
+.nav__menu a.nav__menu-cta{ padding: 10px 18px; border-bottom: none; color: var(--white); font-size: 13px; font-weight: 700; }
+.nav__menu a.nav__menu-cta:hover{ color: var(--white); }
 
-/* ============ BREADCRUMB ============ */
-.breadcrumb{ padding: 4px 20px 0; font-size: 13px; color: var(--ink-soft); }
-.breadcrumb a:hover{ color: var(--red-dark); }
-.breadcrumb span{ margin: 0 6px; }
+/* ============ BUTTONS ============ */
+.btn{ display: inline-flex; align-items: center; justify-content: center; padding: 13px 22px; border-radius: var(--radius-btn); font-family: var(--font-body); font-weight: 700; font-size: 15px; border: 1.4px solid transparent; white-space: nowrap; cursor: pointer; transition: transform .15s ease, background .15s ease, color .15s ease; }
+.btn--primary{ background: var(--red); color: var(--white); border-color: var(--red); }
+.btn--primary:hover{ background: var(--red-dark); border-color: var(--red-dark); }
+.btn--ghost{ border-color: var(--red); color: var(--red-dark); }
+.btn--ghost:hover{ background: var(--red); color: var(--white); }
 
 /* ============ PRODUCT ============ */
 .product{ padding: 18px 20px 0; }
 
 .gallery-main{
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-m);
-  aspect-ratio: 1/0.92;
-  display:flex; align-items:center; justify-content:center;
-  overflow: hidden;
-  position: relative;
-  max-width: 280px;
-  margin: 0 auto;
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-m);
+  aspect-ratio: 1/0.92; overflow: hidden; max-width: 280px; margin: 0 auto;
 }
-.gallery-main img{ width:100%; height:100%; object-fit: cover; display:block; transition: opacity .18s ease; filter: url(#grain); }
+.gallery-main img{ width:100%; height:100%; object-fit: cover; display:block; filter: url(#grain); }
 
-.thumbs{ display:flex; gap: 10px; margin-top: 14px; max-width: 280px; margin-left:auto; margin-right:auto; }
+.thumbs{ display:flex; gap: 10px; margin: 14px auto 0; max-width: 280px; }
 .thumb{
-  flex:1; aspect-ratio: 1/1; border-radius: var(--radius-s);
+  flex:1; aspect-ratio: 1/1; padding: 0; background: none; border-radius: var(--radius-s);
   overflow:hidden; border: 2px solid transparent; cursor: pointer;
   transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
 }
@@ -130,16 +107,15 @@ p{ margin:0; }
 .info{ margin-top: 28px; }
 .info__kicker{ font-size: 13px; color: var(--red-dark); font-weight: 600; margin-bottom: 8px; }
 .info h1{ font-size: 26px; }
-.info .subtitle{ font-size: 14.5px; color: var(--ink-soft); margin-top: 6px; }
+.subtitle{ font-size: 14.5px; color: var(--ink-soft); margin-top: 6px; }
 
 .rating{ display:flex; align-items:center; gap:7px; margin-top: 14px; }
 .stars{ color: var(--red); letter-spacing: 2px; font-size: 13px; }
 .rating .score{ font-weight: 700; font-size: 12.5px; }
 .rating .count{ font-size: 12px; color: var(--ink-soft); }
 
-.price-row{ display:flex; align-items:center; gap: 10px; margin-top: 16px; }
-.price-new{ font-size: 26px; font-weight: 600; font-family: var(--font-display); color: var(--red-dark); }
-
+.price-new{ display:block; margin-top: 16px; font-size: 26px; font-weight: 600; font-family: var(--font-display); color: var(--red-dark); }
+.price-new small{ font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--ink-soft); }
 .desc{ margin-top: 16px; font-size: 14.5px; line-height: 1.65; color: var(--ink-soft); }
 
 .cta-row{ display:flex; gap: 12px; margin-top: 22px; }
@@ -150,27 +126,9 @@ p{ margin:0; }
 .trust-item:hover{ border-color: var(--red); }
 .trust-item svg{ width: 17px; height: 17px; flex-shrink: 0; color: var(--red-dark); }
 
-/* ============ SECTIONS (sama dengan index.html) ============ */
-.section{ padding: 48px 0 8px; }
-.section__head{ padding: 0 20px; margin-bottom: 20px; }
-.section__head h2{ font-size: 24px; line-height: 1.25; margin-bottom: 6px; }
-.section__head p{ color: var(--ink-soft); font-size: 14.5px; max-width: 34ch; }
-
-/* Feature list (sama dengan index.html) */
-.feature-list{ padding: 0 20px; }
-.feature-list__item{ display:flex; gap: 14px; padding: 18px 0; border-top: 1px solid var(--line); }
-.feature-list__item:first-child{ border-top: none; }
-.feature-list__icon{ width: 26px; height: 26px; color: var(--red); flex-shrink: 0; margin-top: 2px; }
-.feature-list__item h3{ font-size: 16px; margin-bottom: 3px; }
-.feature-list__item p{ font-size: 13.5px; color: var(--ink-soft); }
-
-/* Testimonials (sama dengan index.html) */
-.scroll-row{ display:flex; gap: 14px; overflow-x: auto; padding: 4px 20px 12px; scroll-snap-type: x mandatory; }
-.scroll-row::-webkit-scrollbar{ display:none; }
-.testi-card{ flex: 0 0 78%; scroll-snap-align: start; background: var(--rose); border-radius: var(--radius-m); padding: 20px; display:flex; flex-direction:column; justify-content:space-between; }
-.testi-card__quote{ font-family: var(--font-display); font-style: italic; font-size: 16.5px; line-height: 1.4; margin-bottom: 16px; }
-.testi-card__name{ font-weight: 700; font-size: 13.5px; }
-.testi-card__role{ font-size: 12.5px; color: var(--ink-soft); }
+.notfound{ padding: 40px 20px; }
+.notfound h1{ font-size: 26px; margin-bottom: 8px; }
+.notfound p{ color: var(--ink-soft); margin-bottom: 20px; }
 
 /* FAQ */
 .faq{ padding: 48px 20px 8px; }
@@ -186,41 +144,35 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
 
 /* ============ FOOTER (sama dengan index.html) ============ */
 .footer{ padding: 40px 20px 28px; margin-top: 44px; }
-.footer__brand{ display:flex; align-items:center; gap:8px; margin-bottom: 10px; }
+.footer__brand{ display:flex; align-items:center; margin-bottom: 10px; }
+.footer__brand .nav__logo-img{ height: 34px; }
 .footer__desc{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 18px; max-width: 30ch; }
-.footer__contact{ display:flex; flex-direction: column; gap: 8px; font-size: 14px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.footer__col-title{ font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); margin-bottom: 10px; }
+.footer__contact{ display:flex; flex-direction: column; gap: 8px; font-size: 14px; margin-bottom: 24px; }
 .footer__contact a:hover{ color: var(--red-dark); }
-.footer__copy{ font-size: 12px; color: var(--ink-soft); }
+.footer__social{ display:flex; gap: 10px; margin-bottom: 24px; }
+.footer__social a{ width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); display:flex; align-items:center; justify-content:center; color: var(--ink); transition: border-color .2s ease, color .2s ease, background .2s ease; }
+.footer__social a:hover{ border-color: var(--red); color: var(--red-dark); background: var(--rose); }
+.footer__social svg{ width: 17px; height: 17px; }
+.footer__copy{ font-size: 12px; color: var(--ink-soft); padding-top: 24px; border-top: 1px solid var(--line); }
 
-/* =========================================================
-   DESKTOP (min-width: 900px) — mengikuti pola index.html
-   ========================================================= */
+/* ============ DESKTOP ============ */
 @media (min-width: 900px){
-  body{ background: var(--cream-2); }
-  .frame{ max-width: none; box-shadow: none; background: var(--cream); }
-
-  .nav, .breadcrumb, .section__head, .feature-list, .footer{
-    max-width: var(--container-lg); margin-left: auto; margin-right: auto;
-  }
-
+  .frame{ max-width: none; box-shadow: none; }
+  .nav, .footer{ max-width: var(--container-lg); margin-left: auto; margin-right: auto; }
   .nav{ padding: 26px 40px; }
-  .breadcrumb{ padding: 4px 40px 0; }
+  .nav__logo-img{ height: 32px; }
   .nav__burger, .menu-toggle-input{ display:none; }
-  .nav__menu{
-    position: static; flex-direction: row; align-items: center; gap: 32px;
-    background: transparent; border-bottom: none; padding: 0;
-    transform: none; opacity: 1; pointer-events: auto;
-  }
+  .nav__menu{ position: static; flex-direction: row; align-items: center; gap: 32px; background: transparent; border-bottom: none; padding: 0; transform: none; opacity: 1; pointer-events: auto; }
   .nav__menu a{ padding: 0; border-bottom: none; font-size: 14.5px; font-weight: 600; color: var(--ink-soft); }
   .nav__menu a:hover{ color: var(--ink); }
-  .nav__menu-cta{ margin-top: 0; color: var(--white) !important; background: var(--red); padding: 10px 18px; border-radius: var(--radius-s); }
-  .nav__menu-cta:hover{ background: var(--red-dark); color: var(--white) !important; }
+  .nav__menu a.active{ color: var(--red-dark); }
+  .nav__menu-cta{ margin-top: 0; }
+  .nav__menu a.nav__menu-cta{ padding: 10px 18px; color: var(--white); font-weight: 700; }
+  .nav__menu a.nav__menu-cta:hover{ color: var(--white); }
 
-  .product{
-    max-width: var(--container-lg); margin: 0 auto; padding: 40px 40px 0;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start;
-  }
-  .gallery-main{ max-width: 340px; aspect-ratio: 1/0.92; }
+  .product{ max-width: var(--container-lg); margin: 0 auto; padding: 40px 40px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
+  .gallery-main{ max-width: 340px; }
   .thumbs{ max-width: 340px; }
   .info{ margin-top: 0; }
   .info h1{ font-size: 32px; }
@@ -228,37 +180,25 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
   .desc{ font-size: 15px; max-width: 44ch; }
   .cta-row{ max-width: 400px; }
   .trust-grid{ max-width: 420px; }
-
-  .section{ padding: 88px 0 8px; }
-  .section__head{ padding: 0 40px; margin-bottom: 36px; }
-  .section__head h2{ font-size: 34px; }
-
-  .feature-list{ padding: 0 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px; }
-  .feature-list__item{ padding: 26px 0; }
-  .feature-list__item:nth-child(2){ border-top: none; }
-
-  .scroll-row{
-    display: grid; grid-template-columns: repeat(3, 1fr); overflow: visible;
-    max-width: var(--container-lg); margin: 0 auto; padding: 4px 40px 12px;
-  }
-  .testi-card__quote{ font-size: 18px; }
+  .notfound{ max-width: var(--container-lg); margin: 0 auto; padding: 60px 40px; }
 
   .faq{ max-width: var(--container-lg); margin: 0 auto; padding: 88px 40px 8px; }
+  .faq h2{ font-size: 34px; }
 
-  .footer{
-    padding: 64px 40px 32px; display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 40px; align-items: start;
-  }
+  .footer{ padding: 64px 40px 32px; display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 40px; align-items: start; }
   .footer__brand{ margin-bottom: 14px; }
   .footer__desc{ max-width: none; margin-bottom: 0; }
-  .footer__contact{ border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
-  .footer__copy{ grid-column: 1 / -1; padding-top: 24px; border-top: 1px solid var(--line); }
+  .footer__contact{ margin-bottom: 0; }
+  .footer__col--social{ align-self: end; }
+  .footer__col--social .footer__col-title{ text-align: right; }
+  .footer__col--social .footer__social{ justify-content: flex-end; margin-bottom: 0; }
+  .footer__copy{ grid-column: 1 / -1; }
 }
 </style>
 </head>
 <body>
 
-<!-- Grain texture, sama dengan index.html -->
-<svg width="0" height="0" style="position:absolute">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <filter id="grain">
     <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise"/>
     <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0"/>
@@ -271,126 +211,57 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
   <!-- NAV -->
   <header class="nav">
     <a href="index.html" class="nav__logo">
-      <span class="nav__logo-mark">A</span>
-      <span class="nav__logo-text">Amora Grads</span>
+      <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
     </a>
     <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
     <label for="menu-toggle" class="nav__burger" aria-label="Buka menu">
       <span></span><span></span><span></span>
     </label>
     <nav class="nav__menu">
-      <a href="index.html#paket">Paket</a>
-      <a href="index.html#galeri">Galeri</a>
-      <a href="index.html#cara-booking">Cara booking</a>
-      <a href="index.html#testimoni">Testimoni</a>
-      <a href="index.html#kontak" class="nav__menu-cta">Hubungi kami</a>
+      <a href="index.html">Home</a>
+      <a href="katalog.html" class="active">Katalog</a>
+      <a href="index.html#kontak">Hubungi kami</a>
+      <a href="login.html" class="btn btn--primary nav__menu-cta js-account-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        <span class="js-account-label">Login</span>
+      </a>
     </nav>
   </header>
 
-  <p class="breadcrumb"><a href="index.html">Beranda</a><span>/</span><a href="index.html#paket">Paket</a><span>/</span>GRADS I</p>
+  <!-- ISI HALAMAN: dibuat oleh script dari paket.js -->
+  <main id="content"></main>
 
-  <!-- PRODUCT -->
-  <div class="product">
-    <div>
-      <div class="gallery-main">
-        <img id="mainImage" src="aset/paket 1.png" alt="Paket GRADS I">
-      </div>
-      <div class="thumbs">
-        <div class="thumb active" onclick="selectThumb(this,'aset/paket 1.png')">
-          <img src="aset/paket 1.png" alt="">
-        </div>
-        <div class="thumb" onclick="selectThumb(this,'aset/dpaket 1.png')">
-          <img src="aset/dpaket 1.png" alt="">
-        </div>
-        <div class="thumb" onclick="selectThumb(this,'aset/dpaket 2.png')">
-          <img src="aset/dpaket 2.png" alt="">
-        </div>
-        <div class="thumb" onclick="selectThumb(this,'aset/dpaket 3.png')">
-          <img src="aset/dpaket 3.png" alt="">
-        </div>
-      </div>
-    </div>
-
-    <div class="info">
-      <p class="info__kicker">Paket foto wisuda solo</p>
-      <h1>GRADS I</h1>
-      <p class="subtitle">1 Hour Session, 25 foto edit, Multiple spot.</p>
-
-      <div class="rating">
-        <span class="stars">★★★★★</span>
-        <span class="score">4.9</span>
-        <span class="count">dari klien yang sudah wisuda</span>
-      </div>
-
-      <div class="price-row">
-        <span class="price-new">Rp350.000</span>
-      </div>
-
-      <p class="desc">Sesi foto wisuda personal selama 1 jam di beberapa spot pilihan, dengan hasil edit yang natural dan hangat. Cocok buat kamu yang mau mengabadikan hari kelulusan dengan gaya sendiri, tanpa buru-buru.</p>
-
-      <div class="cta-row">
-        <a href="#" class="btn btn--primary">Booking sekarang</a>
-        <a href="#" class="btn btn--ghost">Chat kami</a>
-      </div>
-
-      <div class="trust-grid">
-        <div class="trust-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
-          1 Graduation
-        </div>
-        <div class="trust-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          1 Hour Session
-        </div>
-        <div class="trust-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.5c-4 4-6 7.4-6 10.3a6 6 0 0 0 12 0c0-2.9-2-6.3-6-10.3z"/></svg>
-          Multiple Spot
-        </div>
-        <div class="trust-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4V8z"/><circle cx="12" cy="13" r="3.2"/></svg>
-          25 Foto Edited
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FAQ -->
-  <div class="faq">
-    <h2>Pertanyaan umum</h2>
-    <details>
-      <summary>Apakah paket ini bisa untuk berdua atau berteman?
-        <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </summary>
-      <div class="faq-body">GRADS I dirancang untuk sesi solo. Kalau mau bareng keluarga atau teman, cek paket GRADS II atau Couple &amp; Bestie ya.</div>
-    </details>
-    <details>
-      <summary>Apakah bisa foto di beberapa lokasi?
-        <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </summary>
-      <div class="faq-body">Bisa. Dalam 1 jam sesi, kamu bisa berpindah ke beberapa spot favorit selama masih di area yang sama.</div>
-    </details>
-    <details>
-      <summary>Semua hasil foto diberikan lewat apa?
-        <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </summary>
-      <div class="faq-body">25 foto hasil edit dikirim melalui Google Drive, maksimal 3 hari setelah sesi foto.</div>
-    </details>
-  </div>
-
-  <!-- FOOTER (sama dengan index.html) -->
+  <!-- FOOTER -->
   <footer class="footer" id="kontak">
-    <div>
+    <div class="footer__col footer__col--brand">
       <div class="footer__brand">
-        <span class="nav__logo-mark">A</span>
-        <span class="nav__logo-text">Amora Grads</span>
+        <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
       </div>
-      <p class="footer__desc">Studio foto wisuda dan momen spesial, berbasis di Makassar.</p>
+      <p class="footer__desc">Jasa foto wisuda dan momen spesial, berbasis di Makassar.</p>
     </div>
 
-    <div class="footer__contact">
-      <a href="#">0812-9677-2025</a>
-      <a href="#">@amoragrads</a>
-      <a href="#">hello@amoragrads.id</a>
+    <div class="footer__col footer__col--contact">
+      <p class="footer__col-title">Navigasi</p>
+      <div class="footer__contact">
+        <a href="index.html" target="_blank" rel="noopener">Home</a>
+        <a href="katalog.html" target="_blank" rel="noopener">Katalog</a>
+        <a href="index.html#kontak" target="_blank" rel="noopener">Email</a>
+      </div>
+    </div>
+
+    <div class="footer__col footer__col--social">
+      <p class="footer__col-title">Ikuti kami</p>
+      <div class="footer__social">
+        <a href="https://www.instagram.com/amora.grads?stkn=MTlrM3E0NWhmdmF5YQ==" target="_blank" rel="noopener" aria-label="Instagram Amora Grads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@amoragrads?_r=1&_t=ZS-99zE1fHhkta" target="_blank" rel="noopener" aria-label="TikTok Amora Grads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4v9.2a3.8 3.8 0 1 1-3-3.71"/><path d="M16 4c.4 2.2 2 3.8 4 4.1"/></svg>
+        </a>
+        <a href="https://wa.me/6281356352104" target="_blank" rel="noopener" aria-label="WhatsApp Amora Grads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.3-4A8 8 0 1 1 9 19.4L4 20z"/><path d="M8.5 9.7c0 3.4 2.9 6.1 6.3 6.1"/></svg>
+        </a>
+      </div>
     </div>
 
     <p class="footer__copy">© 2026 Amora Grads. Semua hak cipta dilindungi.</p>
@@ -398,20 +269,95 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
 
 </div>
 
+<script src="paket.js"></script>
 <script>
+  var ICONS = {
+    user:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>',
+    clock:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    pin:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.5c-4 4-6 7.4-6 10.3a6 6 0 0 0 12 0c0-2.9-2-6.3-6-10.3z"/></svg>',
+    camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4V8z"/><circle cx="12" cy="13" r="3.2"/></svg>',
+    chev:   '<svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'
+  };
+
+  /* Bagian yang tidak diisi di paket.js dibuat otomatis dari data dasar paket */
+  function buildFaq(p){
+    return p.faq || [
+      { q: "Untuk berapa orang paket ini?", a: "Paket " + p.name + " untuk " + p.people + ". Kalau jumlah orangnya berbeda, chat kami untuk tanya paket yang paling cocok." },
+      { q: "Apakah bisa foto di beberapa lokasi?", a: "Spot bebas, jadi kamu bisa memilih lokasi favoritmu selama sesi " + p.duration + "." },
+      { q: "Hasilnya diberikan lewat apa?", a: "Semua file soft (" + p.photos + ") dikirim melalui Google Drive." }
+    ];
+  }
+
+  var params = new URLSearchParams(location.search);
+  var p = getPackage(params.get('paket'));
+  var box = document.getElementById('content');
+
+  if (!p) {
+    box.innerHTML =
+      '<div class="notfound">' +
+        '<h1>Paket tidak ditemukan</h1>' +
+        '<p>Paket yang kamu cari tidak ada atau tautannya salah. Pilih paket lain di katalog.</p>' +
+        '<a href="katalog.html" class="btn btn--primary">Kembali ke katalog</a>' +
+      '</div>';
+  } else {
+    document.title = p.name + ' — Amora Grads';
+
+    var gallery = (p.gallery && p.gallery.length) ? p.gallery : [p.img];
+    var thumbs = gallery.length > 1
+      ? '<div class="thumbs">' + gallery.map(function (src, i) {
+          return '<button type="button" class="thumb' + (i === 0 ? ' active' : '') + '" data-src="' + src + '" aria-label="Foto ' + (i + 1) + '"><img src="' + src + '" alt=""></button>';
+        }).join('') + '</div>'
+      : '';
+
+    var faq = buildFaq(p).map(function (f) {
+      return '<details><summary>' + f.q + ICONS.chev + '</summary><div class="faq-body">' + f.a + '</div></details>';
+    }).join('');
+
+    box.innerHTML =
+      '<div class="product">' +
+        '<div>' +
+          '<div class="gallery-main"><img id="mainImage" src="' + gallery[0] + '" alt="Paket ' + p.name + '"></div>' +
+          thumbs +
+        '</div>' +
+        '<div class="info">' +
+          '<p class="info__kicker">' + (p.kicker || 'Paket foto wisuda') + '</p>' +
+          '<h1>' + p.name + '</h1>' +
+          '<p class="subtitle">' + (p.subtitle || (p.duration + ', ' + p.photos + '.')) + '</p>' +
+          '<div class="rating"><span class="stars">★★★★★</span><span class="score">4.9</span><span class="count">dari klien yang sudah wisuda</span></div>' +
+          '<span class="price-new">Rp' + p.price + ' <small>/ sesi</small></span>' +
+          '<p class="desc">' + (p.long || p.desc) + '</p>' +
+          '<div class="cta-row">' +
+            '<a href="booking.html?paket=' + encodeURIComponent(p.id) + '" class="btn btn--primary">Booking sekarang</a>' +
+            '<a href="' + waChatLink(p) + '" target="_blank" rel="noopener" class="btn btn--ghost">Chat kami</a>' +
+          '</div>' +
+          '<div class="trust-grid">' +
+            '<div class="trust-item">' + ICONS.user + p.people + '</div>' +
+            '<div class="trust-item">' + ICONS.clock + p.duration + '</div>' +
+            '<div class="trust-item">' + ICONS.pin + 'Spot bebas</div>' +
+            '<div class="trust-item">' + ICONS.camera + p.photos + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="faq"><h2>Pertanyaan umum</h2>' + faq + '</div>';
+
+    /* Ganti foto utama saat thumbnail diklik */
+    box.addEventListener('click', function (e) {
+      var t = e.target.closest('.thumb');
+      if (!t) return;
+      box.querySelectorAll('.thumb').forEach(function (x) { x.classList.remove('active'); });
+      t.classList.add('active');
+      document.getElementById('mainImage').src = t.dataset.src;
+    });
+  }
+
   document.querySelectorAll('.nav__menu a').forEach(function (link) {
     link.addEventListener('click', function () {
       var mt = document.getElementById('menu-toggle');
       if (mt) mt.checked = false;
     });
   });
-
-  function selectThumb(el, src){
-    document.querySelectorAll('.thumb').forEach(function(t){ t.classList.remove('active'); });
-    el.classList.add('active');
-    document.getElementById('mainImage').src = src;
-  }
 </script>
 
+<script src="auth.js"></script>
 </body>
 </html>

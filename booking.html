@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Sesi Foto — Amora Grads</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ============ TOKENS (sama dengan index.html, katalog.html, detail.html) ============ */
+    :root {
+      --cream: #FAF6F1;
+      --cream-2: #F3ECE4;
+      --ink: #211B18;
+      --ink-soft: #6E6560;
+      --red: #B3282D;
+      --red-dark: #8A1F23;
+      --rose: #F0DEDB;
+      --line: #E6DCD3;
+      --white: #FFFDFB;
+
+      --font-display: 'Fraunces', serif;
+      --font-body: 'Manrope', sans-serif;
+
+      --radius-s: 4px;
+      --radius-m: 10px;
+      --radius-btn: 9px;
+      --container: 480px;
+      --container-lg: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream-2);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    ul,
+    ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-weight: 500;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 2px;
+    }
+
+    .frame {
+      max-width: var(--container);
+      margin: 0 auto;
+      background: var(--cream);
+      min-height: 100vh;
+      box-shadow: 0 0 60px rgba(33, 27, 24, 0.08);
+      overflow: hidden;
+    }
+
+    /* ============ NAV (sama dengan katalog.html & detail.html) ============ */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      position: relative;
+      z-index: 20;
+    }
+
+    .nav__logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav__logo-img {
+      height: 28px;
+      width: auto;
+      display: block;
+    }
+
+    .menu-toggle-input {
+      display: none;
+    }
+
+    .nav__burger {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px;
+      cursor: pointer;
+    }
+
+    .nav__burger span {
+      width: 20px;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 2px;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .nav__menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      padding: 8px 20px 18px;
+      gap: 2px;
+      transform: translateY(-8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .22s ease, opacity .22s ease;
+    }
+
+    .nav__menu a {
+      padding: 12px 4px;
+      border-bottom: 1px solid var(--line);
+      font-size: 15px;
+    }
+
+    .nav__menu a:last-of-type {
+      border-bottom: none;
+    }
+
+    .nav__menu a.active {
+      color: var(--red-dark);
+    }
+
+    .menu-toggle-input:checked~.nav__menu {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .menu-toggle-input:checked~.nav__burger span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .menu-toggle-input:checked~.nav__burger span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-toggle-input:checked~.nav__burger span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .nav__menu-cta {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .nav__menu-cta svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .nav__menu a.nav__menu-cta {
+      padding: 10px 18px;
+      border-bottom: none;
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .nav__menu a.nav__menu-cta:hover {
+      color: var(--white);
+    }
+
+    /* ============ BUTTONS ============ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 22px;
+      border-radius: var(--radius-btn);
+      font-weight: 700;
+      font-size: 14px;
+      border: 1.4px solid transparent;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: transform .15s ease, background .15s ease, color .15s ease, opacity .15s ease;
+    }
+
+    .btn--primary {
+      background: var(--red);
+      color: var(--white);
+      border-color: var(--red);
+    }
+
+    .btn--primary:hover {
+      background: var(--red-dark);
+      border-color: var(--red-dark);
+    }
+
+    .btn--primary:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .btn--ghost {
+      border-color: var(--line);
+      color: var(--ink);
+      background: transparent;
+    }
+
+    .btn--ghost:hover {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .btn--block {
+      width: 100%;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      margin-bottom: 14px;
+    }
+
+    .back-link:hover {
+      color: var(--red-dark);
+    }
+
+    .back-link svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ============ BOOKING PAGE ============ */
+    .booking-head {
+      padding: 24px 20px 8px;
+    }
+
+    .booking-head__eyebrow {
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--red-dark);
+      margin-bottom: 8px;
+    }
+
+    .booking-head h1 {
+      font-size: 26px;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .booking-head p {
+      color: var(--ink-soft);
+      font-size: 14.5px;
+      max-width: 38ch;
+    }
+
+    .booking-wrap {
+      padding: 8px 20px 48px;
+    }
+
+    .booking-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-m);
+      padding: 22px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .step-eyebrow {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--red-dark);
+      margin: 0 0 6px;
+    }
+
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 600;
+      margin: 0 0 20px;
+    }
+
+    .field-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 10px;
+      display: block;
+    }
+
+    /* Pilih paket */
+    .package-select {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .package-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-s);
+      padding: 12px 14px;
+      cursor: pointer;
+      font-size: 13.5px;
+      background: transparent;
+      text-align: left;
+    }
+
+    .package-option.selected {
+      border-color: var(--red);
+      background: var(--rose);
+    }
+
+    .package-option .name {
+      font-weight: 700;
+    }
+
+    .package-option .meta {
+      color: var(--ink-soft);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .package-option .price {
+      font-family: var(--font-display);
+      color: var(--red-dark);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Jam */
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      background: transparent;
+      border-radius: 999px;
+      padding: 9px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    .chip.selected {
+      background: var(--red);
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    /* ============ Kalender ============ */
+    .cal-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-m);
+      padding: 16px 14px;
+      margin-bottom: 22px;
+      background: var(--cream-2);
+    }
+
+    .cal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding: 0 2px;
+    }
+
+    .cal-head b {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .cal-nav-btn {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+
+    .cal-nav-btn svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .cal-nav-btn:disabled {
+      opacity: .3;
+      cursor: not-allowed;
+    }
+
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-soft);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .cal-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 13.5px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: none;
+      color: var(--ink);
+      font-family: inherit;
+      padding: 0;
+      position: relative;
+    }
+
+    .cal-cell.empty {
+      visibility: hidden;
+      cursor: default;
+    }
+
+    .cal-cell.disabled {
+      color: var(--ink-soft);
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    .cal-cell.today:not(.selected) {
+      border-color: var(--red);
+      font-weight: 700;
+    }
+
+    .cal-cell.selected {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    .cal-cell:not(.disabled):not(.empty):not(.selected):hover {
+      background: var(--rose);
+    }
+
+    .cal-cell.full {
+      color: var(--ink-soft);
+      text-decoration: line-through;
+      cursor: pointer;
+      background: rgba(179, 40, 45, 0.08);
+    }
+
+    .cal-cell.full:hover {
+      background: rgba(179, 40, 45, 0.16);
+    }
+
+    .cal-cell.full::after {
+      content: "×";
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--red);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .cal-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .cal-legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--ink-soft);
+    }
+
+    .cal-legend .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .cal-legend .dot.avail {
+      border: 1px solid var(--line);
+      background: transparent;
+    }
+
+    .cal-legend .dot.today {
+      border: 1px solid var(--red);
+      background: transparent;
+    }
+
+    .cal-legend .dot.full {
+      background: var(--red);
+    }
+
+    .cal-full-toast {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      background: var(--rose);
+      border: 1px solid var(--red);
+      border-radius: var(--radius-s);
+      padding: 12px 14px;
+      font-size: 12.5px;
+      color: var(--ink);
+    }
+
+    .cal-full-toast p {
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .cal-full-toast button {
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* Form & ringkasan */
+    .form-row {
+      margin-bottom: 18px;
+    }
+
+    .form-row input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-s);
+      padding: 12px 14px;
+      font-size: 14px;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: inherit;
+    }
+
+    .form-row input:focus {
+      border-color: var(--red);
+    }
+
+    .summary-box {
+      background: var(--cream-2);
+      border-radius: var(--radius-s);
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 13.5px;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .summary-box .line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .summary-box .line b {
+      text-align: right;
+    }
+
+    /* Konfirmasi */
+    .confirm-state {
+      text-align: center;
+      padding: 10px 0 4px;
+    }
+
+    .confirm-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--red);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+    }
+
+    .confirm-icon svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .confirm-state h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      margin: 0 0 8px;
+    }
+
+    .confirm-state p {
+      color: var(--ink-soft);
+      font-size: 13.5px;
+      margin: 0 0 20px;
+      line-height: 1.55;
+    }
+
+    .confirm-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Pembayaran DP QRIS */
+    .pay-amount {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .pay-amount span {
+      display: block;
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-bottom: 4px;
+    }
+
+    .pay-amount b {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--red-dark);
+    }
+
+    .qris-card {
+      background: linear-gradient(135deg, var(--red-dark), var(--red));
+      border-radius: var(--radius-m);
+      padding: 22px;
+      text-align: center;
+      color: var(--white);
+      margin-bottom: 18px;
+    }
+
+    .qris-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .qris-brand span {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+
+    .qr-box {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto;
+    }
+
+    .qr-box img,
+    .qr-box canvas {
+      width: 100% !important;
+      height: 100% !important;
+      image-rendering: pixelated;
+    }
+
+    .qris-merchant {
+      margin-top: 14px;
+      font-size: 12px;
+      opacity: .9;
+    }
+
+    .pay-timer {
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-soft);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .pay-timer b {
+      color: var(--red-dark);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pay-steps {
+      list-style: none;
+      margin: 0 0 20px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .pay-steps li {
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--ink-soft);
+      align-items: flex-start;
+    }
+
+    .pay-steps b {
+      color: var(--red-dark);
+      font-family: var(--font-display);
+      width: 16px;
+      flex-shrink: 0;
+    }
+
+    .pay-demo-note {
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      background: var(--cream-2);
+      border-radius: var(--radius-s);
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .pay-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      margin-top: 14px;
+    }
+
+    .pay-status .spinner {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--line);
+      border-top-color: var(--red);
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ============ FOOTER (sama dengan katalog.html & detail.html) ============ */
+    .footer {
+      padding: 40px 20px 28px;
+      margin-top: 44px;
+    }
+
+    .footer__brand {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .footer__brand .nav__logo-img {
+      height: 34px;
+    }
+
+    .footer__desc {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin-bottom: 18px;
+      max-width: 30ch;
+    }
+
+    .footer__col-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+    }
+
+    .footer__contact {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .footer__contact a:hover {
+      color: var(--red-dark);
+    }
+
+    .footer__social {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .footer__social a {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink);
+      transition: border-color .2s ease, color .2s ease, background .2s ease;
+    }
+
+    .footer__social a:hover {
+      border-color: var(--red);
+      color: var(--red-dark);
+      background: var(--rose);
+    }
+
+    .footer__social svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .footer__copy {
+      font-size: 12px;
+      color: var(--ink-soft);
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    /* ============ DESKTOP ============ */
+    @media (min-width: 900px) {
+      .frame {
+        max-width: none;
+        box-shadow: none;
+      }
+
+      .nav,
+      .booking-head,
+      .footer {
+        max-width: var(--container-lg);
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .nav {
+        padding: 26px 40px;
+      }
+
+      .nav__logo-img {
+        height: 32px;
+      }
+
+      .nav__burger,
+      .menu-toggle-input {
+        display: none;
+      }
+
+      .nav__menu {
+        position: static;
+        flex-direction: row;
+        align-items: center;
+        gap: 32px;
+        background: transparent;
+        border-bottom: none;
+        padding: 0;
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .nav__menu a {
+        padding: 0;
+        border-bottom: none;
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--ink-soft);
+      }
+
+      .nav__menu a:hover {
+        color: var(--ink);
+      }
+
+      .nav__menu a.active {
+        color: var(--red-dark);
+      }
+
+      .nav__menu-cta {
+        margin-top: 0;
+      }
+
+      .nav__menu a.nav__menu-cta {
+        padding: 10px 18px;
+        color: var(--white);
+        font-weight: 700;
+      }
+
+      .nav__menu a.nav__menu-cta:hover {
+        color: var(--white);
+      }
+
+      .booking-head {
+        padding: 56px 40px 8px;
+        text-align: center;
+      }
+
+      .booking-head h1 {
+        font-size: 36px;
+      }
+
+      .booking-head p {
+        font-size: 15.5px;
+        margin: 0 auto;
+      }
+
+      .booking-wrap {
+        padding: 12px 40px 72px;
+      }
+
+      .booking-card {
+        max-width: 520px;
+        padding: 32px;
+      }
+
+      .footer {
+        padding: 64px 40px 32px;
+        display: grid;
+        grid-template-columns: 1.3fr 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+      }
+
+      .footer__brand {
+        margin-bottom: 14px;
+      }
+
+      .footer__desc {
+        max-width: none;
+        margin-bottom: 0;
+      }
+
+      .footer__contact {
+        margin-bottom: 0;
+      }
+
+      .footer__col--social {
+        align-self: end;
+      }
+
+      .footer__col--social .footer__col-title {
+        text-align: right;
+      }
+
+      .footer__col--social .footer__social {
+        justify-content: flex-end;
+        margin-bottom: 0;
+      }
+
+      .footer__copy {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise" />
+      <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0" />
+      <feComposite operator="over" in2="SourceGraphic" />
+    </filter>
+  </svg>
+
+  <div class="frame">
+
+    <!-- NAV (sama dengan katalog.html & detail.html) -->
+    <header class="nav">
+      <a href="index.html" class="nav__logo">
+        <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
+      </a>
+      <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
+      <label for="menu-toggle" class="nav__burger" aria-label="Buka menu">
+        <span></span><span></span><span></span>
+      </label>
+      <nav class="nav__menu">
+        <a href="index.html">Home</a>
+        <a href="katalog.html">Katalog</a>
+        <a href="index.html#kontak">Hubungi kami</a>
+        <a href="login.html" class="btn btn--primary nav__menu-cta js-account-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+          </svg>
+          <span class="js-account-label">Login</span>
+        </a>
+      </nav>
+    </header>
+
+    <!-- BOOKING -->
+    <section class="booking-head">
+      <p class="booking-head__eyebrow">AMORA GRADS</p>
+      <h1>Booking sesi foto</h1>
+      <p>Pilih tanggal dan jam yang masih tersedia. Booking cukup DP dulu.</p>
+    </section>
+
+    <div class="booking-wrap">
+      <div class="booking-card" id="bookingCard"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer" id="kontak">
+      <div class="footer__col footer__col--brand">
+        <div class="footer__brand">
+          <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
+        </div>
+        <p class="footer__desc">Jasa foto wisuda dan momen spesial, berbasis di Makassar.</p>
+      </div>
+
+      <div class="footer__col footer__col--contact">
+        <p class="footer__col-title">Navigasi</p>
+        <div class="footer__contact">
+          <a href="index.html">Home</a>
+          <a href="katalog.html">Katalog</a>
+          <a href="index.html#kontak">Email</a>
+        </div>
+      </div>
+
+      <div class="footer__col footer__col--social">
+        <p class="footer__col-title">Ikuti kami</p>
+        <div class="footer__social">
+          <a href="https://www.instagram.com/amora.grads?stkn=MTlrM3E0NWhmdmF5YQ==" target="_blank" rel="noopener"
+            aria-label="Instagram Amora Grads">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
+          <a href="https://www.tiktok.com/@amoragrads?_r=1&_t=ZS-99zE1fHhkta" target="_blank" rel="noopener"
+            aria-label="TikTok Amora Grads">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M16 4v9.2a3.8 3.8 0 1 1-3-3.71" />
+              <path d="M16 4c.4 2.2 2 3.8 4 4.1" />
+            </svg>
+          </a>
+          <a href="https://wa.me/6281356352104" target="_blank" rel="noopener" aria-label="WhatsApp Amora Grads">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M4 20l1.3-4A8 8 0 1 1 9 19.4L4 20z" />
+              <path d="M8.5 9.7c0 3.4 2.9 6.1 6.3 6.1" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <p class="footer__copy">© 2026 Amora Grads. Semua hak cipta dilindungi.</p>
+    </footer>
+
+  </div>
+
+  <script src="paket.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    /* =========================================================
+       BOOKING FLOW — paket ditentukan dari link "Booking sekarang"
+       di halaman detail (?paket=id-paket), jadi di sini pelanggan
+       langsung mulai dari Langkah 1: tanggal & jam.
+       Langkah 1: tanggal & jam, Langkah 2: data diri, lalu bayar DP
+       via QRIS, lalu konfirmasi.
+       Aturan tanggal penuh di bawah ini contoh saja — ganti dengan
+       data ketersediaan asli (API/DB) kalau sudah ada sistemnya.
+    ========================================================= */
+
+    const DP_AMOUNT = 50000; // sesuai Terms & Conditions: booking minimal DP 50K
+    const TIME_SLOTS = ['09.00', '10.30', '12.00', '13.30', '15.00', '16.30'];
+    const MONTH_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    const WEEKDAY_LABELS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+    function sameDate(a, b) { return a && b && a.y === b.y && a.m === b.m && a.d === b.d; }
+
+    // Demo: Sabtu penuh duluan, plus dua tanggal contoh yang sudah full.
+    function isDateFull(y, m, day) {
+      const dow = new Date(y, m, day).getDay();
+      if (dow === 6) return true;
+      if (day === 12 || day === 25) return true;
+      return false;
+    }
+
+    const card = document.getElementById('bookingCard');
+    let booking = { pkgId: null, dateParts: null, dateLabel: null, time: null, name: '', phone: '' };
+    let calState = null;
+    let revealedFullDates = new Set();
+    let payTimerInterval = null;
+
+    function pkgById(id) {
+      if (typeof getPackage === 'function') return getPackage(id);
+      return PACKAGES.find(p => p.id === id);
+    }
+
+    function backLink(label, onClick) {
+      return `<button type="button" class="back-link" id="backBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>${label}</button>`;
+    }
+
+    function renderNotFound() {
+      card.innerHTML = `
+      <p class="step-eyebrow">Booking</p>
+      <h2 class="step-title">Paket tidak ditemukan</h2>
+      <p style="color:var(--ink-soft); font-size:13.5px; margin-bottom:20px; line-height:1.55;">Link booking yang kamu buka tidak valid atau sudah tidak berlaku. Silakan pilih paket dulu dari katalog, lalu klik tombol "Booking sekarang" di halaman detail paketnya.</p>
+      <a href="katalog.html" class="btn btn--primary btn--block">Lihat katalog</a>
+    `;
+    }
+
+    function renderStep2() {
+      const pkg = pkgById(booking.pkgId);
+      const today = new Date();
+      if (!calState) calState = { year: today.getFullYear(), month: today.getMonth() };
+
+      card.innerHTML = `
+      <a href="detail.html?paket=${encodeURIComponent(booking.pkgId)}" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Kembali ke detail paket</a>
+      <p class="step-eyebrow">Langkah 1 dari 2</p>
+      <h2 class="step-title">${pkg.name} — pilih tanggal &amp; jam</h2>
+      <label class="field-label">Pilih tanggal</label>
+      <div class="cal-card" id="calCard"></div>
+      <label class="field-label">Pilih jam</label>
+      <div class="chip-row" id="timeChips"></div>
+      <button class="btn btn--primary btn--block" id="toStep3" disabled>Lanjut</button>
+    `;
+
+      drawCalendar();
+
+      const chips = card.querySelector('#timeChips');
+      TIME_SLOTS.forEach(t => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip' + (booking.time === t ? ' selected' : '');
+        chip.textContent = t;
+        chip.onclick = () => {
+          booking.time = t;
+          chips.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+          checkStep2();
+        };
+        chips.appendChild(chip);
+      });
+
+      function checkStep2() {
+        card.querySelector('#toStep3').disabled = !(booking.dateParts && booking.time);
+      }
+      checkStep2();
+      card.querySelector('#toStep3').onclick = () => renderStep3();
+    }
+
+    function drawCalendar() {
+      const cal = card.querySelector('#calCard');
+      const today = new Date();
+      const todayParts = { y: today.getFullYear(), m: today.getMonth(), d: today.getDate() };
+      const isCurrentMonth = calState.year === todayParts.y && calState.month === todayParts.m;
+      const daysInMonth = new Date(calState.year, calState.month + 1, 0).getDate();
+      const firstWeekday = new Date(calState.year, calState.month, 1).getDay();
+
+      cal.innerHTML = `
+      <div class="cal-head">
+        <button type="button" class="cal-nav-btn" id="calPrev" ${isCurrentMonth ? 'disabled' : ''} aria-label="Bulan sebelumnya"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <b>${MONTH_NAMES[calState.month]} ${calState.year}</b>
+        <button type="button" class="cal-nav-btn" id="calNext" aria-label="Bulan berikutnya"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+      </div>
+      <div class="cal-weekdays">${WEEKDAY_LABELS.map(d => `<span>${d}</span>`).join('')}</div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span><i class="dot avail"></i> Tersedia</span>
+        <span><i class="dot today"></i> Hari ini</span>
+        <span><i class="dot full"></i> Penuh</span>
+      </div>
+      <div class="cal-full-toast" id="calFullToast">
+        <p>Slot sudah penuh. Silakan pilih tanggal lain yang tersedia.</p>
+        <button type="button" id="calFullToastOk">Oke</button>
+      </div>
+    `;
+
+      const toast = cal.querySelector('#calFullToast');
+      let toastTimer = null;
+      function showFullToast() {
+        toast.style.display = 'flex';
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 5000);
+      }
+      cal.querySelector('#calFullToastOk').onclick = () => { clearTimeout(toastTimer); toast.style.display = 'none'; };
+
+      const grid = cal.querySelector('#calGrid');
+      for (let i = 0; i < firstWeekday; i++) {
+        const empty = document.createElement('span');
+        empty.className = 'cal-cell empty';
+        grid.appendChild(empty);
+      }
+      for (let day = 1; day <= daysInMonth; day++) {
+        const parts = { y: calState.year, m: calState.month, d: day };
+        const cellDate = new Date(calState.year, calState.month, day);
+        const isPast = cellDate < new Date(todayParts.y, todayParts.m, todayParts.d);
+        const isToday = sameDate(parts, todayParts);
+        const isSelected = sameDate(parts, booking.dateParts);
+        const actuallyFull = !isPast && isDateFull(calState.year, calState.month, day);
+        const dateKey = `${calState.year}-${calState.month}-${day}`;
+        const isRevealedFull = actuallyFull && revealedFullDates.has(dateKey);
+        const shortLabel = cellDate.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cal-cell'
+          + (isPast ? ' disabled' : '')
+          + (isRevealedFull ? ' full' : '')
+          + (isToday ? ' today' : '')
+          + (isSelected ? ' selected' : '');
+        btn.textContent = day;
+        btn.disabled = isPast;
+        if (isRevealedFull) btn.title = 'Penuh — semua slot hari ini sudah dipesan';
+        if (!isPast) {
+          btn.onclick = () => {
+            if (actuallyFull) {
+              revealedFullDates.add(dateKey);
+              showFullToast();
+              drawCalendar();
+              return;
+            }
+            toast.style.display = 'none';
+            booking.dateParts = parts;
+            booking.dateLabel = shortLabel;
+            drawCalendar();
+            const nextBtn = card.querySelector('#toStep3');
+            if (nextBtn) nextBtn.disabled = !(booking.dateParts && booking.time);
+          };
+        }
+        grid.appendChild(btn);
+      }
+
+      cal.querySelector('#calPrev').onclick = () => {
+        calState.month--; if (calState.month < 0) { calState.month = 11; calState.year--; }
+        drawCalendar();
+      };
+      cal.querySelector('#calNext').onclick = () => {
+        calState.month++; if (calState.month > 11) { calState.month = 0; calState.year++; }
+        drawCalendar();
+      };
+    }
+
+    function renderStep3() {
+      const pkg = pkgById(booking.pkgId);
+      card.innerHTML = `
+      ${backLink('Ganti tanggal/jam')}
+      <p class="step-eyebrow">Langkah 2 dari 2</p>
+      <h2 class="step-title">Data diri</h2>
+      <div class="summary-box">
+        <div class="line"><span>Paket</span><b>${pkg.name}</b></div>
+        <div class="line"><span>Jadwal</span><b>${booking.dateLabel}, ${booking.time}</b></div>
+        <div class="line"><span>Harga paket</span><b>Rp${pkg.price}</b></div>
+      </div>
+      <div class="form-row"><label class="field-label">Nama lengkap</label><input type="text" id="custName" placeholder="Nama kamu" value="${booking.name || ''}"></div>
+      <div class="form-row"><label class="field-label">Nomor WhatsApp</label><input type="tel" id="custPhone" placeholder="0812xxxxxxx" value="${booking.phone || ''}"></div>
+      <button class="btn btn--primary btn--block" id="confirmBtn">Lanjut ke pembayaran DP</button>
+    `;
+      card.querySelector('#backBtn').onclick = () => renderStep2();
+      card.querySelector('#confirmBtn').onclick = () => {
+        const name = card.querySelector('#custName').value.trim();
+        const phone = card.querySelector('#custPhone').value.trim();
+        if (!name || !phone) {
+          card.querySelector('#confirmBtn').textContent = 'Lengkapi nama & nomor WhatsApp dulu ya';
+          return;
+        }
+        booking.name = name;
+        booking.phone = phone;
+        renderPayment(pkg);
+      };
+    }
+
+    function renderPayment(pkg) {
+      clearInterval(payTimerInterval);
+      const orderId = 'AG-DP-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      booking.orderId = orderId;
+
+      card.innerHTML = `
+      ${backLink('Kembali')}
+      <p class="step-eyebrow">Pembayaran DP</p>
+      <h2 class="step-title">Bayar DP dengan QRIS</h2>
+      <div class="pay-amount"><span>DP booking (sisanya dilunasi H-1)</span><b>Rp${DP_AMOUNT.toLocaleString('id-ID')}</b></div>
+      <div class="qris-card">
+        <div class="qris-brand">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" fill="white"/><rect x="14" y="3" width="7" height="7" rx="1" fill="white"/><rect x="3" y="14" width="7" height="7" rx="1" fill="white"/><rect x="14" y="14" width="3" height="3" fill="white"/><rect x="18" y="18" width="3" height="3" fill="white"/><rect x="14" y="18" width="3" height="3" fill="white"/><rect x="18" y="14" width="3" height="3" fill="white"/></svg>
+          <span>QRIS</span>
+        </div>
+        <div class="qr-box" id="qrBox"></div>
+        <p class="qris-merchant">Amora Grads · Makassar</p>
+      </div>
+      <div class="pay-timer">Selesaikan dalam <b id="payClock">15:00</b></div>
+      <ol class="pay-steps">
+        <li><b>1</b> Buka aplikasi m-banking / e-wallet apa pun yang mendukung QRIS.</li>
+        <li><b>2</b> Pilih Scan QR, arahkan ke kode di atas.</li>
+        <li><b>3</b> Periksa nominal DP, lalu selesaikan pembayaran.</li>
+      </ol>
+      <p class="pay-demo-note">Catatan: ini QR contoh untuk demo tampilan, belum tersambung ke QRIS sungguhan — jangan dipakai untuk transaksi nyata. Setelah bayar, kirim juga bukti transfer ke WhatsApp kami ya.</p>
+      <button class="btn btn--primary btn--block" id="simPayBtn">Saya sudah bayar DP</button>
+      <div class="pay-status" id="payStatus" style="display:none;"><span class="spinner"></span> Memeriksa pembayaran…</div>
+    `;
+      card.querySelector('#backBtn').onclick = () => renderStep3();
+
+      try {
+        const demoPayload = `00020101021126QRIS-DEMO-AMORAGRADS0212${orderId}530336054${DP_AMOUNT}5802ID`;
+        new QRCode(document.getElementById('qrBox'), { text: demoPayload, width: 160, height: 160, colorDark: '#211B18', colorLight: '#ffffff' });
+      } catch (err) {
+        document.getElementById('qrBox').innerHTML = '<span style="color:#8A1F23; font-size:12px; padding:8px;">QR tidak tersedia</span>';
+      }
+
+      let secondsLeft = 15 * 60;
+      const clockEl = document.getElementById('payClock');
+      payTimerInterval = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0) { clearInterval(payTimerInterval); clockEl.textContent = 'Kedaluwarsa'; return; }
+        const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+        const s = String(secondsLeft % 60).padStart(2, '0');
+        clockEl.textContent = `${m}:${s}`;
+      }, 1000);
+
+      document.getElementById('simPayBtn').onclick = () => {
+        document.getElementById('simPayBtn').disabled = true;
+        document.getElementById('payStatus').style.display = 'flex';
+        setTimeout(() => {
+          clearInterval(payTimerInterval);
+          saveBooking(pkg);
+          renderConfirm(pkg);
+        }, 1200);
+      };
+    }
+
+    function saveBooking(pkg) {
+      try {
+        const id = 'AG-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+        const record = {
+          id, package: pkg.name, when: `${booking.dateLabel}, ${booking.time}`,
+          name: booking.name, phone: booking.phone, dp: DP_AMOUNT, orderId: booking.orderId
+        };
+        const existing = JSON.parse(localStorage.getItem('amora_bookings') || '[]');
+        existing.push(record);
+        localStorage.setItem('amora_bookings', JSON.stringify(existing));
+        booking.confirmId = id;
+      } catch (err) {
+        booking.confirmId = 'AG-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      }
+    }
+
+    function renderConfirm(pkg) {
+      const waText = encodeURIComponent(
+        "Halo Amora Grads, saya sudah bayar DP Rp" + DP_AMOUNT.toLocaleString('id-ID') +
+        " untuk paket " + pkg.name + " tanggal " + booking.dateLabel + " jam " + booking.time +
+        " a.n " + booking.name + ". Ini bukti transfernya (terlampir)."
+      );
+      card.innerHTML = `
+      <div class="confirm-state">
+        <div class="confirm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3>DP tercatat, hampir selesai!</h3>
+        <p>${pkg.name} pada ${booking.dateLabel}, ${booking.time}. Tinggal satu langkah lagi: kirim bukti transfer DP ke WhatsApp kami biar jadwalnya kami kunci.</p>
+        <div class="summary-box" style="text-align:left;">
+          <div class="line"><span>Kode booking</span><b>${booking.confirmId}</b></div>
+          <div class="line"><span>DP dibayar</span><b>Rp${DP_AMOUNT.toLocaleString('id-ID')}</b></div>
+        </div>
+        <div class="confirm-actions">
+          <a class="btn btn--primary btn--block" target="_blank" rel="noopener" href="https://wa.me/${WA_NUMBER}?text=${waText}">Kirim bukti transfer via WhatsApp</a>
+          <a class="btn btn--ghost btn--block" href="katalog.html">Kembali ke katalog</a>
+        </div>
+      </div>
+    `;
+    }
+
+    const params = new URLSearchParams(location.search);
+    const initialPkg = pkgById(params.get('paket'));
+    if (initialPkg) {
+      booking.pkgId = initialPkg.id;
+      renderStep2();
+    } else {
+      renderNotFound();
+    }
+
+    document.querySelectorAll('.nav__menu a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        var mt = document.getElementById('menu-toggle');
+        if (mt) mt.checked = false;
+      });
+    });
+  </script>
+
+  <script src="auth.js"></script>
+</body>
+
+</html>

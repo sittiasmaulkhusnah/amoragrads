@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil Saya — Amora Grads</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS (sama dengan index.html) ============ */
+:root{
+  --cream: #FAF6F1;
+  --cream-2: #F3ECE4;
+  --ink: #211B18;
+  --ink-soft: #6E6560;
+  --red: #B3282D;
+  --red-dark: #8A1F23;
+  --rose: #F0DEDB;
+  --line: #E6DCD3;
+  --white: #FFFDFB;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Manrope', sans-serif;
+
+  --radius-s: 4px;
+  --radius-m: 10px;
+  --radius-btn: 9px;
+  --container-lg: 1180px;
+}
+
+*{ box-sizing: border-box; }
+html{ -webkit-text-size-adjust: 100%; }
+body{
+  margin:0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a{ color: inherit; text-decoration: none; }
+h1,h2{ margin:0; font-family: var(--font-display); font-weight: 500; }
+p{ margin:0; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+:focus-visible{ outline: 2px solid var(--red); outline-offset: 2px; }
+
+/* ============ NAV (sama dengan index.html) ============ */
+.nav{ display:flex; align-items:center; justify-content:space-between; padding: 18px 20px; position: relative; z-index: 20; }
+.nav__logo{ display:flex; align-items:center; }
+.nav__logo-img{ height: 28px; width: auto; display: block; }
+.menu-toggle-input{ display:none; }
+.nav__burger{ display:flex; flex-direction: column; gap: 5px; padding: 6px; cursor: pointer; }
+.nav__burger span{ width: 20px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform .2s ease, opacity .2s ease; }
+
+.nav__menu{
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--white); border-bottom: 1px solid var(--line);
+  display:flex; flex-direction: column;
+  padding: 8px 20px 18px; gap: 2px;
+  transform: translateY(-8px); opacity: 0; pointer-events: none;
+  transition: transform .22s ease, opacity .22s ease;
+}
+.nav__menu a{ padding: 12px 4px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.nav__menu a:last-of-type{ border-bottom: none; }
+.nav__menu a.active{ color: var(--red-dark); }
+
+.menu-toggle-input:checked ~ .nav__menu{ transform: translateY(0); opacity: 1; pointer-events: auto; }
+.menu-toggle-input:checked ~ .nav__burger span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.menu-toggle-input:checked ~ .nav__burger span:nth-child(2){ opacity: 0; }
+.menu-toggle-input:checked ~ .nav__burger span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+.nav__menu-cta{ margin-top: 10px; display:flex; align-items:center; justify-content:center; gap:8px; }
+.nav__menu-cta svg{ width:14px; height:14px; flex-shrink:0; }
+.nav__menu a.nav__menu-cta{ padding: 10px 18px; border-bottom: none; color: var(--white); font-size: 13px; font-weight: 700; }
+.nav__menu a.nav__menu-cta:hover{ color: var(--white); }
+
+/* ============ BUTTONS ============ */
+.btn{
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 12px 22px;
+  border-radius: var(--radius-btn);
+  font-family: var(--font-body); font-weight: 700; font-size: 14.5px;
+  border: 1.4px solid var(--red);
+  white-space: nowrap; cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.btn--primary{ background: var(--red); color: var(--white); }
+.btn--primary:hover{ background: var(--red-dark); border-color: var(--red-dark); }
+.btn--ghost{ background: transparent; color: var(--red-dark); }
+.btn--ghost:hover{ background: var(--red); color: var(--white); }
+.btn:disabled{ opacity: .45; cursor: default; pointer-events: none; }
+
+/* ============ HALAMAN ============ */
+.page{ max-width: 720px; margin: 0 auto; padding: 12px 20px 56px; }
+.page__title{ font-size: 30px; line-height: 1.2; margin-bottom: 20px; }
+
+.card{
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 22px 20px;
+}
+
+/* Kepala profil */
+.profile-head{ display:flex; align-items:center; gap: 16px; margin-bottom: 22px; }
+.avatar-wrap{ position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+.avatar{
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--ink); border: 3px solid var(--red);
+  display:flex; align-items:center; justify-content:center; overflow: hidden;
+}
+.avatar img{ width:100%; height:100%; object-fit: cover; }
+.avatar span{ color: var(--cream); font-family: var(--font-display); font-size: 26px; }
+.avatar-edit{
+  position:absolute; bottom:-2px; right:-2px; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--red); color: var(--white); border: 2px solid var(--white);
+  display:flex; align-items:center; justify-content:center; cursor: pointer; font-size: 11px;
+}
+#avatarInput{ display:none; }
+.who{ min-width: 0; }
+#displayName{ font-family: var(--font-display); font-size: 21px; line-height: 1.25; }
+#displayEmail{ font-size: 13.5px; color: var(--ink-soft); margin-top: 2px; word-break: break-all; }
+.verified{
+  display:inline-block; font-size: 10.5px; font-weight: 700;
+  background: #E4F0E2; color: #2E6B2E; padding: 2px 8px; border-radius: 20px; margin-left: 4px;
+  word-break: normal;
+}
+
+/* Form */
+.fields{ display:grid; grid-template-columns: 1fr; gap: 14px; }
+.field label{ display:block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.field input, .field select{
+  width:100%; padding: 12px 14px;
+  font-family: var(--font-body); font-size: 15px; color: var(--ink);
+  background: var(--white);
+  border: 1px solid var(--line); border-radius: var(--radius-btn);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.field input:focus, .field select:focus{ outline:none; border-color: var(--red); box-shadow: 0 0 0 3px var(--rose); }
+.field input:disabled, .field select:disabled{ background: var(--cream-2); border-color: var(--cream-2); color: var(--ink-soft); }
+
+.row-btn{ display:flex; gap: 10px; margin-top: 20px; }
+.row-btn .btn{ flex: 1; }
+.save-msg{ font-size: 13px; color: var(--red-dark); margin-top: 10px; min-height: 18px; }
+
+.logout{
+  margin-top: 14px; padding-top: 18px; border-top: 1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between; gap: 12px;
+}
+.logout p{ font-size: 13.5px; color: var(--ink-soft); }
+
+/* Riwayat booking */
+.section__title{ font-size: 24px; line-height: 1.25; margin: 40px 0 16px; }
+
+.tabs{ display:flex; gap: 8px; overflow-x: auto; margin-bottom: 14px; padding-bottom: 2px; }
+.tabs::-webkit-scrollbar{ display:none; }
+.tab{
+  flex-shrink: 0; padding: 8px 16px; border-radius: 999px;
+  font-size: 13px; font-weight: 700;
+  background: var(--white); color: var(--red-dark);
+  border: 1px solid var(--line); cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.tab:hover{ border-color: var(--red); }
+.tab.active{ background: var(--red); color: var(--white); border-color: var(--red); }
+
+.order{
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius-m); padding: 14px; margin-bottom: 12px;
+}
+.order-top{ display:flex; gap: 12px; align-items: center; }
+.thumb{
+  width: 52px; height: 52px; border-radius: var(--radius-s);
+  background: var(--rose); flex-shrink: 0;
+  display:flex; align-items:center; justify-content:center; font-size: 22px;
+}
+.detail{ flex:1; min-width: 0; }
+.pkg{ font-family: var(--font-display); font-size: 16px; line-height: 1.3; margin-bottom: 2px; }
+.meta{ font-size: 13px; color: var(--ink-soft); }
+.status{
+  font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+  background: var(--rose); color: var(--red-dark); white-space: nowrap; flex-shrink: 0;
+}
+.status.selesai{ background: #E4F0E2; color: #2E6B2E; }
+.status.terjadwal{ background: #E0ECF7; color: #245A8F; }
+.status.batal{ background: #F4E0E0; color: var(--red-dark); }
+
+.order-bottom{
+  display:flex; flex-direction: column; gap: 10px;
+  margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line);
+}
+.total{ font-size: 13.5px; color: var(--ink-soft); }
+.total b{ color: var(--ink); }
+.order-actions{ display:flex; gap: 8px; }
+.order-actions button{
+  flex: 1; padding: 9px 12px; border-radius: var(--radius-btn);
+  font-family: var(--font-body); font-size: 13px; font-weight: 700;
+  border: 1.4px solid var(--red); background: transparent; color: var(--red-dark); cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.order-actions button:hover{ background: var(--red); color: var(--white); }
+.order-actions button.primary{ background: var(--red); color: var(--white); }
+.order-actions button.primary:hover{ background: var(--red-dark); border-color: var(--red-dark); }
+
+.empty{ text-align:center; color: var(--ink-soft); font-size: 14px; padding: 24px 0; }
+
+/* ============ DESKTOP ============ */
+@media (min-width: 560px){
+  .fields{ grid-template-columns: 1fr 1fr; }
+  .field--full{ grid-column: 1 / -1; }
+  .order-bottom{ flex-direction: row; align-items: center; justify-content: space-between; }
+  .order-actions button{ flex: none; }
+}
+
+@media (min-width: 900px){
+  .nav{ max-width: var(--container-lg); margin-left:auto; margin-right:auto; padding: 26px 40px; }
+  .nav__logo-img{ height: 32px; }
+  .nav__burger, .menu-toggle-input{ display:none; }
+  .nav__menu{
+    position: static; flex-direction: row; align-items: center; gap: 32px;
+    background: transparent; border-bottom: none; padding: 0;
+    transform: none; opacity: 1; pointer-events: auto;
+  }
+  .nav__menu a{ padding: 0; border-bottom: none; font-size: 14.5px; font-weight: 600; color: var(--ink-soft); }
+  .nav__menu a:hover{ color: var(--ink); }
+  .nav__menu-cta{ margin-top: 0; }
+  .nav__menu a.nav__menu-cta{ padding: 10px 18px; color: var(--white); font-weight: 700; }
+  .nav__menu a.nav__menu-cta:hover{ color: var(--white); }
+
+  .page{ padding: 24px 40px 80px; }
+  .page__title{ font-size: 38px; margin-bottom: 26px; }
+  .card{ padding: 28px; }
+  .section__title{ font-size: 30px; margin-top: 56px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <a href="index.html" class="nav__logo">
+    <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
+  </a>
+  <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
+  <label for="menu-toggle" class="nav__burger" aria-label="Buka menu">
+    <span></span><span></span><span></span>
+  </label>
+  <nav class="nav__menu">
+    <a href="index.html">Home</a>
+    <a href="katalog.html">Katalog</a>
+    <a href="index.html#kontak">Hubungi kami</a>
+    <a href="profil.html" class="btn btn--primary nav__menu-cta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+      <span>Profil</span>
+    </a>
+  </nav>
+</header>
+
+<main class="page">
+  <h1 class="page__title">Profil saya</h1>
+
+  <!-- KARTU PROFIL -->
+  <div class="card">
+    <div class="profile-head">
+      <div class="avatar-wrap">
+        <div class="avatar" id="avatarBox"><span id="avatarInitial">A</span></div>
+        <label class="avatar-edit" for="avatarInput" aria-label="Ganti foto profil">✎</label>
+        <input type="file" id="avatarInput" accept="image/*">
+      </div>
+      <div class="who">
+        <p id="displayName">Amora Customer</p>
+        <p id="displayEmail">customer@email.com <span class="verified">✓ Terverifikasi</span></p>
+      </div>
+    </div>
+
+    <div class="fields">
+      <div class="field field--full">
+        <label for="inpName">Nama lengkap</label>
+        <input type="text" id="inpName" disabled>
+      </div>
+      <div class="field">
+        <label for="inpPhone">Nomor telepon</label>
+        <input type="tel" id="inpPhone" disabled>
+      </div>
+      <div class="field">
+        <label for="inpEmail">Email</label>
+        <input type="email" id="inpEmail" disabled>
+      </div>
+      <div class="field">
+        <label for="inpDob">Tanggal lahir</label>
+        <input type="date" id="inpDob" disabled>
+      </div>
+      <div class="field">
+        <label for="inpGender">Jenis kelamin</label>
+        <select id="inpGender" disabled>
+          <option value="Perempuan">Perempuan</option>
+          <option value="Laki-laki">Laki-laki</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row-btn">
+      <button class="btn btn--ghost" id="editBtn">Edit profil</button>
+      <button class="btn btn--primary" id="saveBtn" disabled>Simpan</button>
+    </div>
+    <div class="save-msg" id="saveMsg"></div>
+
+    <div class="logout">
+      <p>Selesai? Keluar dari akunmu di perangkat ini.</p>
+      <button class="btn btn--ghost" id="logoutBtn">Keluar</button>
+    </div>
+  </div>
+
+  <!-- RIWAYAT BOOKING -->
+  <h2 class="section__title">Riwayat booking</h2>
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-status="Semua">Semua</div>
+    <div class="tab" data-status="Terjadwal">Terjadwal</div>
+    <div class="tab" data-status="Selesai">Selesai</div>
+    <div class="tab" data-status="Dibatalkan">Dibatalkan</div>
+  </div>
+  <div id="orderList"></div>
+</main>
+
+<script>
+(function(){
+  var LOGIN_KEY = "amoraLoggedIn";   /* sama dengan login.html & index.html */
+  var REQUIRE_LOGIN = true;          /* ubah ke false kalau mau membuka halaman ini tanpa login (testing desain) */
+
+  function isLoggedIn(){
+    try{ return localStorage.getItem(LOGIN_KEY) === "1"; }catch(e){ return false; }
+  }
+  if(REQUIRE_LOGIN && !isLoggedIn()){
+    window.location.replace("login.html");
+    return;
+  }
+
+  /* Keluar: hapus status login, kembali ke beranda (tombol jadi "Login" lagi) */
+  document.getElementById("logoutBtn").addEventListener("click", function(){
+    if(!confirm("Keluar dari akun?")) return;
+    try{ localStorage.removeItem(LOGIN_KEY); }catch(e){}
+    window.location.href = "index.html";
+  });
+
+  /* Tutup menu mobile setelah link diklik */
+  document.querySelectorAll(".nav__menu a").forEach(function(link){
+    link.addEventListener("click", function(){
+      var mt = document.getElementById("menu-toggle");
+      if(mt) mt.checked = false;
+    });
+  });
+
+  var defaults = {
+    name: "Amora Customer", phone: "0812-3456-7890", email: "customer@email.com",
+    dob: "2003-05-14", gender: "Perempuan", avatar: null
+  };
+
+  /* ===== Riwayat booking sesi foto (bukan pesanan barang) ===== */
+  var orders = [
+    {
+      pkg: "GRADS I — Sesi Foto Wisuda Solo",
+      date: "12 Agu 2026 · 09:00",
+      location: "Area Kampus UNM, Makassar",
+      price: "Rp 350.000",
+      status: "Selesai"
+    },
+    {
+      pkg: "Couple & Bestie — Sesi Berdua",
+      date: "3 Okt 2026 · 15:30",
+      location: "Area Kampus UNHAS, Makassar",
+      price: "Rp 700.000",
+      status: "Terjadwal"
+    }
+  ];
+
+  var STORAGE_KEY = "amora_customer_profile_v2";
+
+  function loadProfile(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){ console.warn("Tidak bisa membaca profil tersimpan", e); }
+    return defaults;
+  }
+  function saveProfile(p){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); return true; }
+    catch(e){ console.warn("Tidak bisa menyimpan profil", e); return false; }
+  }
+
+  var nameEl = document.getElementById("inpName");
+  var phoneEl = document.getElementById("inpPhone");
+  var emailEl = document.getElementById("inpEmail");
+  var dobEl = document.getElementById("inpDob");
+  var genderEl = document.getElementById("inpGender");
+  var displayName = document.getElementById("displayName");
+  var displayEmail = document.getElementById("displayEmail");
+  var avatarBox = document.getElementById("avatarBox");
+  var editBtn = document.getElementById("editBtn");
+  var saveBtn = document.getElementById("saveBtn");
+  var saveMsg = document.getElementById("saveMsg");
+  var avatarInput = document.getElementById("avatarInput");
+
+  function render(p){
+    nameEl.value = p.name;
+    phoneEl.value = p.phone;
+    emailEl.value = p.email;
+    dobEl.value = p.dob;
+    genderEl.value = p.gender;
+    displayName.textContent = p.name;
+    displayEmail.childNodes[0].nodeValue = p.email + " ";
+    if(p.avatar){
+      avatarBox.innerHTML = '<img src="' + p.avatar + '" alt="Foto profil">';
+    } else {
+      avatarBox.innerHTML = '<span id="avatarInitial">' + (p.name || "A").trim().charAt(0).toUpperCase() + '</span>';
+    }
+  }
+
+  var profile = loadProfile();
+  render(profile);
+
+  var editing = false;
+  function setEditing(on){
+    editing = on;
+    [nameEl, phoneEl, emailEl, dobEl, genderEl].forEach(function(el){ el.disabled = !on; });
+    saveBtn.disabled = !on;
+    editBtn.textContent = on ? "Batal" : "Edit profil";
+    if(!on){ render(profile); saveMsg.textContent = ""; }
+  }
+  editBtn.addEventListener("click", function(){ setEditing(!editing); });
+
+  saveBtn.addEventListener("click", function(){
+    profile = {
+      name: nameEl.value.trim() || defaults.name,
+      phone: phoneEl.value.trim() || defaults.phone,
+      email: emailEl.value.trim() || defaults.email,
+      dob: dobEl.value || defaults.dob,
+      gender: genderEl.value || defaults.gender,
+      avatar: profile.avatar || null
+    };
+    var ok = saveProfile(profile);
+    render(profile);
+    setEditing(false);
+    saveMsg.textContent = ok ? "Profil berhasil disimpan." : "Perubahan hanya tersimpan sementara di sesi ini.";
+  });
+
+  avatarInput.addEventListener("change", function(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      profile.avatar = ev.target.result;
+      saveProfile(profile);
+      render(profile);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  var orderList = document.getElementById("orderList");
+  var statusClassMap = { "Selesai":"selesai", "Terjadwal":"terjadwal", "Dibatalkan":"batal" };
+
+  function renderOrders(filter){
+    orderList.innerHTML = "";
+    var filtered = filter === "Semua" ? orders : orders.filter(function(o){ return o.status === filter; });
+    if(filtered.length === 0){
+      orderList.innerHTML = '<div class="empty">Belum ada booking pada kategori ini.</div>';
+      return;
+    }
+    filtered.forEach(function(o){
+      var div = document.createElement("div");
+      div.className = "order";
+      var sc = statusClassMap[o.status] || "";
+      var actionBtns = "";
+      if(o.status === "Selesai"){
+        actionBtns = '<button>Booking Lagi</button><button class="primary">Beri Ulasan</button>';
+      } else if(o.status === "Terjadwal"){
+        actionBtns = '<button>Reschedule</button><button class="primary">Hubungi Admin</button>';
+      } else {
+        actionBtns = '<button>Lihat Detail</button><button class="primary">Booking Lagi</button>';
+      }
+      div.innerHTML =
+        '<div class="order-top">' +
+          '<div class="thumb">🎓</div>' +
+          '<div class="detail">' +
+            '<p class="pkg">' + o.pkg + '</p>' +
+            '<p class="meta">' + o.date + ' &middot; ' + o.location + '</p>' +
+          '</div>' +
+          '<div class="status ' + sc + '">' + o.status + '</div>' +
+        '</div>' +
+        '<div class="order-bottom">' +
+          '<div class="total">Biaya sesi: <b>' + o.price + '</b></div>' +
+          '<div class="order-actions">' + actionBtns + '</div>' +
+        '</div>';
+      orderList.appendChild(div);
+    });
+  }
+
+  var tabs = document.querySelectorAll(".tab");
+  tabs.forEach(function(t){
+    t.addEventListener("click", function(){
+      tabs.forEach(function(x){ x.classList.remove("active"); });
+      t.classList.add("active");
+      renderOrders(t.getAttribute("data-status"));
+    });
+  });
+
+  renderOrders("Semua");
+})();
+</script>
+</body>
+</html>

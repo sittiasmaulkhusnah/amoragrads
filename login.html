@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masuk — Amora Grads</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS (sama dengan index.html) ============ */
+:root{
+  --cream: #FAF6F1;
+  --cream-2: #F3ECE4;
+  --ink: #211B18;
+  --ink-soft: #6E6560;
+  --red: #B3282D;
+  --red-dark: #8A1F23;
+  --red-bright: #C8403A;
+  --red-deep: #5C1219;
+  --rose: #F0DEDB;
+  --line: #E6DCD3;
+  --white: #FFFDFB;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Manrope', sans-serif;
+
+  --radius-btn: 9px;
+}
+
+*{ box-sizing: border-box; }
+html{ -webkit-text-size-adjust: 100%; }
+body{
+  margin:0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a{ color: inherit; text-decoration: none; }
+h1,h2{ margin:0; font-family: var(--font-display); font-weight: 500; }
+p{ margin:0; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+:focus-visible{ outline: 2px solid var(--red); outline-offset: 2px; }
+
+/* ============ LAYOUT ============ */
+.wrap{ min-height: 100vh; min-height: 100dvh; display: grid; grid-template-columns: 1fr; }
+
+/* Panel kiri (desktop saja) */
+.brand{ display: none; }
+
+/* Panel form */
+.panel{ display:flex; flex-direction: column; padding: 18px 20px 28px; }
+.panel__top{ display:flex; align-items:center; justify-content:space-between; margin-bottom: 26px; }
+.logo-img{ height: 28px; width: auto; display:block; }
+.panel__home{ font-size: 13.5px; font-weight: 600; color: var(--ink-soft); margin-left: auto; }
+.panel__home:hover{ color: var(--red-dark); }
+
+.panel__body{ flex:1; display:flex; align-items:center; justify-content:center; }
+.card{ width:100%; max-width: 380px; }
+
+.screen{ display:none; }
+.screen.active{ display:block; }
+
+.card h2{ font-size: 28px; line-height: 1.2; margin-bottom: 6px; }
+.sub{ font-size: 14.5px; color: var(--ink-soft); margin-bottom: 22px; }
+.sub a, .link{ color: var(--red-dark); font-weight: 700; }
+.sub a:hover, .link:hover{ text-decoration: underline; }
+
+/* ============ FORM ============ */
+.field{ margin-bottom: 15px; }
+.field label{ display:block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.input-row{ position: relative; }
+.field input{
+  width:100%;
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-btn);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.field input::placeholder{ color: #A79E98; }
+.field input:focus{ outline: none; border-color: var(--red); box-shadow: 0 0 0 3px var(--rose); }
+.input-row input{ padding-right: 96px; }
+.toggle-pass{
+  position:absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  background:none; border:none; cursor:pointer;
+  font-family: var(--font-body); font-size: 12.5px; font-weight: 600;
+  color: var(--ink-soft); padding: 6px;
+}
+.toggle-pass:hover{ color: var(--red-dark); }
+
+.row-end{ display:flex; justify-content:flex-end; margin: -4px 0 18px; font-size: 13px; }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap: 8px;
+  width:100%;
+  padding: 13px 22px;
+  border-radius: var(--radius-btn);
+  font-family: var(--font-body);
+  font-weight: 700; font-size: 15px;
+  border: 1.4px solid var(--red);
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+.btn--primary{ background: var(--red); color: var(--white); }
+.btn--primary:hover{ background: var(--red-dark); border-color: var(--red-dark); }
+.btn--ghost{ background: transparent; color: var(--red-dark); }
+.btn--ghost:hover{ background: var(--red); color: var(--white); }
+
+.divider{ display:flex; align-items:center; gap: 12px; margin: 20px 0 14px; font-size: 12.5px; color: var(--ink-soft); }
+.divider::before, .divider::after{ content:''; flex:1; height:1px; background: var(--line); }
+
+.alts{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-alt{
+  display:flex; align-items:center; justify-content:center; gap: 8px;
+  padding: 11px 10px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-btn);
+  font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--ink);
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+.btn-alt:hover{ border-color: var(--red); background: var(--rose); }
+.btn-alt svg{ flex:none; }
+.alts--single{ grid-template-columns: 1fr; }
+
+.back{
+  background:none; border:none; padding:0; margin-bottom: 16px;
+  font-family: var(--font-body); font-size: 13.5px; font-weight: 600;
+  color: var(--ink-soft); cursor:pointer;
+}
+.back:hover{ color: var(--red-dark); }
+
+.check{
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--rose); color: var(--red-dark);
+  display:flex; align-items:center; justify-content:center;
+  font-size: 22px; margin-bottom: 18px;
+}
+
+/* ============ DESKTOP ============ */
+@media (min-width: 900px){
+  html, body{ height: 100%; overflow: hidden; }
+  .wrap{ height: 100vh; height: 100dvh; min-height: 0; grid-template-columns: 1.05fr 1fr; }
+
+  /* Panel kiri: gaya halaman login sebelumnya */
+  .brand{
+    position: relative;
+    display:flex; flex-direction: column; justify-content: space-between;
+    padding: 48px 52px;
+    color: var(--cream);
+    overflow: hidden;
+    background: radial-gradient(120% 140% at 15% 0%, var(--red-bright) 0%, var(--red) 42%, var(--red-dark) 74%, var(--red-deep) 100%);
+  }
+  .brand::before, .brand::after{
+    content:""; position:absolute; aspect-ratio: 1/1; border-radius: 50%;
+    border: 1px solid rgba(250,246,241,0.28);
+  }
+  .brand::before{ right:-18%; bottom:-22%; width:70%; }
+  .brand::after{ right:-4%; bottom:-38%; width:50%; border-color: rgba(250,246,241,0.18); }
+
+  .brand-mark{ position:relative; z-index:1; display:flex; align-items:center; gap:12px; }
+  .brand-mark .cap{
+    width:34px; height:34px; flex:none;
+    border:1px solid var(--cream); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-display); font-size:18px;
+  }
+  .brand-mark span{ font-family: var(--font-display); font-size:20px; letter-spacing:.06em; }
+
+  .brand-copy{ position:relative; z-index:1; max-width: 420px; }
+  .brand-copy .eyebrow{ font-size:14px; font-weight:600; color: rgba(250,246,241,0.8); margin-bottom:16px; }
+  .brand-copy h1{ font-size: clamp(32px, 3.8vw, 46px); line-height:1.15; letter-spacing:-0.01em; margin-bottom:16px; }
+  .brand-copy p:last-child{ font-size:15.5px; line-height:1.65; color: rgba(250,246,241,0.88); }
+
+  .brand-foot{
+    position:relative; z-index:1;
+    display:flex; justify-content:space-between;
+    font-size:13px; color: rgba(250,246,241,0.65);
+    border-top:1px solid rgba(250,246,241,0.25); padding-top:16px;
+  }
+
+  .panel{ padding: 26px 48px; overflow-y: auto; }   /* scroll hanya muncul di layar sangat pendek */
+  .panel__logo{ display:none; }
+  .panel__top{ margin-bottom: 0; }
+  .card h2{ font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- Panel kiri: hanya tampil di desktop -->
+  <aside class="brand" aria-hidden="true">
+    <div class="brand-mark"><div class="cap">A</div><span>AMORA GRADS</span></div>
+
+    <div class="brand-copy">
+      <p class="eyebrow" id="brandEyebrow"></p>
+      <h1 id="brandTitle"></h1>
+      <p id="brandText"></p>
+    </div>
+
+    <div class="brand-foot"><span>© 2026 Amora Grads</span><span>Makassar</span></div>
+  </aside>
+
+  <!-- Panel kanan: form -->
+  <main class="panel">
+    <div class="panel__top">
+      <a href="index.html" class="panel__logo"><img src="aset/logo.png" alt="Amora Grads" class="logo-img"></a>
+      <a href="index.html" class="panel__home">← Beranda</a>
+    </div>
+
+    <div class="panel__body">
+      <div class="card">
+
+        <!-- MASUK (email) -->
+        <section class="screen active" id="screen-login" data-brand="login">
+          <h2>Masuk</h2>
+          <p class="sub">Belum punya akun? <a href="#" data-go="register">Daftar</a></p>
+
+          <form data-redirect>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="nama@email.com" autocomplete="email" required>
+            </div>
+            <div class="field">
+              <label for="password">Kata sandi</label>
+              <div class="input-row">
+                <input id="password" type="password" placeholder="Masukkan kata sandi" autocomplete="current-password" required>
+                <button type="button" class="toggle-pass" data-target="password">Lihat</button>
+              </div>
+            </div>
+            <div class="row-end"><a href="#" class="link" data-go="forgot">Lupa kata sandi?</a></div>
+            <button type="submit" class="btn btn--primary">Masuk</button>
+          </form>
+
+          <div class="divider">atau masuk dengan</div>
+          <div class="alts">
+            <button type="button" class="btn-alt" data-go="login-phone">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A1F23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Nomor telepon
+            </button>
+            <button type="button" class="btn-alt" data-google>
+              <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.9-2.26 5.36-4.78 7.02l7.73 6c4.51-4.18 7.09-10.36 7.09-17.49z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.94 23.94 0 0 0 0 24c0 3.86.92 7.51 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.92-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.97 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+              Google
+            </button>
+          </div>
+        </section>
+
+        <!-- MASUK (nomor telepon) -->
+        <section class="screen" id="screen-login-phone" data-brand="login">
+          <button type="button" class="back" data-go="login">← Masuk dengan email</button>
+          <h2>Masuk dengan nomor</h2>
+          <p class="sub">Belum punya akun? <a href="#" data-go="register">Daftar</a></p>
+
+          <form data-redirect>
+            <div class="field">
+              <label for="phone">Nomor telepon</label>
+              <input id="phone" type="tel" placeholder="Contoh: 08123456789" autocomplete="tel" required>
+            </div>
+            <div class="field">
+              <label for="phone-password">Kata sandi</label>
+              <div class="input-row">
+                <input id="phone-password" type="password" placeholder="Masukkan kata sandi" autocomplete="current-password" required>
+                <button type="button" class="toggle-pass" data-target="phone-password">Lihat</button>
+              </div>
+            </div>
+            <div class="row-end"><a href="#" class="link" data-go="forgot">Lupa kata sandi?</a></div>
+            <button type="submit" class="btn btn--primary">Masuk</button>
+          </form>
+        </section>
+
+        <!-- DAFTAR (email) -->
+        <section class="screen" id="screen-register" data-brand="register">
+          <h2>Buat akun</h2>
+          <p class="sub">Sudah punya akun? <a href="#" data-go="login">Masuk</a></p>
+
+          <form data-redirect>
+            <div class="field">
+              <label for="reg-nama">Nama lengkap</label>
+              <input id="reg-nama" type="text" placeholder="Masukkan nama lengkap" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="reg-email">Email</label>
+              <input id="reg-email" type="email" placeholder="nama@email.com" autocomplete="email" required>
+            </div>
+            <div class="field">
+              <label for="reg-pass">Kata sandi</label>
+              <div class="input-row">
+                <input id="reg-pass" type="password" placeholder="Minimal 6 karakter" autocomplete="new-password" minlength="6" required>
+                <button type="button" class="toggle-pass" data-target="reg-pass">Lihat</button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn--primary" style="margin-top:4px;">Daftar</button>
+          </form>
+
+          <div class="divider">atau daftar dengan</div>
+          <div class="alts">
+            <button type="button" class="btn-alt" data-go="register-phone">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A1F23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Nomor telepon
+            </button>
+            <button type="button" class="btn-alt" data-google>
+              <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.9-2.26 5.36-4.78 7.02l7.73 6c4.51-4.18 7.09-10.36 7.09-17.49z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.94 23.94 0 0 0 0 24c0 3.86.92 7.51 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.92-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.97 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+              Google
+            </button>
+          </div>
+        </section>
+
+        <!-- DAFTAR (nomor telepon) -->
+        <section class="screen" id="screen-register-phone" data-brand="register">
+          <button type="button" class="back" data-go="register">← Daftar dengan email</button>
+          <h2>Daftar dengan nomor</h2>
+          <p class="sub">Sudah punya akun? <a href="#" data-go="login">Masuk</a></p>
+
+          <form data-redirect>
+            <div class="field">
+              <label for="rp-nama">Nama lengkap</label>
+              <input id="rp-nama" type="text" placeholder="Masukkan nama lengkap" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="rp-telp">Nomor WhatsApp</label>
+              <input id="rp-telp" type="tel" placeholder="Contoh: 08123456789" autocomplete="tel" required>
+            </div>
+            <div class="field">
+              <label for="rp-pass">Kata sandi</label>
+              <div class="input-row">
+                <input id="rp-pass" type="password" placeholder="Minimal 6 karakter" autocomplete="new-password" minlength="6" required>
+                <button type="button" class="toggle-pass" data-target="rp-pass">Lihat</button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn--primary" style="margin-top:4px;">Daftar</button>
+          </form>
+        </section>
+
+        <!-- LUPA KATA SANDI -->
+        <section class="screen" id="screen-forgot" data-brand="forgot">
+          <button type="button" class="back" data-go="login">← Kembali</button>
+          <h2>Lupa kata sandi?</h2>
+          <p class="sub">Masukkan email akunmu, kami kirim tautan untuk atur ulang kata sandi.</p>
+
+          <form id="forgotForm">
+            <div class="field">
+              <label for="forgot-email">Email</label>
+              <input id="forgot-email" type="email" placeholder="nama@email.com" autocomplete="email" required>
+            </div>
+            <button type="submit" class="btn btn--primary">Kirim tautan</button>
+          </form>
+        </section>
+
+        <!-- TAUTAN TERKIRIM -->
+        <section class="screen" id="screen-sent" data-brand="forgot">
+          <div class="check">✓</div>
+          <h2>Cek email kamu</h2>
+          <p class="sub">Tautan atur ulang kata sandi sudah kami kirim. Cek juga folder spam ya.</p>
+          <button type="button" class="btn btn--ghost" data-go="login">Kembali ke halaman masuk</button>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script>
+  var HOME = 'index.html';            /* tujuan setelah masuk / daftar */
+  var LOGIN_KEY = 'amoraLoggedIn';    /* dibaca index.html untuk mengubah "Login" jadi "Profil" */
+
+  var brandContent = {
+    login:    { eyebrow: 'Studio foto wisuda & momen kelulusan', title: 'Abadikan hari kelulusanmu dengan cara yang layak dikenang.', text: 'Masuk untuk booking sesi foto, pilih paket, dan atur jadwalmu bersama tim Amora Grads.' },
+    register: { eyebrow: 'Bergabung dengan Amora Grads', title: 'Satu akun untuk semua sesi foto wisudamu.', text: 'Daftar untuk mulai booking sesi foto dan memantau pesananmu.' },
+    forgot:   { eyebrow: 'Pemulihan akun', title: 'Tenang, kata sandi bisa diatur ulang.', text: 'Masukkan email yang terdaftar, kami kirim tautan untuk membuat kata sandi baru.' }
+  };
+
+  function goTo(name){
+    document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
+    var screen = document.getElementById('screen-' + name);
+    screen.classList.add('active');
+    var c = brandContent[screen.dataset.brand];
+    document.getElementById('brandEyebrow').textContent = c.eyebrow;
+    document.getElementById('brandTitle').textContent = c.title;
+    document.getElementById('brandText').textContent = c.text;
+    window.scrollTo(0, 0);
+  }
+
+  /* Simpan status login, lalu ke home */
+  function signIn(){
+    try { localStorage.setItem(LOGIN_KEY, '1'); } catch (e) {}
+    window.location.href = HOME;
+  }
+
+  document.querySelectorAll('[data-go]').forEach(function (el) {
+    el.addEventListener('click', function (e) { e.preventDefault(); goTo(el.dataset.go); });
+  });
+
+  document.querySelectorAll('form[data-redirect]').forEach(function (f) {
+    f.addEventListener('submit', function (e) { e.preventDefault(); signIn(); });
+  });
+
+  /* Google: simulasi, langsung dianggap berhasil (sambungkan ke Google Sign-In saat backend siap) */
+  document.querySelectorAll('[data-google]').forEach(function (b) {
+    b.addEventListener('click', signIn);
+  });
+
+  document.getElementById('forgotForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    goTo('sent');
+  });
+
+  document.querySelectorAll('.toggle-pass').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var input = document.getElementById(btn.dataset.target);
+      var hidden = input.type === 'password';
+      input.type = hidden ? 'text' : 'password';
+      btn.textContent = hidden ? 'Sembunyikan' : 'Lihat';
+    });
+  });
+
+  goTo(location.hash === '#daftar' ? 'register' : 'login');
+</script>
+
+</body>
+</html>
