@@ -229,7 +229,7 @@ p{ margin:0; }
           <h2>Masuk</h2>
           <p class="sub">Belum punya akun? <a href="#" data-go="register">Daftar</a></p>
 
-          <form data-redirect>
+          <form data-kind="login">
             <div class="field">
               <label for="email">Email</label>
               <input id="email" type="email" placeholder="nama@email.com" autocomplete="email" required>
@@ -264,7 +264,7 @@ p{ margin:0; }
           <h2>Masuk dengan nomor</h2>
           <p class="sub">Belum punya akun? <a href="#" data-go="register">Daftar</a></p>
 
-          <form data-redirect>
+          <form data-kind="login-phone">
             <div class="field">
               <label for="phone">Nomor telepon</label>
               <input id="phone" type="tel" placeholder="Contoh: 08123456789" autocomplete="tel" required>
@@ -286,7 +286,7 @@ p{ margin:0; }
           <h2>Buat akun</h2>
           <p class="sub">Sudah punya akun? <a href="#" data-go="login">Masuk</a></p>
 
-          <form data-redirect>
+          <form data-kind="register">
             <div class="field">
               <label for="reg-nama">Nama lengkap</label>
               <input id="reg-nama" type="text" placeholder="Masukkan nama lengkap" autocomplete="name" required>
@@ -324,7 +324,7 @@ p{ margin:0; }
           <h2>Daftar dengan nomor</h2>
           <p class="sub">Sudah punya akun? <a href="#" data-go="login">Masuk</a></p>
 
-          <form data-redirect>
+          <form data-kind="register-phone">
             <div class="field">
               <label for="rp-nama">Nama lengkap</label>
               <input id="rp-nama" type="text" placeholder="Masukkan nama lengkap" autocomplete="name" required>
@@ -394,23 +394,60 @@ p{ margin:0; }
     window.scrollTo(0, 0);
   }
 
-  /* Simpan status login, lalu ke home */
-  function signIn(){
-    try { localStorage.setItem(LOGIN_KEY, '1'); } catch (e) {}
-    window.location.href = HOME;
+  function csrf(){ var m = document.cookie.match(/csrftoken=([^;]+)/); return m ? m[1] : ''; }
+
+  function post(url, data){
+    return fetch(url, {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf() },
+      body: JSON.stringify(data)
+    }).then(function (r) { return r.json(); });
+  }
+
+  function showError(form, msg){
+    var el = form.querySelector('.form-error');
+    if (!el) {
+      el = document.createElement('p');
+      el.className = 'form-error';
+      el.style.cssText = 'color:var(--red-dark);font-size:14px;margin:0 0 12px;font-weight:600;';
+      form.insertBefore(el, form.querySelector('button[type=submit]'));
+    }
+    el.textContent = msg;
   }
 
   document.querySelectorAll('[data-go]').forEach(function (el) {
     el.addEventListener('click', function (e) { e.preventDefault(); goTo(el.dataset.go); });
   });
 
-  document.querySelectorAll('form[data-redirect]').forEach(function (f) {
-    f.addEventListener('submit', function (e) { e.preventDefault(); signIn(); });
+  function handle(form, url, payload){
+    var btn = form.querySelector('button[type=submit]');
+    btn.disabled = true;
+    post(url, payload).then(function (res) {
+      if (res.ok) { window.location.href = res.redirect; return; }
+      showError(form, res.error || 'Terjadi kesalahan, coba lagi.');
+      btn.disabled = false;
+    }).catch(function () {
+      showError(form, 'Tidak bisa terhubung ke server.');
+      btn.disabled = false;
+    });
+  }
+
+  document.querySelector('form[data-kind="login"]').addEventListener('submit', function (e) {
+    e.preventDefault();
+    handle(this, '/api/login/', { email: document.getElementById('email').value, password: document.getElementById('password').value });
   });
 
-  /* Google: simulasi, langsung dianggap berhasil (sambungkan ke Google Sign-In saat backend siap) */
+  document.querySelector('form[data-kind="register"]').addEventListener('submit', function (e) {
+    e.preventDefault();
+    handle(this, '/api/register/', { nama: document.getElementById('reg-nama').value, email: document.getElementById('reg-email').value, password: document.getElementById('reg-pass').value });
+  });
+
+  /* Masuk/daftar lewat nomor HP & Google belum tersedia di backend */
+  document.querySelectorAll('form[data-kind$="-phone"]').forEach(function (f) {
+    f.addEventListener('submit', function (e) { e.preventDefault(); showError(f, 'Fitur ini belum tersedia. Silakan pakai email.'); });
+  });
   document.querySelectorAll('[data-google]').forEach(function (b) {
-    b.addEventListener('click', signIn);
+    b.addEventListener('click', function () { alert('Masuk dengan Google belum tersedia. Silakan pakai email.'); });
   });
 
   document.getElementById('forgotForm').addEventListener('submit', function (e) {

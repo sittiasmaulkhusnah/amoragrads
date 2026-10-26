@@ -327,24 +327,20 @@ p{ margin:0; }
   <div id="orderList"></div>
 </main>
 
+{{ amora_user|json_script:"amora-user" }}
+{{ amora_orders|json_script:"amora-orders" }}
 <script>
 (function(){
-  var LOGIN_KEY = "amoraLoggedIn";   /* sama dengan login.html & index.html */
-  var REQUIRE_LOGIN = true;          /* ubah ke false kalau mau membuka halaman ini tanpa login (testing desain) */
-
-  function isLoggedIn(){
-    try{ return localStorage.getItem(LOGIN_KEY) === "1"; }catch(e){ return false; }
-  }
-  if(REQUIRE_LOGIN && !isLoggedIn()){
-    window.location.replace("login.html");
-    return;
-  }
+  /* Data pengguna & riwayat booking datang dari database lewat Django */
+  var SERVER_USER = JSON.parse(document.getElementById("amora-user").textContent);
+  var SERVER_ORDERS = JSON.parse(document.getElementById("amora-orders").textContent);
+  function csrf(){ var m = document.cookie.match(/csrftoken=([^;]+)/); return m ? m[1] : ""; }
 
   /* Keluar: hapus status login, kembali ke beranda (tombol jadi "Login" lagi) */
   document.getElementById("logoutBtn").addEventListener("click", function(){
     if(!confirm("Keluar dari akun?")) return;
-    try{ localStorage.removeItem(LOGIN_KEY); }catch(e){}
-    window.location.href = "index.html";
+    fetch("/api/logout/", { method: "POST", credentials: "same-origin", headers: { "X-CSRFToken": csrf() } })
+      .then(function(){ window.location.href = "index.html"; });
   });
 
   /* Tutup menu mobile setelah link diklik */
@@ -355,41 +351,26 @@ p{ margin:0; }
     });
   });
 
-  var defaults = {
-    name: "Amora Customer", phone: "0812-3456-7890", email: "customer@email.com",
-    dob: "2003-05-14", gender: "Perempuan", avatar: null
-  };
+  var defaults = SERVER_USER;
 
   /* ===== Riwayat booking sesi foto (bukan pesanan barang) ===== */
-  var orders = [
-    {
-      pkg: "GRADS I — Sesi Foto Wisuda Solo",
-      date: "12 Agu 2026 · 09:00",
-      location: "Area Kampus UNM, Makassar",
-      price: "Rp 350.000",
-      status: "Selesai"
-    },
-    {
-      pkg: "Couple & Bestie — Sesi Berdua",
-      date: "3 Okt 2026 · 15:30",
-      location: "Area Kampus UNHAS, Makassar",
-      price: "Rp 700.000",
-      status: "Terjadwal"
-    }
-  ];
+  var orders = SERVER_ORDERS;
 
-  var STORAGE_KEY = "amora_customer_profile_v2";
+  var AVATAR_KEY = "amora_avatar_" + defaults.email;
 
   function loadProfile(){
-    try{
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if(raw) return JSON.parse(raw);
-    }catch(e){ console.warn("Tidak bisa membaca profil tersimpan", e); }
-    return defaults;
+    var p = Object.assign({}, defaults);
+    try{ p.avatar = localStorage.getItem(AVATAR_KEY); }catch(e){}
+    return p;
   }
   function saveProfile(p){
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); return true; }
-    catch(e){ console.warn("Tidak bisa menyimpan profil", e); return false; }
+    try{ if(p.avatar) localStorage.setItem(AVATAR_KEY, p.avatar); }catch(e){}
+    fetch("/api/profile/", {
+      method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrf() },
+      body: JSON.stringify({ name: p.name, phone: p.phone, email: p.email, dob: p.dob, gender: p.gender })
+    });
+    return true;
   }
 
   var nameEl = document.getElementById("inpName");

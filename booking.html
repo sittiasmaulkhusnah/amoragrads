@@ -1441,6 +1441,16 @@
         existing.push(record);
         localStorage.setItem('amora_bookings', JSON.stringify(existing));
         booking.confirmId = id;
+        // simpan juga ke database Django
+        fetch('/api/bookings/', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '' },
+          body: JSON.stringify({ package: pkg.name, y: booking.dateParts.y, m: booking.dateParts.m, d: booking.dateParts.d,
+                                 time: booking.time, name: booking.name, phone: booking.phone, dp: DP_AMOUNT, order_id: booking.orderId || id })
+        }).then(function (r) {
+          if (r.status === 401) window.location.href = '/login.html';
+          else if (r.status === 409) alert('Maaf, jadwal itu baru saja terisi. Hubungi admin lewat WhatsApp ya.');
+        }).catch(function () {});
       } catch (err) {
         booking.confirmId = 'AG-' + Math.random().toString(36).slice(2, 8).toUpperCase();
       }
@@ -1487,6 +1497,12 @@
   </script>
 
   <script src="auth.js"></script>
+  <script>
+    /* Booking wajib login */
+    fetch('/api/me/', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (me) {
+      if (!me.loggedIn) window.location.replace('/login.html');
+    });
+  </script>
 </body>
 
 </html>
