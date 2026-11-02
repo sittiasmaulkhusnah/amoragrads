@@ -13,7 +13,7 @@ from .decorators import ROLE_USER, admin_required, is_admin
 from .models import Booking, Package, Payment, Profile
 
 
-# ======================= Halaman frontend =======================
+#Halaman frontend
 @ensure_csrf_cookie
 def home(request):
     return render(request, 'index.html')
@@ -41,7 +41,7 @@ def login_page(request):
     return render(request, 'login.html')
 
 
-# ======================= Helper =======================
+#Helper
 def _after_login(user):
     return '/dashboard-admin/' if is_admin(user) else '/profil.html'
 
@@ -83,7 +83,7 @@ def _user_data(user):
     }
 
 
-# ======================= Dashboard pengguna (profil + riwayat booking) =======================
+# Dashboard pengguna (profil + riwayat booking)
 @ensure_csrf_cookie
 def profil(request):
     if not request.user.is_authenticated:
@@ -112,7 +112,7 @@ def dashboard(request):
     return redirect(_after_login(request.user))
 
 
-# ======================= API: auth =======================
+# API: auth 
 @ensure_csrf_cookie
 def api_me(request):
     if not request.user.is_authenticated:

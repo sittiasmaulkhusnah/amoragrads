@@ -2,7 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # halaman frontend (nama file .html dipertahankan supaya link lama tetap jalan)
     path('', views.home, name='home'),
     path('index.html', views.home),
     path('katalog.html', views.katalog),

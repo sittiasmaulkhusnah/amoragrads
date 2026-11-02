@@ -2,7 +2,6 @@ from django.db import models
 from django.conf import settings
 
 
-# MODEL 1: Paket Fotografi
 class Package(models.Model):
     name = models.CharField(max_length=100)
     price = models.PositiveIntegerField()
@@ -13,7 +12,6 @@ class Package(models.Model):
         return self.name
 
 
-# MODEL 2: Booking Pelanggan
 class Booking(models.Model):
 
     STATUS_CHOICES = [
@@ -49,7 +47,6 @@ class Booking(models.Model):
         return f"Booking #{self.pk}"
 
 
-# MODEL 3: Pembayaran
 class Payment(models.Model):
 
     STATUS_CHOICES = [
@@ -86,7 +83,6 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment #{self.pk}"
 
-# MODEL 4: Profil tambahan pengguna (no HP, tanggal lahir, gender)
 class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
