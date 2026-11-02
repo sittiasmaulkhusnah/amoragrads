@@ -1,0 +1,28 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<div class="card" style="max-width:820px">
+<h3 style="margin-bottom:16px">{{ title }}</h3>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+<div class="formgrid">
+{% for f in form %}
+<div class="{% if f.name == 'deskripsi' or f.name == 'deskripsi_lengkap' or f.name == 'subtitle' or f.name == 'featured_image' %}full{% endif %}">
+<label for="{{ f.id_for_label }}">{{ f.label }}{% if f.field.required %} *{% endif %}</label>
+{{ f }}
+{% if f.name == 'featured_image' and paket.featured_image %}<div class="gal"><figure><img src="{{ paket.featured_image.url }}" alt=""><small class="sub">Foto utama saat ini</small></figure></div>{% endif %}
+{% for e in f.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+{% endfor %}
+<div class="full">
+<label for="media_files">Foto galeri (boleh pilih banyak)</label>
+<input type="file" id="media_files" name="media_files" accept="image/*" multiple>
+{% if paket.media_paket.all %}
+<div class="gal">
+{% for m in paket.media_paket.all %}
+<figure><img src="{{ m.media.url }}" alt="">
+<button class="btn sm danger" type="submit" formnovalidate formmethod="post" formaction="{% url 'app:paket_media_hapus' paket.pk m.id %}" onclick="return confirm('Hapus foto ini?')">Hapus</button></figure>
+{% endfor %}
+</div>{% endif %}
+</div>
+</div>
+<p style="margin:18px 0 0"><button class="btn btn--primary" type="submit">Simpan Paket</button> <a class="btn" href="{% url 'app:paket_list' %}">Kembali</a></p>
+</form></div>
+{% endblock %}

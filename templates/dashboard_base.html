@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }} — Amora Grads</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#FAF6F1;--cream-2:#F3ECE4;--ink:#211B18;--ink-soft:#6E6560;--red:#B3282D;--red-dark:#8A1F23;--rose:#F0DEDB;--line:#E6DCD3;--white:#FFFDFB;
+--font-display:'Fraunces',serif;--font-body:'Manrope',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}h1,h2,h3{font-family:var(--font-display);font-weight:500;margin:0}
+.side{width:250px;flex-shrink:0;background:var(--white);border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.side .logo img{height:30px;margin:0 8px 26px}
+.side nav{display:flex;flex-direction:column;gap:4px;flex:1}
+.side nav a{padding:10px 14px;border-radius:10px;font-weight:600;font-size:14px;color:var(--ink-soft)}
+.side nav a:hover{background:var(--cream-2);color:var(--ink)}
+.side nav a.on{background:var(--rose);color:var(--red-dark)}
+.side .out{display:block;text-align:center;background:var(--red);color:#fff;padding:10px;border-radius:10px;font-weight:700;font-size:14px}
+.side .out:hover{background:var(--red-dark)}
+.side small{display:block;text-align:center;color:var(--ink-soft);margin-top:10px;font-size:12px}
+.main{flex:1;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;padding:16px 32px;background:var(--white);border-bottom:1px solid var(--line)}
+.top h2{font-size:22px}.chip{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px}
+.av{width:38px;height:38px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:800;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.wrap{padding:28px 32px 60px;max-width:1150px}
+.msg{padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:600;font-size:14px}
+.msg.success{background:#DDEFE0;color:#1f6b34}.msg.error{background:#F8DCDC;color:#8A1F23}
+.card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:22px}
+.hello{display:flex;gap:22px;align-items:center;margin-bottom:22px}
+.hello .big{width:84px;height:84px;font-size:32px}
+.hello h1{font-size:34px}.hello p{margin:2px 0;color:var(--ink-soft);font-size:14px}
+.btn{display:inline-block;border:1px solid var(--line);background:var(--white);padding:9px 16px;border-radius:10px;font:700 13px var(--font-body);cursor:pointer;color:var(--ink)}
+.btn--primary{background:var(--red);border-color:var(--red);color:#fff}.btn--primary:hover{background:var(--red-dark)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:26px}
+.stat small{color:var(--ink-soft);font-weight:600}.stat b{display:block;font:500 28px var(--font-display);color:var(--red-dark);margin-top:2px}
+.tablewrap{overflow-x:auto;background:var(--white);border:1px solid var(--line);border-radius:14px;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{background:var(--cream-2);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
+tr:last-child td{border-bottom:0}
+select,input[type=text],input[type=number],input[type=date],input[type=file],textarea{font:500 14px var(--font-body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--white);width:100%}
+td select{width:auto;padding:6px 8px;font-size:13px}
+.badge{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;background:var(--rose);color:var(--red-dark);white-space:nowrap}
+.badge.confirmed,.badge.paid,.badge.partial{background:#DDEFE0;color:#1f6b34}.badge.completed{background:#DCE8F5;color:#1d4d86}.badge.cancelled,.badge.failed{background:#EEE;color:#777}
+.thumb{width:54px;height:54px;border-radius:10px;object-fit:cover;background:var(--cream-2);display:block}
+.gal{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.gal figure{margin:0;text-align:center}.gal img{width:90px;height:90px;object-fit:cover;border-radius:10px;display:block}
+.btn.sm{padding:5px 10px;font-size:12px}.btn.danger{color:var(--red-dark);border-color:var(--red)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.chk{display:flex;align-items:center;gap:8px}.chk input{width:auto}
+.empty{padding:22px;color:var(--ink-soft)}.sub{color:var(--ink-soft);font-size:13px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.formgrid .full{grid-column:1/-1}
+label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}.err{color:var(--red-dark);font-size:12px;margin-top:4px}
+@media(max-width:820px){body{flex-direction:column}.side{width:100%;height:auto;position:static}.formgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside class="side">
+  <a class="logo" href="/"><img src="/aset/logo.png" alt="Amora Grads"></a>
+  <nav>
+    {% if request.user.last_name == 'Super Admin' %}
+    <a href="{% url 'app:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'index' %}on{% endif %}">Dashboard</a>
+    <a href="{% url 'app:paket_list' %}" class="{% if request.resolver_match.url_name == 'paket_list' or request.resolver_match.url_name == 'paket_tambah' or request.resolver_match.url_name == 'paket_edit' %}on{% endif %}">Kelola Paket</a>
+    <a href="{% url 'app:kategori_paket_list' %}" class="{% if 'kategori_paket' in request.resolver_match.url_name %}on{% endif %}">Kategori Paket</a>
+    <a href="{% url 'app:daftar_pengguna' %}" class="{% if request.resolver_match.url_name == 'daftar_pengguna' %}on{% endif %}">Daftar Pengguna</a>
+    <a href="{% url 'app:profile_admin' %}" class="{% if request.resolver_match.url_name == 'profile_admin' %}on{% endif %}">Profil</a>
+    <a href="/admin/">Django Admin</a>
+    {% endif %}
+    <a href="/">Lihat Website</a>
+  </nav>
+  <a class="out" href="{% url 'logout' %}">Logout</a>
+  <small>Amora Grads © 2026</small>
+</aside>
+<div class="main">
+  <header class="top">
+    <h2>{{ title }}</h2>
+    <div class="chip"><span>{{ request.user.first_name|default:request.user.username }}</span>
+      <span class="av">{% if photo %}<img src="{{ photo.url }}" alt="">{% else %}{{ request.user.first_name|default:request.user.username|slice:":1"|upper }}{% endif %}</span></div>
+  </header>
+  <div class="wrap">
+    {% for m in messages %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endfor %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+</body>
+</html>

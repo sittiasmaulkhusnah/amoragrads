@@ -1,0 +1,17 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<h3>Daftar Pengguna</h3>
+<p class="sub">Semua akun dengan role Pengguna (pelanggan Amora Grads).</p>
+<div class="tablewrap">
+<table style="min-width:700px">
+  <tr><th>Nama</th><th>Email</th><th>Telepon</th><th>Universitas</th><th>Jurusan</th><th>Bergabung</th></tr>
+  {% for p in pengguna %}
+  <tr>
+    <td><b>{{ p.user.first_name }}</b></td><td>{{ p.user.email }}</td><td>{{ p.telp|default:"-" }}</td>
+    <td>{{ p.universitas|default:"-" }}</td><td>{{ p.jurusan|default:"-" }}</td>
+    <td>{{ p.user.date_joined|date:"d M Y" }}</td>
+  </tr>
+  {% empty %}<tr><td colspan="6" class="empty">Belum ada pengguna.</td></tr>{% endfor %}
+</table>
+</div>
+{% endblock %}

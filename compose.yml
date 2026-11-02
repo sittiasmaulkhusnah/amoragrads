@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mariadb:10.11.15
+    container_name: db_amoragrads
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: amoragrads
+      MYSQL_USER: amoragrads_user
+      MYSQL_PASSWORD: amoragrads_pass
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3309:3306"
+    networks:
+      - amoragrads_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: pma_amoragrads
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    ports:
+      - "8888:80"
+    networks:
+      - amoragrads_network
+
+volumes:
+  db_data:
+
+networks:
+  amoragrads_network:
+    driver: bridge

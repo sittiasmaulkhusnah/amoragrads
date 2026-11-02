@@ -1,0 +1,157 @@
+{% extends 'pengguna/base_pengguna.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="page__title">Halo, {{ nama }}</h1>
+<p class="page__sub">Pantau jadwal sesi foto wisudamu di sini.</p>
+
+<div class="stats">
+  <div class="stat"><small>Total booking</small><b>{{ total }}</b></div>
+  <div class="stat"><small>Terjadwal</small><b>{{ terjadwal }}</b></div>
+  <div class="stat"><small>Selesai</small><b>{{ selesai }}</b></div>
+</div>
+<a class="btn btn--primary" href="booking.html" style="display:inline-flex">+ Booking Baru</a>
+
+<h2 class="section__title">Riwayat booking</h2>
+<div class="tabs" id="tabs">
+  <div class="tab active" data-status="Semua">Semua</div>
+  <div class="tab" data-status="Terjadwal">Terjadwal</div>
+  <div class="tab" data-status="Selesai">Selesai</div>
+  <div class="tab" data-status="Dibatalkan">Dibatalkan</div>
+</div>
+<div id="orderList"></div>
+
+<style>
+.modal{ position:fixed; inset:0; background:rgba(33,27,24,.5); display:flex; align-items:center; justify-content:center; z-index:50; padding:16px; }
+.modal[hidden]{ display:none; }
+.modal-box{ background:var(--white); border-radius:var(--radius-m); padding:24px; width:100%; max-width:420px; }
+.modal-box h3{ font-family:var(--font-display); font-weight:500; font-size:22px; margin:0 0 4px; }
+.modal-box label{ display:block; font-weight:700; font-size:13px; margin:14px 0 5px; }
+.modal-box input, .modal-box select{ width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:var(--radius-s); font:inherit; background:var(--white); }
+</style>
+<div class="modal" id="rsModal" hidden>
+  <div class="modal-box">
+    <h3>Reschedule booking</h3>
+    <p class="hint" id="rsInfo"></p>
+    <label for="rsDate">Tanggal baru</label>
+    <input type="date" id="rsDate">
+    <label for="rsTime">Jam baru</label>
+    <select id="rsTime">
+      <option value="09.00">09.00</option><option value="10.30">10.30</option><option value="12.00">12.00</option>
+      <option value="13.30">13.30</option><option value="15.00">15.00</option><option value="16.30">16.30</option>
+    </select>
+    <p class="err" id="rsErr"></p>
+    <div class="row-btn" style="margin-top:14px">
+      <button class="btn btn--ghost" id="rsCancel" type="button">Batal</button>
+      <button class="btn btn--primary" id="rsOk" type="button">Simpan jadwal</button>
+    </div>
+  </div>
+</div>
+{{ amora_orders|json_script:"amora-orders" }}
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  var orders = JSON.parse(document.getElementById("amora-orders").textContent);
+  var orderList = document.getElementById("orderList");
+  var statusClassMap = { "Selesai":"selesai", "Terjadwal":"terjadwal", "Dibatalkan":"batal" };
+
+  function renderOrders(filter){
+    orderList.innerHTML = "";
+    var filtered = filter === "Semua" ? orders : orders.filter(function(o){ return o.status === filter; });
+    if(filtered.length === 0){
+      orderList.innerHTML = '<div class="empty">Belum ada booking pada kategori ini.</div>';
+      return;
+    }
+    filtered.forEach(function(o){
+      var div = document.createElement("div");
+      div.className = "order";
+      var sc = statusClassMap[o.status] || "";
+      var actionBtns = "";
+      if(o.status === "Terjadwal" && o.bisa_ubah){
+        actionBtns = '<button data-act="reschedule" data-id="' + o.id + '">Reschedule</button><button data-act="batal" data-id="' + o.id + '">Batalkan</button><button class="primary" data-go="index.html#kontak">Hubungi Admin</button>';
+      } else if(o.status === "Selesai"){
+        actionBtns = '<button data-go="booking.html">Booking Lagi</button><button class="primary" data-go="index.html#kontak">Beri Ulasan</button>';
+      } else if(o.status === "Terjadwal"){
+        actionBtns = '<button data-go="index.html#kontak">Reschedule</button><button class="primary" data-go="index.html#kontak">Hubungi Admin</button>';
+      } else {
+        actionBtns = '<button data-go="katalog.html">Lihat Katalog</button><button class="primary" data-go="booking.html">Booking Lagi</button>';
+      }
+      div.innerHTML =
+        '<div class="order-top">' +
+          '<div class="thumb">🎓</div>' +
+          '<div class="detail">' +
+            '<p class="pkg">' + o.pkg + '</p>' +
+            '<p class="meta">' + o.date + ' &middot; ' + o.location + '</p>' +
+          '</div>' +
+          '<div class="status ' + sc + '">' + o.status + '</div>' +
+        '</div>' +
+        '<div class="order-bottom">' +
+          '<div class="total">Biaya sesi: <b>' + o.price + '</b></div>' +
+          '<div class="order-actions">' + actionBtns + '</div>' +
+        '</div>';
+      orderList.appendChild(div);
+    });
+  }
+
+  function csrf(){ var m = document.cookie.match(/csrftoken=([^;]+)/); return m ? m[1] : ""; }
+  function post(url, data){
+    return fetch(url, { method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrf() },
+      body: JSON.stringify(data || {}) }).then(function(r){ return r.json(); });
+  }
+  function byId(id){ return orders.filter(function(o){ return String(o.id) === String(id); })[0]; }
+
+  /* ---- Reschedule (modal) ---- */
+  var modal = document.getElementById("rsModal"), rsDate = document.getElementById("rsDate"),
+      rsTime = document.getElementById("rsTime"), rsErr = document.getElementById("rsErr"),
+      rsInfo = document.getElementById("rsInfo"), rsOk = document.getElementById("rsOk"), rsId = null;
+  var today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+  rsDate.min = today.toISOString().slice(0, 10);
+
+  function bukaReschedule(o){
+    rsId = o.id; rsErr.textContent = "";
+    rsInfo.textContent = o.pkg + " — jadwal sekarang: " + o.date;
+    rsDate.value = o.raw_date; rsTime.value = o.raw_time;
+    modal.hidden = false;
+  }
+  document.getElementById("rsCancel").addEventListener("click", function(){ modal.hidden = true; });
+  modal.addEventListener("click", function(e){ if(e.target === modal){ modal.hidden = true; } });
+  rsOk.addEventListener("click", function(){
+    if(!rsDate.value){ rsErr.textContent = "Pilih tanggal baru dulu."; return; }
+    rsOk.disabled = true;
+    post("/app/api/bookings/" + rsId + "/reschedule/", { date: rsDate.value, time: rsTime.value })
+      .then(function(res){
+        if(res.ok){ window.location.reload(); return; }
+        rsErr.textContent = res.error || "Gagal menjadwalkan ulang."; rsOk.disabled = false;
+      }).catch(function(){ rsErr.textContent = "Tidak bisa terhubung ke server."; rsOk.disabled = false; });
+  });
+
+  orderList.addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if(!b){ return; }
+    if(b.hasAttribute("data-go")){ window.location.href = b.getAttribute("data-go"); return; }
+    var o = byId(b.getAttribute("data-id"));
+    if(!o){ return; }
+    if(b.getAttribute("data-act") === "reschedule"){ bukaReschedule(o); }
+    if(b.getAttribute("data-act") === "batal"){
+      if(!confirm("Batalkan booking " + o.pkg + " pada " + o.date + "?\nUntuk DP yang sudah dibayar, hubungi admin.")){ return; }
+      post("/app/api/bookings/" + o.id + "/batal/").then(function(res){
+        if(res.ok){ window.location.reload(); } else { alert(res.error || "Gagal membatalkan booking."); }
+      });
+    }
+  });
+
+  var tabs = document.querySelectorAll(".tab");
+  tabs.forEach(function(t){
+    t.addEventListener("click", function(){
+      tabs.forEach(function(x){ x.classList.remove("active"); });
+      t.classList.add("active");
+      renderOrders(t.getAttribute("data-status"));
+    });
+  });
+
+  renderOrders("Semua");
+})();
+</script>
+{% endblock %}

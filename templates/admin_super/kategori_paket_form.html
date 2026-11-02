@@ -1,0 +1,16 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<div class="card" style="max-width:640px">
+<h3 style="margin-bottom:16px">{{ title }}</h3>
+<form method="post">{% csrf_token %}
+<div class="formgrid">
+{% for f in form %}
+<div class="{% if f.name == 'deskripsi_kategori' %}full{% endif %}">
+{% if f.name == 'aktif' %}<label class="chk">{{ f }} {{ f.label }}</label>
+{% else %}<label for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}{% endif %}
+{% for e in f.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+{% endfor %}
+</div>
+<p style="margin:18px 0 0"><button class="btn btn--primary">Simpan</button> <a class="btn" href="{% url 'app:kategori_paket_list' %}">Batal</a></p>
+</form></div>
+{% endblock %}

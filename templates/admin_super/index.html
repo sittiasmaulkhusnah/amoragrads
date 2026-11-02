@@ -1,0 +1,49 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<div class="card hello">
+  <span class="av big">{% if photo %}<img src="{{ photo.url }}" alt="">{% else %}{{ request.user.first_name|default:"A"|slice:":1"|upper }}{% endif %}</span>
+  <div>
+    <p>Selamat Datang, Admin</p>
+    <h1>{{ request.user.first_name|default:request.user.username }}</h1>
+    <p>{{ request.user.email|default:"-" }}{% if userdetail.telp %} · {{ userdetail.telp }}{% endif %}</p>
+    <a class="btn btn--primary" href="{% url 'app:profile_admin' %}" style="margin-top:8px">Edit Profil</a>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="card stat"><small>Total Pengguna</small><b>{{ total_pengguna }}</b></div>
+  <div class="card stat"><small>Booking Dikonfirmasi</small><b>{{ dikonfirmasi }}</b></div>
+  <div class="card stat"><small>Total Paket</small><b>{{ total_paket }}</b></div>
+  <div class="card stat"><small>Kategori Paket</small><b>{{ total_kategori }}</b></div>
+  <div class="card stat"><small>Total Booking</small><b>{{ total_booking }}</b></div>
+  <div class="card stat"><small>Menunggu Pembayaran</small><b>{{ menunggu }}</b></div>
+  <div class="card stat"><small>DP / Pembayaran Diterima</small><b>{{ diterima }}</b></div>
+</div>
+
+<h3>Booking terbaru</h3>
+<div class="tablewrap">
+<table>
+  <tr><th>#</th><th>Pelanggan</th><th>Paket</th><th>Jadwal</th><th>Status</th><th>Pembayaran</th><th>Ubah</th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.b.pk }}</td>
+    <td><b>{{ r.b.customer.first_name }}</b><br><span class="sub">{{ r.b.customer.email }}{% if r.telp %} · {{ r.telp }}{% endif %}</span></td>
+    <td>{{ r.b.package.name }}</td>
+    <td>{{ r.tgl }}</td>
+    <td><span class="badge {{ r.b.status }}">{{ r.b.get_status_display }}</span></td>
+    <td>{% if r.pay %}<span class="badge {{ r.pay.status }}">{{ r.pay.get_status_display }}</span>{% else %}-{% endif %}</td>
+    <td>
+      <form method="post" action="{% url 'app:booking_status' r.b.pk %}" style="display:flex;gap:6px;flex-wrap:wrap">
+        {% csrf_token %}
+        <select name="status">{% for v,l in status_choices %}<option value="{{ v }}" {% if v == r.b.status %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+        <select name="pay_status">{% for v,l in pay_choices %}<option value="{{ v }}" {% if r.pay and v == r.pay.status %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+        <button class="btn btn--primary">Simpan</button>
+      </form>
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="7" class="empty">Belum ada booking.</td></tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}

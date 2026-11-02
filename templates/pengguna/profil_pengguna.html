@@ -1,0 +1,78 @@
+{% extends 'pengguna/base_pengguna.html' %}
+{% block title %}Profil Saya{% endblock %}
+{% block content %}
+<h1 class="page__title">Profil saya</h1>
+{% if request.GET.lengkapi or not userpengguna.telp or not userpengguna.universitas %}
+<p class="hint" style="margin:-8px 0 16px">Lengkapi nomor WhatsApp dan kampusmu supaya bisa mulai booking.</p>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="card">
+  {% csrf_token %}
+  <div class="profile-head">
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatarBox">{% if photo %}<img src="{{ photo.url }}" alt="Foto profil">{% else %}<span>{{ nama|slice:":1"|upper }}</span>{% endif %}</div>
+      <label class="avatar-edit" for="avatarInput" aria-label="Ganti foto profil">✎</label>
+      <input type="file" id="avatarInput" name="photo" accept="image/*">
+    </div>
+    <div class="who">
+      <p>{{ nama }}</p>
+      <p>{{ request.user.email|default:"-" }} <span class="verified">✓ Terverifikasi</span></p>
+    </div>
+  </div>
+  {% for e in form.photo.errors %}<div class="err">{{ e }}</div>{% endfor %}
+
+  <div class="fields">
+    <div class="field">
+      <label for="{{ form.nama_lengkap.id_for_label }}">Nama lengkap</label>
+      {{ form.nama_lengkap }}
+      {% for e in form.nama_lengkap.errors %}<div class="err">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="field">
+      <label for="{{ form.telp.id_for_label }}">{{ form.telp.label }} *</label>
+      {{ form.telp }}
+      {% for e in form.telp.errors %}<div class="err">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" value="{{ request.user.email }}" disabled>
+    </div>
+    <div class="field">
+      <label for="{{ form.tanggal_lahir.id_for_label }}">{{ form.tanggal_lahir.label }}</label>
+      {{ form.tanggal_lahir }}
+      {% for e in form.tanggal_lahir.errors %}<div class="err">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="field">
+      <label for="{{ form.gender.id_for_label }}">{{ form.gender.label }} *</label>
+      {{ form.gender }}
+      {% for e in form.gender.errors %}<div class="err">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="field">
+      <label for="{{ form.universitas.id_for_label }}">{{ form.universitas.label }} *</label>
+      {{ form.universitas }}
+      {% for e in form.universitas.errors %}<div class="err">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="field">
+      <label for="{{ form.jurusan.id_for_label }}">{{ form.jurusan.label }}</label>
+      {{ form.jurusan }}
+      {% for e in form.jurusan.errors %}<div class="err">{{ e }}</div>{% endfor %}
+    </div>
+  </div>
+
+  <div class="row-btn">
+    <a class="btn btn--ghost" href="{% url 'app:dashboard' %}">Kembali</a>
+    <button class="btn btn--primary" type="submit">Simpan</button>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById("avatarInput").addEventListener("change", function(e){
+  var f = e.target.files && e.target.files[0];
+  if(!f) return;
+  var r = new FileReader();
+  r.onload = function(ev){ document.getElementById("avatarBox").innerHTML = '<img src="' + ev.target.result + '" alt="Foto profil">'; };
+  r.readAsDataURL(f);
+});
+</script>
+{% endblock %}

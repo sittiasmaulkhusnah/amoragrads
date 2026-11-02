@@ -1,0 +1,21 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<div class="card" style="max-width:760px">
+  <h3 style="margin-bottom:16px">{{ heading }}</h3>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="formgrid">
+      {% for f in form %}
+      <div class="{% if f.name == 'alamat' or f.name == 'photo' %}full{% endif %}">
+        <label for="{{ f.id_for_label }}">{{ f.label }}{% if f.field.required %} *{% endif %}</label>
+        {{ f }}
+        {% for e in f.errors %}<div class="err">{{ e }}</div>{% endfor %}
+      </div>
+      {% endfor %}
+      <div class="full"><span class="sub">Email: {{ request.user.email|default:"-" }}</span></div>
+    </div>
+    <p style="margin:18px 0 0"><button class="btn btn--primary" type="submit">Simpan Profil</button>
+    <a class="btn" href="{% url 'app:dashboard' %}">Kembali</a></p>
+  </form>
+</div>
+{% endblock %}

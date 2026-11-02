@@ -1,0 +1,19 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<div class="head"><div><h3>Kelola Paket</h3>
+<p class="sub">Paket berstatus Tersedia (dengan kategori aktif) tampil di beranda, katalog, detail, dan booking.</p></div>
+<a class="btn btn--primary" href="{% url 'app:paket_tambah' %}">+ Tambah Paket</a></div>
+<div class="tablewrap"><table style="min-width:820px">
+<tr><th>#</th><th>Foto</th><th>Paket</th><th>Kategori</th><th>Harga</th><th>Status</th><th>Aksi</th></tr>
+{% for x in paket_list %}
+<tr><td>{{ forloop.counter }}</td>
+<td>{% if x.featured_image %}<img class="thumb" src="{{ x.featured_image.url }}" alt="">{% else %}<span class="sub">-</span>{% endif %}</td>
+<td><b>{{ x.name }}</b>{% if x.badge %} <span class="badge">{{ x.badge }}</span>{% endif %}<br><span class="sub">{{ x.peserta }} · {{ x.duration_minutes }} menit · {{ x.hasil }}</span></td>
+<td>{{ x.kategori|default:"-" }}</td>
+<td>{% if x.persentase_diskon %}<s class="sub">{{ x.price_rp }}</s><br><b>{{ x.potongan_rp }}</b> <span class="badge">-{{ x.persentase_diskon }}%</span>{% else %}<b>{{ x.price_rp }}</b>{% endif %}</td>
+<td><span class="badge {% if x.status == 'Tersedia' %}confirmed{% else %}cancelled{% endif %}">{{ x.status }}</span></td>
+<td style="white-space:nowrap"><a class="btn sm" href="{% url 'app:paket_edit' x.pk %}">Edit</a>
+<form method="post" action="{% url 'app:paket_hapus' x.pk %}" onsubmit="return confirm('Yakin hapus paket ini?')" style="display:inline">{% csrf_token %}<button class="btn sm danger">Hapus</button></form></td></tr>
+{% empty %}<tr><td colspan="7" class="empty">Belum ada paket.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

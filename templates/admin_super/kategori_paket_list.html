@@ -1,0 +1,16 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<div class="head"><div><h3>Kategori Paket</h3>
+<p class="sub">Nonaktifkan kategori untuk menyembunyikannya dari website tanpa menghapus data.</p></div>
+<a class="btn btn--primary" href="{% url 'app:kategori_paket_tambah' %}">+ Tambah Kategori</a></div>
+<div class="tablewrap"><table style="min-width:620px">
+<tr><th>#</th><th>Nama</th><th>Slug</th><th>Jumlah paket</th><th>Status</th><th>Aksi</th></tr>
+{% for x in kategori_list %}
+<tr><td>{{ forloop.counter }}</td><td><b>{{ x.nama_kategori }}</b><br><span class="sub">{{ x.deskripsi_kategori|truncatechars:60 }}</span></td>
+<td>{{ x.slug }}</td><td>{{ x.paket.count }}</td>
+<td>{% if x.aktif %}<span class="badge confirmed">Aktif</span>{% else %}<span class="badge cancelled">Nonaktif</span>{% endif %}</td>
+<td style="white-space:nowrap"><a class="btn sm" href="{% url 'app:kategori_paket_edit' x.pk %}">Edit</a>
+<form method="post" action="{% url 'app:kategori_paket_hapus' x.pk %}" onsubmit="return confirm('Yakin hapus kategori ini?')" style="display:inline">{% csrf_token %}<button class="btn sm danger">Hapus</button></form></td></tr>
+{% empty %}<tr><td colspan="6" class="empty">Belum ada kategori.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}
