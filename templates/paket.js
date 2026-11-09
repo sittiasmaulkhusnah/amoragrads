@@ -1,4 +1,4 @@
-/* paket.js — DIBANGKITKAN DARI DATABASE oleh Django (app/views.py: paket_js).
+/* paket.js — DIBANGKITKAN DARI DATABASE oleh Django (app/views.py: paket_js). */
 
 var WA_NUMBER = "{{ wa_number }}";   /* format internasional, tanpa + atau 0 di depan */
 
