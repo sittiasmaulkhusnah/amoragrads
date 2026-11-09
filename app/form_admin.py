@@ -38,12 +38,13 @@ class PaketForm(forms.ModelForm):
     class Meta:
         model = Package
         fields = ['name', 'slug', 'kategori', 'badge', 'peserta', 'duration_minutes', 'price',
-                  'harga_potongan', 'hasil', 'deskripsi', 'subtitle', 'kicker', 'deskripsi_lengkap',
+                  'harga_potongan', 'stok', 'hasil', 'deskripsi', 'subtitle', 'kicker', 'deskripsi_lengkap',
                   'featured_image', 'status']
         labels = {
             'name': 'Nama paket', 'slug': 'Slug / URL (opsional)', 'badge': 'Label (opsional)',
             'peserta': 'Jumlah orang', 'duration_minutes': 'Durasi (menit)', 'price': 'Harga (Rp)',
-            'harga_potongan': 'Harga potongan (Rp, opsional)', 'hasil': 'Hasil yang didapat',
+            'harga_potongan': 'Harga potongan (Rp, opsional)', 'stok': 'Stok / kuota slot',
+            'hasil': 'Hasil yang didapat',
             'deskripsi': 'Deskripsi singkat', 'subtitle': 'Subjudul', 'kicker': 'Kicker (teks kecil di atas judul)',
             'deskripsi_lengkap': 'Deskripsi lengkap', 'featured_image': 'Foto utama (cover)', 'status': 'Status',
         }
@@ -54,6 +55,7 @@ class PaketForm(forms.ModelForm):
             'peserta': forms.TextInput(attrs={'placeholder': 'Contoh: 1 Orang'}),
             'price': forms.NumberInput(attrs={'min': 0, 'step': 1000, 'placeholder': '400000'}),
             'harga_potongan': forms.NumberInput(attrs={'min': 0, 'step': 1000, 'placeholder': 'Kosongkan jika tidak diskon'}),
+            'stok': forms.NumberInput(attrs={'min': 0, 'placeholder': '0'}),
             'duration_minutes': forms.NumberInput(attrs={'min': 1, 'placeholder': '60'}),
             'hasil': forms.TextInput(attrs={'placeholder': 'Contoh: 25 Foto Edit'}),
             'deskripsi': forms.Textarea(attrs={'rows': 3}),

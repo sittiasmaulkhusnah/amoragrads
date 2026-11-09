@@ -1,7 +1,7 @@
 /* paket.js — data paket yang dipakai katalog.html dan detail.html.
-   Ubah harga, deskripsi, atau foto di sini, dua halaman ikut berubah. */
+   Ubah harga, deskripsi, atau foto untuk kedua halaman berubah. */
 
-var WA_NUMBER = "6281296772025";   /* format internasional, tanpa + atau 0 di depan */
+var WA_NUMBER = "6285796442025";  
 
 var PACKAGES = [
   {

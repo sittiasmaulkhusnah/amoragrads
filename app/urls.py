@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views, views_admin, views_pengguna
+from . import views, views_admin, views_konten, views_pengguna
 
 urlpatterns = [
     path('profile/admin', views_admin.profile_admin, name='profile_admin'),
@@ -16,6 +16,11 @@ urlpatterns = [
     path('paket/edit/<int:pk>/', views_admin.paket_edit, name='paket_edit'),
     path('paket/hapus/<int:pk>/', views_admin.paket_hapus, name='paket_hapus'),
     path('paket/<int:paket_pk>/media/hapus/<uuid:media_uuid>/', views_admin.paket_media_hapus, name='paket_media_hapus'),
+    path('konten/<str:jenis>/', views_konten.konten_list, name='konten_list'),
+    path('konten/<str:jenis>/tambah/', views_konten.konten_form, name='konten_tambah'),
+    path('konten/<str:jenis>/<uuid:pk>/edit/', views_konten.konten_form, name='konten_edit'),
+    path('konten/<str:jenis>/<uuid:pk>/hapus/', views_konten.konten_hapus, name='konten_hapus'),
+    path('pengaturan/', views_konten.pengaturan_web, name='pengaturan_web'),
     path('api/me/', views.api_me, name='api_me'),
     path('api/bookings/', views.api_bookings, name='api_bookings'),
     path('api/bookings/<int:pk>/batal/', views.api_booking_batal, name='api_booking_batal'),

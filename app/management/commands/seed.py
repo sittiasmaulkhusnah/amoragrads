@@ -8,10 +8,11 @@ from django.contrib.auth.models import User
 from django.core.files import File
 from django.core.management.base import BaseCommand
 
-from app.models import KategoriPaket, MediaPaket, Package, Universitas, UserAdmin
+from app.models import (Article, Category, HeroSlide, KategoriPaket, MediaPaket, Package, Page,
+                        Universitas, UserAdmin, WebSetting)
 from app.roles import ROLE_ADMIN
 
-UNIVERSITAS = [  # kampus di Makassar dan sekitarnya 
+UNIVERSITAS = [  # kampus di Makassar dan sekitarnya (bisa diubah lewat /admin/)
     ('Universitas Hasanuddin', 'UNHAS'),
     ('Universitas Negeri Makassar', 'UNM'),
     ('UIN Alauddin Makassar', 'UINAM'),
@@ -35,6 +36,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **opts):
         self.seed_paket()
+        self.seed_konten()
         for nama, singkat in UNIVERSITAS:
             Universitas.objects.update_or_create(nama_universitas=nama, defaults=dict(singkatan=singkat, aktif=True))
         for u in User.objects.filter(is_superuser=True):
@@ -43,7 +45,7 @@ class Command(BaseCommand):
                 u.first_name = 'Admin Amora'
             u.save()
             UserAdmin.objects.get_or_create(username=u)
-        self.stdout.write(self.style.SUCCESS('Seed selesai (kategori, paket + galeri, universitas, role Super Admin).'))
+        self.stdout.write(self.style.SUCCESS('Seed selesai (paket, universitas, konten website, role Super Admin).'))
 
     def _salin_gambar(self, field, path_statis):
         """Salin gambar dari static/aset ke media supaya bisa dikelola lewat dashboard admin."""
@@ -81,3 +83,73 @@ class Command(BaseCommand):
                     media = MediaPaket(package=paket)
                     if self._salin_gambar(media.media, g):
                         media.save()
+
+    def seed_konten(self):
+        """Isi awal konten website. Hanya dibuat kalau tabelnya masih kosong,
+        jadi perubahan dan penghapusan dari panel admin tidak ditimpa lagi."""
+        admin = User.objects.filter(is_superuser=True).first()
+
+        if not WebSetting.objects.exists():
+            WebSetting.objects.create(
+                nama_web='Amora Grads',
+                tagline='Jasa foto wisuda dan momen spesial, berbasis di Makassar.',
+                alamat='Makassar, Sulawesi Selatan',
+                no_telp='081296772025',
+                link_instagram='https://www.instagram.com/amora.grads',
+                link_tiktok='https://www.tiktok.com/@amoragrads',
+            )
+
+        if not HeroSlide.objects.exists():
+            HeroSlide.objects.create(
+                judul='Abadikan momen kelulusanmu.', badge_text='Studio foto wisuda & momen kelulusan',
+                deskripsi='Amora Grads bantu kamu mengabadikan hari kelulusan dengan hasil yang natural, hangat, dan tetap kamu banget.',
+                tombol_teks='Booking sekarang', tombol_url='/katalog.html', urutan=1)
+            HeroSlide.objects.create(
+                judul='Pilih paket yang pas untuk harimu.', badge_text='Dari sesi solo sampai bersama sahabat',
+                deskripsi='Semua paket sudah termasuk hasil edit. Lihat pilihan paketnya dan amankan jadwal sesimu.',
+                tombol_teks='Lihat katalog', tombol_url='/katalog.html', urutan=2)
+
+        if not Category.objects.exists():
+            tips = Category.objects.create(name='Tips Wisuda', description='Persiapan dan inspirasi untuk hari wisuda.')
+            info = Category.objects.create(name='Info Amora', description='Informasi seputar layanan Amora Grads.')
+            Article.objects.create(
+                title='5 Tips Memilih Outfit untuk Foto Wisuda', category=tips, author=admin, status='published',
+                content=(
+                    'Outfit sangat memengaruhi hasil foto wisuda. Beberapa hal yang bisa kamu perhatikan:\n\n'
+                    '1. Pilih warna yang kontras dengan toga dan latar tempat foto, supaya kamu tidak tenggelam di dalam gambar.\n\n'
+                    '2. Utamakan kenyamanan. Pakaian yang nyaman membuat ekspresimu lebih natural saat bergerak dan berpose.\n\n'
+                    '3. Coba outfit-mu lebih dulu dan cek tampilannya dari berbagai sudut, terutama saat duduk dan berjalan.\n\n'
+                    '4. Gunakan riasan yang tahan lama dan tidak berlebihan, karena sesi foto bisa berlangsung cukup lama.\n\n'
+                    '5. Siapkan satu set pakaian cadangan atau perlengkapan kecil seperti sisir, tisu, dan cermin.'))
+            Article.objects.create(
+                title='Persiapan Sebelum Hari Sesi Foto', category=tips, author=admin, status='published',
+                content=(
+                    'Supaya sesi fotomu berjalan lancar, coba siapkan hal-hal berikut:\n\n'
+                    'Istirahat yang cukup di malam sebelumnya agar wajah tetap segar.\n\n'
+                    'Datang sedikit lebih awal dari jadwal, supaya ada waktu merapikan diri tanpa terburu-buru.\n\n'
+                    'Bawa perlengkapan pribadi seperti air minum, tisu, dan alat rias untuk touch up.\n\n'
+                    'Kumpulkan beberapa referensi pose atau suasana yang kamu suka, lalu bagikan ke fotografer.'))
+            Article.objects.create(
+                title='Cara Booking Sesi Foto di Amora Grads', category=info, author=admin, status='published',
+                content=(
+                    'Booking sesi foto bisa dilakukan langsung lewat website:\n\n'
+                    '1. Buat akun dan lengkapi profilmu.\n\n'
+                    '2. Buka halaman Katalog, lalu pilih paket yang sesuai.\n\n'
+                    '3. Pilih tanggal dan jam sesi yang masih tersedia, lalu isi data pemesan.\n\n'
+                    '4. Selesaikan pembayaran DP.\n\n'
+                    '5. Pantau jadwalmu di dashboard. Dari sana kamu juga bisa memindahkan jadwal atau membatalkan booking.'))
+
+        if not Page.objects.exists():
+            Page.objects.create(
+                title='Tentang Kami', author=admin,
+                content=(
+                    'Amora Grads adalah jasa foto wisuda dan momen spesial yang berbasis di Makassar.\n\n'
+                    'Kami membantu kamu mengabadikan hari kelulusan dengan hasil yang natural, hangat, dan tetap kamu banget. '
+                    'Kamu bisa memilih paket sesuai kebutuhan di halaman Katalog, lalu mengatur jadwal sesimu langsung dari website.'))
+            Page.objects.create(
+                title='Kebijakan Privasi', author=admin,
+                content=(
+                    '(Teks contoh awal. Admin dapat mengubahnya kapan saja lewat panel admin, menu Kelola Halaman.)\n\n'
+                    'Saat membuat akun dan melakukan booking, website ini menyimpan data yang kamu isi, yaitu nama, email, '
+                    'nomor WhatsApp, kampus, serta detail booking dan pembayaran DP.\n\n'
+                    'Data tersebut digunakan untuk mengelola akunmu, mengatur jadwal sesi foto, dan menghubungimu terkait booking.'))

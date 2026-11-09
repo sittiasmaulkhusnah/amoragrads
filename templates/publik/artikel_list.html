@@ -1,0 +1,30 @@
+{% extends 'publik/base_publik.html' %}
+{% block title %}Artikel{% endblock %}
+{% block nav_artikel %}active{% endblock %}
+{% block content %}
+  <section class="section">
+    <div class="section__head">
+      <h2>Artikel &amp; tips</h2>
+      <p>Inspirasi dan info seputar foto wisuda.</p>
+    </div>
+    <div class="filter">
+      <a href="{% url 'artikel_list' %}" class="{% if not kategori_aktif %}on{% endif %}">Semua</a>
+      {% for k in kategori_list %}<a href="{% url 'artikel_list' %}?kategori={{ k.slug }}" class="{% if kategori_aktif == k.slug %}on{% endif %}">{{ k.name }}</a>{% endfor %}
+      <form method="get" action="{% url 'artikel_list' %}"><input type="text" name="q" value="{{ q }}" placeholder="Cari artikel"></form>
+    </div>
+    {% if artikel %}
+    <div class="art-grid art-grid--list">
+      {% for a in artikel %}
+      <a class="art-card" href="{% url 'artikel_detail' a.slug %}">
+        {% if a.featured_image %}<img class="art-card__img" src="{{ a.featured_image.url }}" alt="{{ a.title }}">{% else %}<div class="art-card__img"></div>{% endif %}
+        <div class="art-card__body">
+          {% if a.category %}<span class="art-card__tag">{{ a.category }}</span>{% endif %}
+          <h3>{{ a.title }}</h3>
+          <p>{{ a.content|striptags|truncatewords:22 }}</p>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}<p class="empty-note">Belum ada artikel.</p>{% endif %}
+  </section>
+{% endblock %}

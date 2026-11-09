@@ -1,0 +1,15 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<div class="head"><div><h3>{{ cfg.judul }}</h3><p class="sub">{{ cfg.info }}</p></div>
+<a class="btn btn--primary" href="{% url 'app:konten_tambah' jenis %}">+ Tambah</a></div>
+<div class="tablewrap"><table style="min-width:640px">
+<tr><th>#</th>{% if cfg.gambar %}<th>Foto</th>{% endif %}{% for k in kolom %}<th>{{ k }}</th>{% endfor %}<th>Aksi</th></tr>
+{% for r in baris %}
+<tr><td>{{ forloop.counter }}</td>
+{% if cfg.gambar %}<td>{% if r.foto %}<img class="thumb" src="{{ r.foto }}" alt="">{% else %}<span class="sub">-</span>{% endif %}</td>{% endif %}
+{% for c in r.sel %}<td>{% if c.j == 'ok' or c.j == 'aktif' %}<span class="badge confirmed">{{ c.v|capfirst }}</span>{% elif c.j == 'off' or c.j == 'nonaktif' %}<span class="badge cancelled">{{ c.v|capfirst }}</span>{% else %}{{ c.v }}{% endif %}</td>{% endfor %}
+<td style="white-space:nowrap"><a class="btn sm" href="{% url 'app:konten_edit' jenis r.pk %}">Edit</a>
+<form method="post" action="{% url 'app:konten_hapus' jenis r.pk %}" onsubmit="return confirm('Yakin hapus {{ cfg.tunggal }} ini?')" style="display:inline">{% csrf_token %}<button class="btn sm danger">Hapus</button></form></td></tr>
+{% empty %}<tr><td colspan="9" class="empty">Belum ada data. Klik "+ Tambah" untuk membuat yang pertama.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

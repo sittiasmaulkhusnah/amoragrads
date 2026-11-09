@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/*  TOKENS (sama dengan index.html)  */
+/*  TOKENS */
 :root{
   --cream: #FAF6F1;
   --cream-2: #F3ECE4;
@@ -49,7 +49,7 @@ p{ margin:0; }
 
 .frame{ max-width: var(--container); margin: 0 auto; background: var(--cream); min-height: 100vh; box-shadow: 0 0 60px rgba(33,27,24,0.08); overflow: hidden; }
 
-/* ============ NAV (sama dengan index.html) ============ */
+/* NAV */
 .nav{ display:flex; align-items:center; justify-content:space-between; padding: 18px 20px; position: relative; z-index: 20; }
 .nav__logo{ display:flex; align-items:center; }
 .nav__logo-img{ height: 28px; width: auto; display: block; }
@@ -78,14 +78,14 @@ p{ margin:0; }
 .nav__menu a.nav__menu-cta{ padding: 10px 18px; border-bottom: none; color: var(--white); font-size: 13px; font-weight: 700; }
 .nav__menu a.nav__menu-cta:hover{ color: var(--white); }
 
-/* ============ BUTTONS ============ */
+/* BUTTONS */
 .btn{ display: inline-flex; align-items: center; justify-content: center; padding: 13px 22px; border-radius: var(--radius-btn); font-family: var(--font-body); font-weight: 700; font-size: 15px; border: 1.4px solid transparent; white-space: nowrap; cursor: pointer; transition: transform .15s ease, background .15s ease, color .15s ease; }
 .btn--primary{ background: var(--red); color: var(--white); border-color: var(--red); }
 .btn--primary:hover{ background: var(--red-dark); border-color: var(--red-dark); }
 .btn--ghost{ border-color: var(--red); color: var(--red-dark); }
 .btn--ghost:hover{ background: var(--red); color: var(--white); }
 
-/* ============ PRODUCT ============ */
+/* PRODUCT */
 .product{ padding: 18px 20px 0; }
 
 .gallery-main{
@@ -142,7 +142,7 @@ details[open] .chev{ transform: rotate(180deg); }
 .faq-body{ max-height:0; overflow:hidden; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; transition: max-height .35s ease, padding-top .35s ease; }
 details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
 
-/* ============ FOOTER (sama dengan index.html) ============ */
+/* FOOTER */
 .footer{ padding: 40px 20px 28px; margin-top: 44px; }
 .footer__brand{ display:flex; align-items:center; margin-bottom: 10px; }
 .footer__brand .nav__logo-img{ height: 34px; }
@@ -156,7 +156,7 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
 .footer__social svg{ width: 17px; height: 17px; }
 .footer__copy{ font-size: 12px; color: var(--ink-soft); padding-top: 24px; border-top: 1px solid var(--line); }
 
-/* ============ DESKTOP ============ */
+/* DESKTOP */
 @media (min-width: 900px){
   .frame{ max-width: none; box-shadow: none; }
   .nav, .footer{ max-width: var(--container-lg); margin-left: auto; margin-right: auto; }
@@ -228,7 +228,7 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
     </nav>
   </header>
 
-  <!-- ISI HALAMAN: dibuat oleh script dari paket.js -->
+  <!-- ISI HALAMAN, script dari paket.js -->
   <main id="content"></main>
 
   <!-- FOOTER -->

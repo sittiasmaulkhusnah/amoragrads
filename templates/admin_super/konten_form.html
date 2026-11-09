@@ -1,0 +1,20 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<div class="card" style="max-width:820px">
+<h3 style="margin-bottom:6px">{{ title }}</h3>
+{% if cfg.info %}<p class="sub" style="margin:0 0 16px">{{ cfg.info }}</p>{% endif %}
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+<div class="formgrid">
+{% for c in campos %}{% with f=c.f %}
+<div class="{% if f.widget_type == 'textarea' or f.widget_type == 'fileinput' or f.widget_type == 'clearablefileinput' %}full{% endif %}">
+{% if f.widget_type == 'checkbox' %}<label class="chk">{{ f }} {{ f.label }}</label>
+{% else %}<label for="{{ f.id_for_label }}">{{ f.label }}{% if f.field.required %} *{% endif %}</label>{{ f }}{% endif %}
+{% if c.preview %}<div class="gal"><figure><img src="{{ c.preview }}" alt=""><small class="sub">Saat ini</small></figure></div>{% endif %}
+{% if f.help_text %}<div class="sub" style="margin-top:4px;font-size:12px">{{ f.help_text }}</div>{% endif %}
+{% for e in f.errors %}<div class="err">{{ e }}</div>{% endfor %}</div>
+{% endwith %}{% endfor %}
+</div>
+<p style="margin:18px 0 0"><button class="btn btn--primary" type="submit">Simpan</button>
+<a class="btn" href="{% if pengaturan %}{% url 'app:dashboard' %}{% else %}{% url 'app:konten_list' jenis %}{% endif %}">Kembali</a></p>
+</form></div>
+{% endblock %}

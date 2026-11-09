@@ -1,0 +1,11 @@
+{% extends 'publik/base_publik.html' %}
+{% block meta_desc %}{% firstof hal.deskripsi hal.content|striptags|truncatechars:150 %}{% endblock %}
+{% block title %}{{ hal.title }}{% endblock %}
+{% block content %}
+  <article class="page-wrap">
+    <h1>{{ hal.title }}</h1>
+    <p class="page-meta">Diperbarui {{ hal.updated_at|date:"d F Y" }}</p>
+    {% if hal.featured_image %}<img class="page-hero" src="{{ hal.featured_image.url }}" alt="{{ hal.title }}">{% endif %}
+    <div class="prose">{{ hal.content|linebreaks }}</div>
+  </article>
+{% endblock %}

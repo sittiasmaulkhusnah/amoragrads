@@ -50,7 +50,7 @@ p{ margin:0; }
 
 .frame{ max-width: var(--container); margin: 0 auto; background: var(--cream); min-height: 100vh; box-shadow: 0 0 60px rgba(33,27,24,0.08); overflow: hidden; }
 
-/* ============ NAV (sama dengan index.html) ============ */
+/* NAV (sama dengan index.html) */
 .nav{ display:flex; align-items:center; justify-content:space-between; padding: 18px 20px; position: relative; z-index: 20; }
 .nav__logo{ display:flex; align-items:center; }
 .nav__logo-img{ height: 28px; width: auto; display: block; }
@@ -86,7 +86,7 @@ p{ margin:0; }
 .btn--ghost{ border-color: var(--red); color: var(--red-dark); }
 .btn--ghost:hover{ background: var(--red); color: var(--white); }
 
-/* ============ PRODUCT ============ */
+/* PRODUCT */
 .product{ padding: 18px 20px 0; }
 
 .gallery-main{
@@ -143,7 +143,7 @@ details[open] .chev{ transform: rotate(180deg); }
 .faq-body{ max-height:0; overflow:hidden; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; transition: max-height .35s ease, padding-top .35s ease; }
 details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
 
-/* ============ FOOTER (sama dengan index.html) ============ */
+/* FOOTER */
 .footer{ padding: 40px 20px 28px; margin-top: 44px; }
 .footer__brand{ display:flex; align-items:center; margin-bottom: 10px; }
 .footer__brand .nav__logo-img{ height: 34px; }
@@ -157,7 +157,7 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
 .footer__social svg{ width: 17px; height: 17px; }
 .footer__copy{ font-size: 12px; color: var(--ink-soft); padding-top: 24px; border-top: 1px solid var(--line); }
 
-/* ============ DESKTOP ============ */
+/* DESKTOP */
 @media (min-width: 900px){
   .frame{ max-width: none; box-shadow: none; }
   .nav, .footer{ max-width: var(--container-lg); margin-left: auto; margin-right: auto; }
@@ -221,6 +221,7 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
     <nav class="nav__menu">
       <a href="index.html">Home</a>
       <a href="katalog.html" class="active">Katalog</a>
+      <a href="artikel/">Artikel</a>
       <a href="index.html#kontak">Hubungi kami</a>
       <a href="login.html" class="btn btn--primary nav__menu-cta js-account-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
@@ -233,40 +234,7 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
   <main id="content"></main>
 
   <!-- FOOTER -->
-  <footer class="footer" id="kontak">
-    <div class="footer__col footer__col--brand">
-      <div class="footer__brand">
-        <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
-      </div>
-      <p class="footer__desc">Jasa foto wisuda dan momen spesial, berbasis di Makassar.</p>
-    </div>
-
-    <div class="footer__col footer__col--contact">
-      <p class="footer__col-title">Navigasi</p>
-      <div class="footer__contact">
-        <a href="index.html" target="_blank" rel="noopener">Home</a>
-        <a href="katalog.html" target="_blank" rel="noopener">Katalog</a>
-        <a href="index.html#kontak" target="_blank" rel="noopener">Email</a>
-      </div>
-    </div>
-
-    <div class="footer__col footer__col--social">
-      <p class="footer__col-title">Ikuti kami</p>
-      <div class="footer__social">
-        <a href="https://www.instagram.com/amora.grads?stkn=MTlrM3E0NWhmdmF5YQ==" target="_blank" rel="noopener" aria-label="Instagram Amora Grads">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
-        </a>
-        <a href="https://www.tiktok.com/@amoragrads?_r=1&_t=ZS-99zE1fHhkta" target="_blank" rel="noopener" aria-label="TikTok Amora Grads">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4v9.2a3.8 3.8 0 1 1-3-3.71"/><path d="M16 4c.4 2.2 2 3.8 4 4.1"/></svg>
-        </a>
-        <a href="https://wa.me/6281356352104" target="_blank" rel="noopener" aria-label="WhatsApp Amora Grads">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.3-4A8 8 0 1 1 9 19.4L4 20z"/><path d="M8.5 9.7c0 3.4 2.9 6.1 6.3 6.1"/></svg>
-        </a>
-      </div>
-    </div>
-
-    <p class="footer__copy">© 2026 Amora Grads. Semua hak cipta dilindungi.</p>
-  </footer>
+  {% include 'publik/_footer.html' %}
 
 </div>
 

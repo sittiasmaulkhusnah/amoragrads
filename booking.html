@@ -106,7 +106,7 @@
       overflow: hidden;
     }
 
-    /* ============ NAV (sama dengan katalog.html & detail.html) ============ */
+    /* NAV */
     .nav {
       display: flex;
       align-items: center;
@@ -222,7 +222,7 @@
       color: var(--white);
     }
 
-    /* ============ BUTTONS ============ */
+    /* BUTTONS */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -416,7 +416,7 @@
       color: var(--white);
     }
 
-    /* ============ Kalender ============ */
+    /* Kalender */
     .cal-card {
       border: 1px solid var(--line);
       border-radius: var(--radius-m);
@@ -845,7 +845,7 @@
       }
     }
 
-    /* ============ FOOTER (sama dengan katalog.html & detail.html) ============ */
+    /* FOOTER */
     .footer {
       padding: 40px 20px 28px;
       margin-top: 44px;
@@ -925,7 +925,7 @@
       border-top: 1px solid var(--line);
     }
 
-    /* ============ DESKTOP ============ */
+    /* DESKTOP */
     @media (min-width: 900px) {
       .frame {
         max-width: none;
@@ -1072,7 +1072,7 @@
 
   <div class="frame">
 
-    <!-- NAV (sama dengan katalog.html & detail.html) -->
+    <!-- NAV  -->
     <header class="nav">
       <a href="index.html" class="nav__logo">
         <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
@@ -1162,15 +1162,6 @@
   <script src="paket.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
-    /* =========================================================
-       BOOKING FLOW — paket ditentukan dari link "Booking sekarang"
-       di halaman detail (?paket=id-paket), jadi di sini pelanggan
-       langsung mulai dari Langkah 1: tanggal & jam.
-       Langkah 1: tanggal & jam, Langkah 2: data diri, lalu bayar DP
-       via QRIS, lalu konfirmasi.
-       Aturan tanggal penuh di bawah ini contoh saja — ganti dengan
-       data ketersediaan asli (API/DB) kalau sudah ada sistemnya.
-    ========================================================= */
 
     const DP_AMOUNT = 50000; // sesuai Terms & Conditions: booking minimal DP 50K
     const TIME_SLOTS = ['09.00', '10.30', '12.00', '13.30', '15.00', '16.30'];

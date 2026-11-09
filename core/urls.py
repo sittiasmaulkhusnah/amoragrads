@@ -5,7 +5,7 @@ from django.urls import include, path, re_path
 from django.views.generic import RedirectView
 from django.views.static import serve
 
-from app import views
+from app import views, views_konten
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +23,9 @@ urlpatterns += [
     path('', views.home, name='home'),
     path('index.html', views.home),
     path('paket.js', views.paket_js, name='paket_js'),
+    path('artikel/', views_konten.artikel_list, name='artikel_list'),
+    path('artikel/<slug:slug>/', views_konten.artikel_detail, name='artikel_detail'),
+    path('halaman/<slug:slug>/', views_konten.halaman_detail, name='halaman_detail'),
     path('produk/<slug:kategori_slug>/<slug:slug>/', views.paket_detail, name='paket_detail'),
     path('katalog.html', views.katalog, name='katalog'),
     path('detail.html', views.detail, name='detail'),

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/*  TOKENS (sama dengan index.html)  */
+/*  TOKENS  */
 :root{
   --cream: #FAF6F1;
   --cream-2: #F3ECE4;
@@ -48,7 +48,7 @@ p{ margin:0; }
 }
 :focus-visible{ outline: 2px solid var(--red); outline-offset: 2px; }
 
-/* ============ LAYOUT ============ */
+/* LAYOUT */
 .wrap{ min-height: 100vh; min-height: 100dvh; display: grid; grid-template-columns: 1fr; }
 
 /* Panel kiri (desktop saja) */
@@ -72,7 +72,7 @@ p{ margin:0; }
 .sub a, .link{ color: var(--red-dark); font-weight: 700; }
 .sub a:hover, .link:hover{ text-decoration: underline; }
 
-/* ============ FORM ============ */
+/* FORM */
 .field{ margin-bottom: 15px; }
 .field label{ display:block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
 .input-row{ position: relative; }
@@ -153,7 +153,7 @@ p{ margin:0; }
   html, body{ height: 100%; overflow: hidden; }
   .wrap{ height: 100vh; height: 100dvh; min-height: 0; grid-template-columns: 1.05fr 1fr; }
 
-  /* Panel kiri: gaya halaman login sebelumnya */
+  /* Panel kiri */
   .brand{
     position: relative;
     display:flex; flex-direction: column; justify-content: space-between;
@@ -201,7 +201,7 @@ p{ margin:0; }
 
 <div class="wrap">
 
-  <!-- Panel kiri: hanya tampil di desktop -->
+  <!-- Panel kiri -->
   <aside class="brand" aria-hidden="true">
     <div class="brand-mark"><div class="cap">A</div><span>AMORA GRADS</span></div>
 
@@ -374,8 +374,8 @@ p{ margin:0; }
 </div>
 
 <script>
-  var HOME = 'index.html';            /* tujuan setelah masuk / daftar */
-  var LOGIN_KEY = 'amoraLoggedIn';    /* dibaca index.html untuk mengubah "Login" jadi "Profil" */
+  var HOME = 'index.html';           
+  var LOGIN_KEY = 'amoraLoggedIn';    
 
   var brandContent = {
     login:    { eyebrow: 'Studio foto wisuda & momen kelulusan', title: 'Abadikan hari kelulusanmu dengan cara yang layak dikenang.', text: 'Masuk untuk booking sesi foto, pilih paket, dan atur jadwalmu bersama tim Amora Grads.' },

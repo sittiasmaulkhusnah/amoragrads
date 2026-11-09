@@ -15,7 +15,8 @@ body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-bo
 a{color:inherit;text-decoration:none}h1,h2,h3{font-family:var(--font-display);font-weight:500;margin:0}
 .side{width:250px;flex-shrink:0;background:var(--white);border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
 .side .logo img{height:30px;margin:0 8px 26px}
-.side nav{display:flex;flex-direction:column;gap:4px;flex:1}
+.side nav{display:flex;flex-direction:column;gap:2px;flex:1;overflow-y:auto}
+.side nav .grp{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a89c95;margin:12px 14px 2px}
 .side nav a{padding:10px 14px;border-radius:10px;font-weight:600;font-size:14px;color:var(--ink-soft)}
 .side nav a:hover{background:var(--cream-2);color:var(--ink)}
 .side nav a.on{background:var(--rose);color:var(--red-dark)}
@@ -43,7 +44,7 @@ table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
 th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
 th{background:var(--cream-2);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
 tr:last-child td{border-bottom:0}
-select,input[type=text],input[type=number],input[type=date],input[type=file],textarea{font:500 14px var(--font-body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--white);width:100%}
+select,input[type=text],input[type=number],input[type=date],input[type=url],input[type=email],input[type=file],textarea{font:500 14px var(--font-body);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--white);width:100%}
 td select{width:auto;padding:6px 8px;font-size:13px}
 .badge{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;background:var(--rose);color:var(--red-dark);white-space:nowrap}
 .badge.confirmed,.badge.paid,.badge.partial{background:#DDEFE0;color:#1f6b34}.badge.completed{background:#DCE8F5;color:#1d4d86}.badge.cancelled,.badge.failed{background:#EEE;color:#777}
@@ -64,8 +65,20 @@ label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}.err{color:
   <nav>
     {% if request.user.last_name == 'Super Admin' %}
     <a href="{% url 'app:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'index' %}on{% endif %}">Dashboard</a>
-    <a href="{% url 'app:paket_list' %}" class="{% if request.resolver_match.url_name == 'paket_list' or request.resolver_match.url_name == 'paket_tambah' or request.resolver_match.url_name == 'paket_edit' %}on{% endif %}">Kelola Paket</a>
-    <a href="{% url 'app:kategori_paket_list' %}" class="{% if 'kategori_paket' in request.resolver_match.url_name %}on{% endif %}">Kategori Paket</a>
+    {% with j=request.resolver_match.kwargs.jenis un=request.resolver_match.url_name %}
+    <div class="grp">Katalog</div>
+    <a href="{% url 'app:paket_list' %}" class="{% if un == 'paket_list' or un == 'paket_tambah' or un == 'paket_edit' %}on{% endif %}">Kelola Paket</a>
+    <a href="{% url 'app:kategori_paket_list' %}" class="{% if 'kategori_paket' in un %}on{% endif %}">Kategori Paket</a>
+    <div class="grp">Artikel &amp; Halaman</div>
+    <a href="{% url 'app:konten_list' 'artikel' %}" class="{% if j == 'artikel' %}on{% endif %}">Kelola Artikel</a>
+    <a href="{% url 'app:konten_list' 'kategori-artikel' %}" class="{% if j == 'kategori-artikel' %}on{% endif %}">Kategori Artikel</a>
+    <a href="{% url 'app:konten_list' 'halaman' %}" class="{% if j == 'halaman' %}on{% endif %}">Kelola Halaman</a>
+    <div class="grp">Tampilan &amp; Mitra</div>
+    <a href="{% url 'app:konten_list' 'hero-slide' %}" class="{% if j == 'hero-slide' %}on{% endif %}">Hero Slide</a>
+    <a href="{% url 'app:konten_list' 'mitra' %}" class="{% if j == 'mitra' %}on{% endif %}">Kerja Sama / Mitra</a>
+    <div class="grp">Pengaturan</div>
+    <a href="{% url 'app:pengaturan_web' %}" class="{% if un == 'pengaturan_web' %}on{% endif %}">Pengaturan Website</a>
+    {% endwith %}
     <a href="{% url 'app:daftar_pengguna' %}" class="{% if request.resolver_match.url_name == 'daftar_pengguna' %}on{% endif %}">Daftar Pengguna</a>
     <a href="{% url 'app:profile_admin' %}" class="{% if request.resolver_match.url_name == 'profile_admin' %}on{% endif %}">Profil</a>
     <a href="/admin/">Django Admin</a>

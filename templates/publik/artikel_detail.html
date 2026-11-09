@@ -1,0 +1,39 @@
+{% extends 'publik/base_publik.html' %}
+{% block title %}{{ art.title }}{% endblock %}
+{% block nav_artikel %}active{% endblock %}
+{% block meta_desc %}{% firstof art.deskripsi_seo art.content|striptags|truncatechars:150 %}{% endblock %}
+{% block content %}
+  <article class="detail">
+    <a class="detail__back" href="{% url 'artikel_list' %}">← Semua artikel</a>
+
+    <header class="detail__head">
+      {% if art.category %}<a class="art-card__tag" href="{% url 'artikel_list' %}?kategori={{ art.category.slug }}">{{ art.category }}</a>{% endif %}
+      <h1>{{ art.title }}</h1>
+      <p class="detail__meta">
+        {{ art.created_at|date:"d F Y" }}
+        {% if art.author %}<span>·</span> {{ art.author.first_name|default:art.author.username }}{% endif %}
+        <span>·</span> {{ art.views_count }} kali dibaca
+      </p>
+    </header>
+
+    <div class="detail__body prose">{{ art.content|linebreaks }}</div>
+  </article>
+
+  {% if terkait %}
+  <section class="section detail__related">
+    <div class="section__head"><h2>Artikel terkait</h2></div>
+    <div class="art-grid art-grid--related">
+      {% for a in terkait %}
+      <a class="art-card" href="{% url 'artikel_detail' a.slug %}">
+        {% if a.featured_image %}<img class="art-card__img" src="{{ a.featured_image.url }}" alt="{{ a.title }}">{% else %}<div class="art-card__img"></div>{% endif %}
+        <div class="art-card__body">
+          {% if a.category %}<span class="art-card__tag">{{ a.category }}</span>{% endif %}
+          <h3>{{ a.title }}</h3>
+          <p>{{ a.content|striptags|truncatewords:18 }}</p>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+{% endblock %}

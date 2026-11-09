@@ -117,9 +117,7 @@ def kategori_paket_hapus(request, pk):
     return redirect('app:kategori_paket_list')
 
 
-# ==========================================
 # KELOLA PAKET
-# ==========================================
 @admin_required
 def paket_list(request):
     return render(request, 'admin_super/paket_list.html', {

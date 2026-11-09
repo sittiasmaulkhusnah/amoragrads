@@ -57,7 +57,7 @@ p{ margin:0; }
   outline-offset: 2px;
 }
 
-/* ============ FRAME ============ */
+/* FRAME */
 .frame{
   max-width: var(--container);
   margin: 0 auto;
@@ -67,7 +67,7 @@ p{ margin:0; }
   overflow: hidden;
 }
 
-/* ============ NAV ============ */
+/* NAV */
 .nav{
   display:flex;
   align-items:center;
@@ -125,7 +125,7 @@ p{ margin:0; }
 .nav__menu a.nav__menu-cta{ padding: 10px 18px; border-bottom: none; color: var(--white); font-size: 13px; font-weight: 700; }
 .nav__menu a.nav__menu-cta:hover{ color: var(--white); }
 
-/* ============ BUTTONS ============ */
+/* BUTTONS */
 .btn{
   display: inline-flex;
   align-items: center;
@@ -146,7 +146,7 @@ p{ margin:0; }
 .btn--light{ background: var(--white); color: var(--red-dark); border-color: var(--white); }
 .btn--light:hover{ background: var(--rose); }
 
-/* ============ HERO ============ */
+/* HERO */
 .hero{ padding: 12px 20px 0; }
 .hero__kicker{ font-size: 14px; color: var(--red-dark); font-weight: 600; margin-bottom: 14px; }
 .hero__title{ font-size: 34px; line-height: 1.18; letter-spacing: -0.01em; margin-bottom: 16px; max-width: 15ch; }
@@ -167,14 +167,14 @@ p{ margin:0; }
 .polaroid--3{ width: 40%; height: 170px; left: 26%; bottom: 0; transform: rotate(-2deg); z-index: 3; }
 .polaroid__pin{ position:absolute; top: 14px; right: 18px; width: 12px; height:12px; border-radius: 50%; background: var(--red); box-shadow: 0 2px 4px rgba(0,0,0,0.25); }
 
-/* ============ STATS ============ */
+/* STATS */
 .stats{ display:flex; margin: 40px 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .stats__item{ flex:1; padding: 18px 6px; text-align: center; border-left: 1px solid var(--line); }
 .stats__item:first-child{ border-left: none; }
 .stats__num{ display:block; font-family: var(--font-display); font-size: 22px; color: var(--red-dark); }
 .stats__label{ display:block; font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
 
-/* ============ SECTIONS ============ */
+/* SECTIONS */
 .section{ padding: 48px 0 8px; }
 .section__head{ padding: 0 20px; margin-bottom: 20px; }
 .section__head h2{ font-size: 24px; line-height: 1.25; margin-bottom: 6px; }
@@ -194,7 +194,7 @@ p{ margin:0; }
 /* Tombol "lihat semua paket" di bawah baris preview */
 .pkg-more{ padding: 4px 20px 0; text-align: center; }
 
-/* Gallery — mosaic */
+/* Gallery */
 .gallery{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -213,13 +213,13 @@ p{ margin:0; }
   height: 100%;
   display: block;
   object-fit: cover;
-  object-position: center 25%; /* jaga wajah tetap terlihat */
+  object-position: center 25%; 
   filter: url(#grain);
   transition: transform .5s ease;
 }
 .gallery__item:hover img{ transform: scale(1.05); }
 
-/* Mobile: tinggi-kecil-kecil / lebar penuh / tinggi-tinggi */
+/* Mobile  */
 .g1{ grid-row: span 2; }
 .g4{ grid-column: 1 / -1; grid-row: span 2; }
 .g5, .g6{ grid-row: span 2; }
@@ -240,12 +240,12 @@ p{ margin:0; }
 .testi-card__name{ font-weight: 700; font-size: 13.5px; }
 .testi-card__role{ font-size: 12.5px; color: var(--ink-soft); }
 
-/* ============ CTA ============ */
+/* CTA */
 .cta{ margin: 48px 20px 0; background: var(--red); color: var(--white); border-radius: var(--radius-m); padding: 32px 22px; text-align: left; }
 .cta h2{ font-size: 22px; margin-bottom: 8px; }
 .cta p{ font-size: 14px; opacity: 0.9; margin-bottom: 20px; max-width: 32ch; }
 
-/* ============ FOOTER ============ */
+/* FOOTER */
 .footer{ padding: 40px 20px 28px; margin-top: 44px; }
 .footer__brand{ display:flex; align-items:center; margin-bottom: 10px; }
 .footer__brand .nav__logo-img{ height: 34px; }
@@ -265,11 +265,7 @@ p{ margin:0; }
 .footer__social svg{ width: 17px; height: 17px; }
 .footer__copy{ font-size: 12px; color: var(--ink-soft); padding-top: 24px; border-top: 1px solid var(--line); }
 
-/* =========================================================
-   DESKTOP  (min-width: 900px)
-   Layout switches from a single mobile "frame" column to a
-   full-width editorial layout with a centered content rail.
-   ========================================================= */
+/* DESKTOP  (min-width: 900px) */
 @media (min-width: 900px){
 
   body{ background: var(--cream-2); }
@@ -280,7 +276,7 @@ p{ margin:0; }
     background: var(--cream);
   }
 
-  /* --- shared content rail --- */
+  /* shared content rail */
   .nav, .hero, .stats, .section__head, .steps,
   .footer{
     max-width: var(--container-lg);
@@ -288,7 +284,7 @@ p{ margin:0; }
     margin-right: auto;
   }
 
-  /* --- nav --- */
+  /* nav */
   .nav{ padding: 26px 40px; }
   .nav__logo-img{ height: 32px; }
   .nav__burger, .menu-toggle-input{ display:none; }
@@ -310,7 +306,7 @@ p{ margin:0; }
   .nav__menu a.nav__menu-cta{ padding: 10px 18px; color: var(--white); font-weight: 700; }
   .nav__menu a.nav__menu-cta:hover{ color: var(--white); }
 
-  /* --- hero: split into text / collage --- */
+  /* hero: split into text / collage */
   .hero{
     display: grid;
     grid-template-columns: 1fr 0.9fr;
@@ -327,19 +323,19 @@ p{ margin:0; }
   .polaroid--2{ width: 48%; height: 320px; right: 0; top: 10px; }
   .polaroid--3{ width: 42%; height: 240px; left: 28%; bottom: -10px; }
 
-  /* --- stats --- */
+  /* stats */
   .stats{ margin-top: 70px; padding: 0 40px; }
   .stats__item{ padding: 26px 12px; }
   .stats__num{ font-size: 30px; }
   .stats__label{ font-size: 13.5px; }
 
-  /* --- section heads --- */
+  /* section heads */
   .section{ padding: 88px 0 8px; }
   .section__head{ padding: 0 40px; margin-bottom: 36px; display:flex; align-items:flex-end; justify-content:space-between; gap: 40px; }
   .section__head h2{ font-size: 34px; max-width: 16ch; }
   .section__head p{ font-size: 15.5px; max-width: 38ch; margin-left: auto; }
 
-  /* --- packages: grid instead of scroll --- */
+  /* packages: grid instead of scroll */
   .scroll-row{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -354,7 +350,7 @@ p{ margin:0; }
 
   .pkg-more{ padding: 8px 40px 0; text-align: center; }
 
-  /* --- gallery: mosaik 4 kolom --- */
+  /* gallery: mosaik 4 kolom */
   .gallery{
     max-width: var(--container-lg);
     margin: 0 auto;
@@ -364,14 +360,14 @@ p{ margin:0; }
     grid-auto-rows: auto;
     gap: 16px;
   }
-  .g1{ grid-column: 1 / 3; grid-row: 1 / 3; }  /* foto utama besar */
+  .g1{ grid-column: 1 / 3; grid-row: 1 / 3; }  
   .g2{ grid-column: 3;     grid-row: 1; }
-  .g3{ grid-column: 4;     grid-row: 1 / 3; }  /* tinggi */
+  .g3{ grid-column: 4;     grid-row: 1 / 3; } 
   .g4{ grid-column: 3;     grid-row: 2; }
-  .g5{ grid-column: 1 / 3; grid-row: 3; }      /* lebar */
-  .g6{ grid-column: 3 / 5; grid-row: 3; }      /* lebar */
+  .g5{ grid-column: 1 / 3; grid-row: 3; }      
+  .g6{ grid-column: 3 / 5; grid-row: 3; }
 
-  /* --- steps: horizontal --- */
+  /* steps: horizontal */
   .steps{
     padding: 0 40px;
     display: grid;
@@ -382,7 +378,7 @@ p{ margin:0; }
   .steps__item::before{ left: 15px; top: 46px; right: -28px; bottom: auto; width: auto; height: 1px; }
   .steps__item:nth-child(3)::before{ display:none; }
 
-  /* --- testimonials: 3-col grid --- */
+  /* testimonials */
   .scroll-row--testi{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -393,7 +389,7 @@ p{ margin:0; }
   .testi-card{ display:flex; flex-direction: column; justify-content: space-between; }
   .testi-card__quote{ font-size: 18px; }
 
-  /* --- cta --- */
+  /* cta  */
   .cta{
     max-width: var(--container-lg);
     margin: 88px auto 0;
@@ -408,7 +404,7 @@ p{ margin:0; }
   .cta p{ font-size: 15px; margin-bottom: 0; }
   .cta .btn{ flex-shrink: 0; }
 
-  /* --- footer: multi column, social block sits bottom-right --- */
+  /* footer */
   .footer{
     padding: 64px 40px 32px;
     display: grid;
@@ -428,6 +424,60 @@ p{ margin:0; }
 @media (min-width: 1280px){
   .hero__title{ font-size: 60px; }
 }
+
+/* Hero slider 2 slide */
+.hero__viewport{ display:grid; }
+.hero__s{ grid-area:1 / 1; min-width:0; align-self:start; }
+.hero__s--2{ align-self:center; }
+.hero__s.is-off{ visibility:hidden; pointer-events:none; }
+
+/* teks fade bergantian */
+.hero__s .hero__copy{ transition: opacity .5s ease .45s, transform .5s ease .45s; }
+.hero__s.is-quiet .hero__copy{ opacity:0; transform:translateY(12px); transition: opacity .3s ease, transform .3s ease; }
+
+/* polaroid slide 1 disembunyikan saat foto-fotonya "terbang" */
+.hero__s--1.stack-hidden .hero__stack{ opacity:0; }
+
+/* indikator: garis tipis */
+.hero-dots{ display:flex; justify-content:center; gap:6px; margin-top:18px; }
+.hero-dot{ position:relative; width:22px; height:2px; padding:0; border:0; border-radius:2px; background:var(--line); cursor:pointer; transition: background .3s ease, width .3s ease; }
+.hero-dot::before{ content:''; position:absolute; inset:-12px -3px; } /* area klik lebih besar */
+.hero-dot.on{ background:var(--red); width:34px; }
+
+/* Slide 2 */
+.hero__s--2{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+.arc{
+  display:flex; justify-content:center; align-items:flex-start; gap:3%;
+  width:100%; max-width:480px; margin:0 auto 22px; padding-top:6px;
+}
+.arc__item{
+  margin:0; position:relative; background:var(--white); padding:8px 8px 20px;
+  border-radius:2px; box-shadow:0 12px 26px rgba(33,27,24,.14); will-change:transform;
+}
+.arc__item img{ display:block; width:100%; height:100%; object-fit:cover; }
+.arc__item--l{ width:28%; transform: translateY(20px) rotate(-8deg); }
+.arc__item--c{ width:33%; z-index:2; }
+.arc__item--r{ width:28%; transform: translateY(20px) rotate(8deg); }
+.arc__item .polaroid__pin{ top:14px; right:18px; width:12px; height:12px; }
+
+.hero__s--2 .hero__kicker{ margin-bottom:8px; }
+.hero__s--2 .hero__title{ font-size:28px; max-width:none; margin:0 auto 10px; }
+.hero__s--2 .hero__desc{ font-size:14.5px; max-width:40ch; margin:0 auto 18px; }
+.hero__s--2 .hero__actions{ justify-content:center; margin-bottom:0; }
+.hero__s--2 .btn{ padding:11px 20px; font-size:14.5px; }
+
+@media (min-width: 900px){
+  .hero{ display:block; }
+  .hero__s--1{ display:grid; grid-template-columns:1fr 0.9fr; align-items:center; gap:60px; }
+
+  /* slide 2 */
+  .hero__s--2{ align-self:start; margin-top:-34px; }
+  .arc{ max-width:none; width:auto; gap:56px; margin-bottom:18px; padding-top:0; align-items:center; }
+  .arc__item--l, .arc__item--c, .arc__item--r{ width:auto; }
+  .hero__s--2 .hero__title{ font-size:38px; margin-bottom:8px; }
+  .hero__s--2 .hero__desc{ font-size:16px; max-width:52ch; margin-bottom:16px; }
+}
+
 </style>
 </head>
 <body>
@@ -463,31 +513,60 @@ p{ margin:0; }
     </nav>
   </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero__copy">
-      <p class="hero__kicker">Studio foto wisuda &amp; momen kelulusan</p>
-      <h1 class="hero__title">Abadikan momen kelulusanmu.</h1>
-      <p class="hero__desc">Amora Grads bantu kamu mengabadikan hari kelulusan dengan hasil yang natural, hangat, dan tetap kamu banget.</p>
-      <div class="hero__actions">
-        <a href="katalog.html" class="btn btn--primary">Booking sekarang</a>
-        <a href="#galeri" class="btn btn--ghost">Lihat hasil</a>
+<section class="hero" id="hero">
+  <div class="hero__viewport">
+
+    <!-- SLIDE 1 -->
+    <div class="hero__s hero__s--1">
+      <div class="hero__copy">
+        <p class="hero__kicker">Studio foto wisuda &amp; momen kelulusan</p>
+        <h1 class="hero__title">Abadikan momen kelulusanmu.</h1>
+        <p class="hero__desc">Amora Grads bantu kamu mengabadikan hari kelulusan dengan hasil yang natural, hangat, dan tetap kamu banget.</p>
+        <div class="hero__actions">
+          <a href="katalog.html" class="btn btn--primary">Booking sekarang</a>
+          <a href="#galeri" class="btn btn--ghost">Lihat hasil</a>
+        </div>
+      </div>
+
+      <div class="hero__stack" aria-hidden="true">
+        <div class="polaroid polaroid--1">
+          <img class="polaroid__photo" src="aset/foto 1.png" alt="">
+        </div>
+        <div class="polaroid polaroid--2">
+          <img class="polaroid__photo" src="aset/foto 2.png" alt="">
+          <span class="polaroid__pin"></span>
+        </div>
+        <div class="polaroid polaroid--3">
+          <img class="polaroid__photo" src="aset/foto 3.jpeg" alt="">
+        </div>
       </div>
     </div>
 
-    <div class="hero__stack" aria-hidden="true">
-      <div class="polaroid polaroid--1">
-        <img class="polaroid__photo" src="aset/foto 1.png" alt="">
-      </div>
-      <div class="polaroid polaroid--2">
-        <img class="polaroid__photo" src="aset/foto 2.png" alt="">
-        <span class="polaroid__pin"></span>
-      </div>
-      <div class="polaroid polaroid--3">
-        <img class="polaroid__photo" src="aset/foto 3.jpeg" alt="">
+    <!-- SLIDE 2 -->
+    <div class="hero__s hero__s--2 is-off" inert>
+      <div class="arc" aria-hidden="true">
+        <figure class="arc__item arc__item--l"><img src="aset/foto 1.png" alt=""></figure>
+        <figure class="arc__item arc__item--c"><img src="aset/foto 2.png" alt=""><span class="polaroid__pin"></span></figure>
+        <figure class="arc__item arc__item--r"><img src="aset/foto 3.jpeg" alt=""></figure>
+      </div> 
+      <div class="hero__copy">
+        <p class="hero__kicker">Paket wisuda lengkap, sudah termasuk edit</p>
+        <h2 class="hero__title">Satu hari, kenangan seumur hidup.</h2>
+        <p class="hero__desc">Pilih paket yang pas, amankan tanggalmu, dan biar kami yang urus sisanya.</p>
+        <div class="hero__actions">
+          <a href="katalog.html" class="btn btn--primary">Lihat paket</a>
+          <a href="#kontak" class="btn btn--ghost">Hubungi kami</a>
+        </div>
       </div>
     </div>
-  </section>
+
+  </div>
+
+  <div class="hero-dots" id="heroDots">
+    <button type="button" class="hero-dot on" aria-label="Slide 1"></button>
+    <button type="button" class="hero-dot" aria-label="Slide 2"></button>
+  </div>
+</section>
 
   <!-- STATS -->
   <section class="stats">
@@ -505,8 +584,7 @@ p{ margin:0; }
     </div>
   </section>
 
-  <!-- PAKET / KATALOG: 4 paket pertama, datanya diambil dari paket.js supaya
-       selalu sinkron dengan katalog.html. Klik kartu → detail paket itu. -->
+  <!-- PAKET / KATALOG: 4 paket pertama -->
   <section class="section" id="paket">
     <div class="section__head">
       <h2>Paket yang bisa kamu pilih</h2>
@@ -649,6 +727,9 @@ p{ margin:0; }
 <!-- Data paket (dipakai untuk preview 4 paket di atas, biar sinkron dengan katalog.html) -->
 <script src="paket.js"></script>
 <script>
+  var DUR = matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 900; // lama foto bergerak (ms)
+  var EASE = 'cubic-bezier(.45,.05,.2,1)';
+
   /* Render 4 paket pertama dari paket.js sebagai preview di homepage */
   function renderPkgPreview(){
     var row = document.getElementById('pkgPreviewRow');
@@ -670,6 +751,155 @@ p{ margin:0; }
       if (mt) mt.checked = false;
     });
   });
+
+
+(function(){
+  var hero = document.getElementById('hero');
+  if(!hero) return;
+  var s1 = hero.querySelector('.hero__s--1');
+  var s2 = hero.querySelector('.hero__s--2');
+  if(!s1 || !s2 || !s2.animate) return;
+
+  var pols = [].slice.call(s1.querySelectorAll('.polaroid'));
+  var arcs = [].slice.call(s2.querySelectorAll('.arc__item'));
+  var dots = [].slice.call(hero.querySelectorAll('.hero-dot'));
+
+  var INTERVAL = 4500;   // jeda antar slide (ms)
+  var DUR = matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 950; // lama foto bergerak (ms)
+  var EASE = 'cubic-bezier(.22,.8,.26,1)';
+  var cur = 0, busy = false, timer = null;
+
+  s2.classList.add('is-off', 'is-quiet');
+  s2.setAttribute('inert', '');
+
+  // foto di slide 2 selalu sama dengan polaroid slide 1 (supaya transisinya nyambung)
+  arcs.forEach(function(a, k){
+    var src = pols[k] && pols[k].querySelector('img');
+    var im = a.querySelector('img');
+    if(src && im) im.setAttribute('src', src.getAttribute('src'));
+  });
+  // ukuran foto slide 2: kiri = kanan, tengah mengikuti polaroid tengah
+  function sync(){
+    var desk = matchMedia('(min-width: 900px)').matches;
+    arcs.forEach(function(a){ a.style.width = ''; a.style.height = ''; });
+    if(!pols[0] || !pols[1]) return;
+    var wL, hL, wC, hC;
+    if(desk){
+      wL = pols[0].offsetWidth; hL = pols[0].offsetHeight;
+      wC = pols[1].offsetWidth; hC = pols[1].offsetHeight;
+    } else {
+      wL = arcs[0].offsetWidth; hL = wL * pols[0].offsetHeight / pols[0].offsetWidth;
+      wC = arcs[1].offsetWidth; hC = wC * pols[1].offsetHeight / pols[1].offsetWidth;
+    }
+    var sz = [[wL, hL], [wC, hC], [wL, hL]];
+    arcs.forEach(function(a, k){
+      a.style.width  = sz[k][0] + 'px';
+      a.style.height = sz[k][1] + 'px';
+    });
+  }
+
+  function box(el){
+    var r = el.getBoundingClientRect();
+    var m = getComputedStyle(el).transform, a = 0, x = 0, y = 0;
+    if(m && m !== 'none'){
+      var v = m.match(/matrix\(([^)]+)\)/)[1].split(',').map(parseFloat);
+      a = Math.atan2(v[1], v[0]) * 180 / Math.PI; x = v[4]; y = v[5];
+    }
+    return { cx:r.left + r.width/2, cy:r.top + r.height/2, w:el.offsetWidth, h:el.offsetHeight, a:a, x:x, y:y };
+  }
+
+  // animasi foto: polaroid slide 1 <-> posisi melengkung slide 2 (tanpa scale, jadi tidak gepeng)
+  function flight(toTwo){
+    sync();
+    var arcEl = arcs[0].parentNode;
+    var data = arcs.map(function(a, k){ return { A: box(a), P: box(pols[k]) }; });
+    var R = arcEl.getBoundingClientRect();
+
+    // kunci ukuran wadah supaya layout tidak bergeser selama foto bergerak
+    arcEl.style.width = R.width + 'px';
+    arcEl.style.height = R.height + 'px';
+    arcEl.style.position = 'relative';
+
+    return arcs.map(function(arc, k){
+      var A = data[k].A, P = data[k].P;
+      var aL = A.cx - A.x - R.left - A.w / 2, aT = A.cy - A.y - R.top - A.h / 2;
+      var pL = P.cx - R.left - P.w / 2,        pT = P.cy - R.top - P.h / 2;
+
+      arc.style.position = 'absolute';
+      arc.style.left = aL + 'px';
+      arc.style.top = aT + 'px';
+      arc.style.zIndex = getComputedStyle(pols[k]).zIndex;
+
+      var to = {
+        left: aL + 'px', top: aT + 'px', width: A.w + 'px', height: A.h + 'px',
+        transform: 'translate(' + A.x + 'px,' + A.y + 'px) rotate(' + A.a + 'deg)'
+      };
+      var from = {
+        left: pL + 'px', top: pT + 'px', width: P.w + 'px', height: P.h + 'px',
+        transform: 'rotate(' + P.a + 'deg)'
+      };
+      return arc.animate(toTwo ? [from, to] : [to, from],
+        { duration: DUR, delay: k * 50, easing: EASE, fill: 'both' });
+    });
+  }
+  function unfreeze(){
+    var e = arcs[0].parentNode;
+    e.style.width = ''; e.style.height = ''; e.style.position = '';
+    arcs.forEach(function(a){
+      a.style.position = ''; a.style.left = ''; a.style.top = ''; a.style.zIndex = '';
+    });
+  }
+
+  function resetZ(){ arcs.forEach(function(a){ a.style.zIndex = ''; }); }
+  function whenDone(anims, fn){
+    Promise.all(anims.map(function(a){ return a.finished.catch(function(){}); })).then(fn);
+  }
+
+  function go(n){
+    if(busy || n === cur) return;
+    busy = true; cur = n;
+    dots.forEach(function(d, k){ d.classList.toggle('on', k === n); });
+    var anims = flight(n === 1);
+
+    if(n === 1){
+      s1.classList.add('is-quiet', 'stack-hidden');
+      s1.setAttribute('inert', '');
+      s2.classList.remove('is-off', 'is-quiet');
+      s2.removeAttribute('inert');
+      setTimeout(function(){ s1.classList.add('is-off'); }, 400);
+      // untuk n === 1 (menuju slide 2)
+      whenDone(anims, function(){
+        anims.forEach(function(a){ a.cancel(); });
+        unfreeze();
+        busy = false;
+});
+    } else {
+      s2.classList.add('is-quiet');
+      s2.setAttribute('inert', '');
+      s1.classList.remove('is-off', 'is-quiet');
+      s1.removeAttribute('inert');
+      // untuk else (kembali ke slide 1)
+      whenDone(anims, function(){
+        s2.classList.add('is-off');
+        s1.classList.remove('stack-hidden');
+        anims.forEach(function(a){ a.cancel(); });
+        unfreeze();
+        busy = false;
+      });
+    }
+  }
+
+  function stop(){ clearInterval(timer); }
+  function start(){ stop(); timer = setInterval(function(){ if(!document.hidden) go(cur ? 0 : 1); }, INTERVAL); }
+
+  dots.forEach(function(d, k){ d.addEventListener('click', function(){ go(k); start(); }); });
+  hero.addEventListener('mouseenter', stop);
+  hero.addEventListener('mouseleave', start);
+  sync();
+  window.addEventListener('resize', sync);
+
+  start();
+})();
 </script>
 
 <script src="auth.js"></script>

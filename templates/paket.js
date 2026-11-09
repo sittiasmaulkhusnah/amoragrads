@@ -1,7 +1,6 @@
-/* paket.js — DIBANGKITKAN DARI DATABASE oleh Django (lihat app/views.py: paket_js).
-   Ubah paket lewat dashboard admin > Kelola Paket, bukan di file ini. */
+/* paket.js — DIBANGKITKAN DARI DATABASE oleh Django (app/views.py: paket_js).
 
-var WA_NUMBER = "6281296772025";   /* format internasional, tanpa + atau 0 di depan */
+var WA_NUMBER = "{{ wa_number }}";   /* format internasional, tanpa + atau 0 di depan */
 
 var PACKAGES = {{ packages_json|safe }};
 

@@ -15,7 +15,9 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
 from .form_pengguna import LoginForm, RegisterForm
-from .models import Booking, KategoriPaket, Package, Payment, UserAdmin, UserPengguna
+from .models import (Article, Booking, HeroSlide, KategoriPaket, KerjaSama, Package, Payment, Page,
+                     UserAdmin, UserPengguna, WebSetting)
+from .views_konten import konteks_publik
 from .roles import ROLE_ADMIN, ROLE_PENGGUNA
 
 JAM_BOOKING = ['09.00', '10.30', '12.00', '13.30', '15.00', '16.30']   # sama dengan TIME_SLOTS di booking.html
@@ -35,17 +37,23 @@ def tgl_booking(b):
 # Halaman frontend
 @ensure_csrf_cookie
 def home(request):
-    return render(request, 'index.html')
+    ctx = konteks_publik()
+    ctx.update({
+        'hero_slides': HeroSlide.objects.filter(is_active=True),
+        'artikel_terbaru' : Article.objects.filter(status='published').order_by('-created_at')[:3],
+        'mitra': KerjaSama.objects.all(),
+    })
+    return render(request, 'index.html', ctx)
 
 
 @ensure_csrf_cookie
 def katalog(request):
-    return render(request, 'katalog.html')
+    return render(request, 'katalog.html', konteks_publik())
 
 
 @ensure_csrf_cookie
 def detail(request):
-    return render(request, 'detail.html')
+    return render(request, 'detail.html', konteks_publik())
 
 
 def paket_tersedia():
@@ -94,6 +102,7 @@ def paket_js(request):
     """paket.js dibangkitkan dari database, jadi katalog/detail/beranda/booking otomatis ikut data terbaru."""
     js = render_to_string('paket.js', {
         'packages_json': json.dumps(paket_untuk_frontend(), ensure_ascii=False),
+        'wa_number': (WebSetting.objects.first().wa_number if WebSetting.objects.exists() else '') or '6281296772025',
     })
     resp = HttpResponse(js, content_type='application/javascript; charset=utf-8')
     resp['Cache-Control'] = 'no-cache'
@@ -103,15 +112,17 @@ def paket_js(request):
 @ensure_csrf_cookie
 def paket_detail(request, kategori_slug, slug):
     """URL cantik /produk/<kategori>/<slug>/ -- tampilannya memakai detail.html."""
-    return render(request, 'detail.html', {'paket_slug': slug})
+    ctx = konteks_publik()
+    ctx['paket_slug'] = slug
+    return render(request, 'detail.html', ctx)
 
 
 @ensure_csrf_cookie
 def booking_page(request):
-    return render(request, 'booking.html')
+    return render(request, 'booking.html', konteks_publik())
 
 
-#  Login, Register, Logout 
+# Login, Register, Logout
 @ensure_csrf_cookie
 def loginView(request):
     if request.user.is_authenticated:
@@ -162,7 +173,7 @@ def LogoutView(request):
     return redirect('home')
 
 
-#  Dashboard 
+# ======================= Dashboard (role di kolom last_name) =======================
 @login_required
 def index(request):
     user = request.user
@@ -190,6 +201,8 @@ def index(request):
             'menunggu': bookings.filter(status='pending').count(),
             'total_paket': Package.objects.count(),
             'total_kategori': KategoriPaket.objects.count(),
+            'total_artikel': Article.objects.count(),
+            'total_halaman': Page.objects.count(),
             'diterima': rupiah(diterima),
             'rows': rows,
             'status_choices': Booking.STATUS_CHOICES,
@@ -231,7 +244,7 @@ def index(request):
     return redirect('login')
 
 
-# ======================= API kecil untuk frontend =======================
+# API kecil untuk frontend
 @ensure_csrf_cookie
 def api_me(request):
     u = request.user
