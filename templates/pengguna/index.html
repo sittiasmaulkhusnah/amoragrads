@@ -3,6 +3,11 @@
 {% block content %}
 <h1 class="page__title">Halo, {{ nama }}</h1>
 <p class="page__sub">Pantau jadwal sesi foto wisudamu di sini.</p>
+{% for p in pengingat %}
+<div style="background:#FBEFD9;border:1px solid #E7C9A6;border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:14px">
+  <b>Jangan lupa lunasi ya!</b> Sisa pembayaran {{ p.pkg }} sebesar <b>{{ p.sisa }}</b> paling lambat <b>{{ p.batas }}</b>. Klik tombol "Lunasi" di bawah.
+</div>
+{% endfor %}
 
 <div class="stats">
   <div class="stat"><small>Total booking</small><b>{{ total }}</b></div>
@@ -50,6 +55,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ midtrans_snap_js }}" data-client-key="{{ midtrans_client_key }}"></script>
 <script>
 (function(){
   var orders = JSON.parse(document.getElementById("amora-orders").textContent);
@@ -68,6 +74,7 @@
       div.className = "order";
       var sc = statusClassMap[o.status] || "";
       var actionBtns = "";
+      var lunasiBtn = o.bisa_lunas ? '<button class="primary" data-act="lunasi" data-id="' + o.id + '">Lunasi ' + o.sisa + '</button>' : '';
       if(o.status === "Terjadwal" && o.bisa_ubah){
         actionBtns = '<button data-act="reschedule" data-id="' + o.id + '">Reschedule</button><button data-act="batal" data-id="' + o.id + '">Batalkan</button><button class="primary" data-go="index.html#kontak">Hubungi Admin</button>';
       } else if(o.status === "Selesai"){
@@ -87,7 +94,11 @@
           '<div class="status ' + sc + '">' + o.status + '</div>' +
         '</div>' +
         '<div class="order-bottom">' +
-          '<div class="total">Biaya sesi: <b>' + o.price + '</b></div>' +
+                    '<div class="total">Biaya sesi: <b>' + o.price + '</b>' +
+            (o.status === "Dibatalkan" ? '' :
+              '<br>' + o.status_bayar + ' &middot; dibayar <b>' + o.dibayar + '</b>' +
+              (o.bisa_lunas ? ' &middot; sisa <b>' + o.sisa + '</b> (lunasi paling lambat ' + o.batas_lunas + ')' : '')) +
+          '</div>' +
           '<div class="order-actions">' + actionBtns + '</div>' +
         '</div>';
       orderList.appendChild(div);
@@ -100,7 +111,25 @@
       headers: { "Content-Type": "application/json", "X-CSRFToken": csrf() },
       body: JSON.stringify(data || {}) }).then(function(r){ return r.json(); });
   }
-  function byId(id){ return orders.filter(function(o){ return String(o.id) === String(id); })[0]; }
+    function byId(id){ return orders.filter(function(o){ return String(o.id) === String(id); })[0]; }
+
+  function cekBayar(id){
+    return post("/app/api/bookings/" + id + "/cek-bayar/").then(function(){ window.location.reload(); })
+      .catch(function(){ window.location.reload(); });
+  }
+  function lunasi(o, btn){
+    if(!window.snap){ alert("Layanan pembayaran belum siap. Muat ulang halaman lalu coba lagi."); return; }
+    btn.disabled = true;
+    post("/app/api/bookings/" + o.id + "/pelunasan/").then(function(res){
+      if(!res.ok){ alert(res.error || "Gagal membuat tagihan pelunasan."); btn.disabled = false; return; }
+      window.snap.pay(res.token, {
+        onSuccess: function(){ cekBayar(o.id); },
+        onPending: function(){ cekBayar(o.id); },
+        onError: function(){ alert("Pembayaran gagal. Coba lagi."); btn.disabled = false; },
+        onClose: function(){ btn.disabled = false; }
+      });
+    }).catch(function(){ alert("Tidak bisa terhubung ke server."); btn.disabled = false; });
+  }
 
   /* ---- Reschedule (modal) ---- */
   var modal = document.getElementById("rsModal"), rsDate = document.getElementById("rsDate"),
@@ -133,7 +162,8 @@
     if(b.hasAttribute("data-go")){ window.location.href = b.getAttribute("data-go"); return; }
     var o = byId(b.getAttribute("data-id"));
     if(!o){ return; }
-    if(b.getAttribute("data-act") === "reschedule"){ bukaReschedule(o); }
+        if(b.getAttribute("data-act") === "reschedule"){ bukaReschedule(o); }
+    if(b.getAttribute("data-act") === "lunasi"){ lunasi(o, b); }
     if(b.getAttribute("data-act") === "batal"){
       if(!confirm("Batalkan booking " + o.pkg + " pada " + o.date + "?\nUntuk DP yang sudah dibayar, hubungi admin.")){ return; }
       post("/app/api/bookings/" + o.id + "/batal/").then(function(res){

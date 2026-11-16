@@ -22,6 +22,37 @@
   <div class="card stat"><small>DP / Pembayaran Diterima</small><b>{{ diterima }}</b></div>
 </div>
 
+<div class="card" style="margin:16px 0;padding:16px">
+  <form method="post" action="{% url 'app:dp_ubah' %}" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+    {% csrf_token %}
+    <div>
+      <label for="nominal_dp"><b>Nominal DP booking (Rp)</b></label><br>
+      <input type="number" id="nominal_dp" name="nominal_dp" min="10000" step="1000" value="{{ dp_amount }}" required>
+    </div>
+    <button class="btn btn--primary">Simpan DP</button>
+  </form>
+  <p class="sub" style="margin:8px 0 0">Berlaku untuk booking baru. Booking yang sudah dibuat tetap memakai DP lamanya.</p>
+</div>
+
+{% if pengingat %}
+<div class="card" style="margin:16px 0;padding:16px;border:1px solid #E7C9A6">
+  <h3 style="margin-top:0">Pengingat pelunasan ({{ pengingat|length }})</h3>
+  <p class="sub">Booking dikonfirmasi yang masih punya sisa tagihan dan pemotretannya 3 hari lagi atau kurang.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Pelanggan</th><th>Paket / Jadwal</th><th>Sisa</th><th>Batas lunas</th><th></th></tr>
+    {% for p in pengingat %}
+    <tr>
+      <td><b>{{ p.nama }}</b></td>
+      <td>{{ p.b.package.name }}<br><span class="sub">{{ p.tgl }}</span></td>
+      <td>{{ p.sisa }}</td>
+      <td>{{ p.batas }}{% if p.hari_lagi <= 1 %} <span class="badge" style="background:#F4E0E0;color:#8A1F23">{% if p.hari_lagi == 0 %}hari H{% else %}H-1, hari ini batas{% endif %}</span>{% endif %}</td>
+      <td>{% if p.wa %}<a class="btn btn--primary" target="_blank" rel="noopener" href="{{ p.wa }}">Kirim WA</a>{% else %}<span class="sub">No. WA kosong</span>{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </table></div>
+</div>
+{% endif %}
+
 <h3>Booking terbaru</h3>
 <div class="tablewrap">
 <table>
@@ -33,12 +64,16 @@
     <td>{{ r.b.package.name }}</td>
     <td>{{ r.tgl }}</td>
     <td><span class="badge {{ r.b.status }}">{{ r.b.get_status_display }}</span></td>
-    <td>{% if r.pay %}<span class="badge {{ r.pay.status }}">{{ r.pay.get_status_display }}</span>{% else %}-{% endif %}</td>
+        <td>
+      {% if r.b.status == 'cancelled' and r.b.status_bayar == 'failed' %}-
+      {% else %}<span class="badge {{ r.b.status_bayar }}">{{ r.b.status_bayar_label }}</span>
+      <br><span class="sub">{{ r.dibayar }} dari {{ r.total }}{% if r.b.status_bayar == 'partial' %} · sisa {{ r.sisa }}{% endif %}</span>{% endif %}
+    </td>
     <td>
       <form method="post" action="{% url 'app:booking_status' r.b.pk %}" style="display:flex;gap:6px;flex-wrap:wrap">
         {% csrf_token %}
         <select name="status">{% for v,l in status_choices %}<option value="{{ v }}" {% if v == r.b.status %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
-        <select name="pay_status">{% for v,l in pay_choices %}<option value="{{ v }}" {% if r.pay and v == r.pay.status %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+         {% if r.bisa_tandai_lunas %}<label class="sub" style="display:flex;align-items:center;gap:4px"><input type="checkbox" name="tandai_lunas" value="1"> Tandai lunas</label>{% endif %}
         <button class="btn btn--primary">Simpan</button>
       </form>
     </td>

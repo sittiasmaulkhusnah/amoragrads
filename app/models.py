@@ -1,6 +1,7 @@
 import os
 import uuid
 
+from datetime import timedelta
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -66,7 +67,7 @@ class UserPengguna(models.Model):
         return f"Pengguna {self.user}"
 
 
-# ===================== KATALOG PAKET (setara "produk" di materi dosen) =====================
+# KATALOG PAKET
 def _slug_unik(model, dasar, pk=None, maks=100):
     dasar = (slugify(dasar) or 'paket')[:maks - 8]
     slug, n = dasar, 2
@@ -227,10 +228,42 @@ class Booking(models.Model):
         choices=STATUS_CHOICES,
         default='pending'
     )
+    total_harga = models.PositiveIntegerField(
+    default=0, help_text='Harga paket saat booking dibuat (0 = pakai harga paket sekarang)')
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    def __str__(self): 
         return f"Booking #{self.pk}"
+    
+        # ---- ringkasan pembayaran (DP + pelunasan di booking yang sama) ----
+    @property
+    def harga_total(self):
+        return self.total_harga or self.package.harga_akhir
+
+    @property
+    def total_dibayar(self):
+        # .all() dipakai supaya hasil prefetch_related ikut terpakai
+        return sum(p.amount for p in self.payment_set.all() if p.status in ('partial', 'paid'))
+
+    @property
+    def sisa_tagihan(self):
+        return max(self.harga_total - self.total_dibayar, 0)
+
+    @property
+    def status_bayar(self):
+        if self.total_dibayar == 0:
+            return 'failed' if self.status == 'cancelled' else 'pending'
+        return 'paid' if self.sisa_tagihan == 0 else 'partial'
+
+    @property
+    def status_bayar_label(self):
+        return {'pending': 'Menunggu Pembayaran', 'partial': 'DP Dibayar',
+                'paid': 'Lunas', 'failed': 'Gagal'}[self.status_bayar]
+
+    @property
+    def batas_pelunasan(self):
+        """Pelunasan paling lambat sehari sebelum pemotretan (H-1)."""
+        return self.booking_date - timedelta(days=1)
 
 
 # MODEL 8: Pembayaran
@@ -242,6 +275,16 @@ class Payment(models.Model):
         ('paid', 'Lunas'),
         ('failed', 'Gagal'),
     ]
+    JENIS_CHOICES = [
+        ('dp', 'DP'),
+        ('full', 'Bayar Penuh'),
+        ('pelunasan', 'Pelunasan'),
+    ]
+
+    booking = models.ForeignKey(Booking, on_delete=models.PROTECT)
+    jenis = models.CharField(max_length=10, choices=JENIS_CHOICES, default='dp')
+    snap_token = models.CharField(max_length=100, blank=True)
+    amount = models.PositiveIntegerField()
 
     booking = models.ForeignKey(
         Booking,
@@ -400,6 +443,7 @@ class WebSetting(models.Model):
     link_facebook = models.URLField(blank=True)
     link_youtube = models.URLField(blank=True)
     link_maps = models.URLField(blank=True)
+    nominal_dp = models.PositiveIntegerField(default=50000, verbose_name='Nominal DP booking (Rp)')
 
     class Meta:
         verbose_name = 'Pengaturan Website'
@@ -415,7 +459,10 @@ class WebSetting(models.Model):
 
     def __str__(self):
         return self.nama_web
-
+    
+def nominal_dp_aktif():
+        ws = WebSetting.objects.first()
+        return ws.nominal_dp if ws and ws.nominal_dp else 50000
 
 # MODEL 13: Kerja Sama / Mitra (networking)
 class KerjaSama(models.Model):

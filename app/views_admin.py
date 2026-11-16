@@ -1,12 +1,15 @@
+import re
+
 from django.contrib import messages
 from django.db.models import ProtectedError
+from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .decorators_admin import admin_required
 from .form_admin import KategoriPaketForm, PaketForm, formProfile
-from .models import Booking, KategoriPaket, MediaPaket, Package, Payment, UserAdmin, UserPengguna
-
+from .models import (Booking, KategoriPaket, MediaPaket, Package, Payment, UserAdmin, UserPengguna,
+                     WebSetting, nominal_dp_aktif)
 
 @admin_required
 def profile_admin(request):
@@ -49,18 +52,41 @@ def daftar_pengguna(request):
 
 @admin_required
 @require_POST
+@admin_required
+@require_POST
 def booking_status(request, pk):
     b = get_object_or_404(Booking, pk=pk)
     st = request.POST.get('status')
     if st in dict(Booking.STATUS_CHOICES):
         b.status = st
         b.save()
-    ps = request.POST.get('pay_status')
-    pay = b.payment_set.first()
-    if pay and ps in dict(Payment.STATUS_CHOICES):
-        pay.status = ps
-        pay.save()
+    if request.POST.get('tandai_lunas') and b.status != 'cancelled':
+        sisa = b.sisa_tagihan
+        if sisa > 0:
+            Payment.objects.create(booking=b, jenis='pelunasan', amount=sisa, status='paid',
+                                   payment_method='Manual (admin)',
+                                   transaction_id=f'MANUAL-{b.pk}-{timezone.now():%d%H%M%S}')
     messages.success(request, 'Status booking diperbarui.')
+    return redirect('app:dashboard')
+
+
+@admin_required
+@require_POST
+def dp_ubah(request):
+    angka = re.sub(r'\D', '', request.POST.get('nominal_dp', ''))
+    nilai = int(angka) if angka else 0
+    if nilai < 10000:
+        messages.error(request, 'Nominal DP minimal Rp 10.000.')
+        return redirect('app:dashboard')
+    ws = WebSetting.objects.first() or WebSetting()
+    ws.nominal_dp = nilai
+    ws.save()
+    termurah = (Package.objects.filter(status='Tersedia').order_by('price')
+                .values_list('price', flat=True).first())
+    pesan = f'Nominal DP diubah menjadi Rp {nilai:,}'.replace(',', '.') + '.'
+    if termurah and nilai >= termurah:
+        pesan += ' Catatan: ada paket dengan harga <= DP, paket itu akan otomatis dibayar lunas.'
+    messages.success(request, pesan)
     return redirect('app:dashboard')
 
 

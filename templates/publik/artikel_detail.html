@@ -16,7 +16,7 @@
       </p>
     </header>
 
-    <div class="detail__body prose">{{ art.content|linebreaks }}</div>
+    <div class="detail__body prose">{% if '<p' in art.content %}{{ art.content|safe }}{% else %}{{ art.content|linebreaks }}{% endif %}</div>
   </article>
 
   {% if terkait %}

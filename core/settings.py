@@ -150,3 +150,12 @@ from django.db.backends.mysql.base import DatabaseWrapper
 from django.db.backends.mysql.features import DatabaseFeatures
 DatabaseWrapper.check_database_version_supported = lambda self: None
 DatabaseFeatures.can_return_columns_from_insert = False
+
+# --- Midtrans (SANDBOX) ---
+try:
+    from .midtrans_keys import MIDTRANS_SERVER_KEY, MIDTRANS_CLIENT_KEY
+except ImportError:
+    MIDTRANS_SERVER_KEY = MIDTRANS_CLIENT_KEY = ''
+MIDTRANS_SNAP_URL = 'https://app.sandbox.midtrans.com/snap/v1/transactions'
+MIDTRANS_STATUS_URL = 'https://api.sandbox.midtrans.com/v2/{order_id}/status'
+MIDTRANS_SNAP_JS = 'https://app.sandbox.midtrans.com/snap/snap.js'

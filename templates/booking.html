@@ -721,6 +721,20 @@
       font-weight: 600;
       color: var(--red-dark);
     }
+     .pay-opts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+    .pay-opt {
+      display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px;
+      border: 1px solid var(--line); border-radius: var(--radius-s);
+      background: var(--white); cursor: pointer;
+    }
+    .pay-opt:has(input:checked) { border-color: var(--red); background: var(--rose); }
+    .pay-opt input { margin-top: 5px; accent-color: var(--red); }
+    .pay-opt__body { display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+    .pay-opt__body em {
+      font-style: normal; font-family: var(--font-display);
+      font-size: 20px; font-weight: 600; color: var(--red-dark);
+    }
+    .pay-opt__body small { color: var(--ink-soft); font-size: 12.5px; line-height: 1.5; }
 
     .qris-card {
       background: linear-gradient(135deg, var(--red-dark), var(--red));
@@ -1058,6 +1072,7 @@
       }
     }
   </style>
+<script src="{{ midtrans_snap_js }}" data-client-key="{{ midtrans_client_key }}"></script>
 </head>
 
 <body>
@@ -1101,7 +1116,7 @@
     <section class="booking-head">
       <p class="booking-head__eyebrow">AMORA GRADS</p>
       <h1>Booking sesi foto</h1>
-      <p>Pilih tanggal dan jam yang masih tersedia. Booking cukup DP dulu.</p>
+      <p>Pilih tanggal dan jam yang masih tersedia. Bayar DP dulu atau langsung lunas, terserah kamu.</p>
     </section>
 
     <div class="booking-wrap">
@@ -1117,7 +1132,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
 
-    const DP_AMOUNT = 50000; // sesuai Terms & Conditions: booking minimal DP 50K
+    const DP_AMOUNT = {{ dp_amount|default:50000 }};
     const TIME_SLOTS = ['09.00', '10.30', '12.00', '13.30', '15.00', '16.30'];
     const MONTH_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     const WEEKDAY_LABELS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
@@ -1301,7 +1316,7 @@
       </div>
       <div class="form-row"><label class="field-label">Nama lengkap</label><input type="text" id="custName" placeholder="Nama kamu" value="${booking.name || ''}"></div>
       <div class="form-row"><label class="field-label">Nomor WhatsApp</label><input type="tel" id="custPhone" placeholder="0812xxxxxxx" value="${booking.phone || ''}"></div>
-      <button class="btn btn--primary btn--block" id="confirmBtn">Lanjut ke pembayaran DP</button>
+      <button class="btn btn--primary btn--block" id="confirmBtn">Lanjut ke pembayaran</button>
     `;
       card.querySelector('#backBtn').onclick = () => renderStep2();
       card.querySelector('#confirmBtn').onclick = () => {
@@ -1317,62 +1332,125 @@
       };
     }
 
+        let snapToken = null;
+    let bookingDbId = null;
+
+    function csrfHeaders() {
+      return { 'Content-Type': 'application/json',
+               'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '' };
+    }
+
+        function hargaPaket(pkg) { return parseInt(String(pkg.price).replace(/\D/g, ''), 10) || 0; }
+    function rp(n) { return 'Rp' + Number(n).toLocaleString('id-ID'); }
+    function batasLunasLabel() {
+      const t = new Date(booking.dateParts.y, booking.dateParts.m, booking.dateParts.d - 1);
+      return t.getDate() + ' ' + MONTH_NAMES[t.getMonth()] + ' ' + t.getFullYear();
+    }
+
     function renderPayment(pkg) {
       clearInterval(payTimerInterval);
-      const orderId = 'AG-DP-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-      booking.orderId = orderId;
-
+      const harga = hargaPaket(pkg);
+      const bisaDp = DP_AMOUNT < harga;
+      let opsi = bisaDp ? (booking.opsi || 'dp') : 'full';
       card.innerHTML = `
       ${backLink('Kembali')}
-      <p class="step-eyebrow">Pembayaran DP</p>
-      <h2 class="step-title">Bayar DP dengan QRIS</h2>
-      <div class="pay-amount"><span>DP booking (sisanya dilunasi H-1)</span><b>Rp${DP_AMOUNT.toLocaleString('id-ID')}</b></div>
-      <div class="qris-card">
-        <div class="qris-brand">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" fill="white"/><rect x="14" y="3" width="7" height="7" rx="1" fill="white"/><rect x="3" y="14" width="7" height="7" rx="1" fill="white"/><rect x="14" y="14" width="3" height="3" fill="white"/><rect x="18" y="18" width="3" height="3" fill="white"/><rect x="14" y="18" width="3" height="3" fill="white"/><rect x="18" y="14" width="3" height="3" fill="white"/></svg>
-          <span>QRIS</span>
-        </div>
-        <div class="qr-box" id="qrBox"></div>
-        <p class="qris-merchant">Amora Grads · Makassar</p>
+      <p class="step-eyebrow">Pembayaran</p>
+      <h2 class="step-title">Pilih cara bayar</h2>
+      <div class="pay-opts">
+        ${bisaDp ? `
+        <label class="pay-opt">
+          <input type="radio" name="opsiBayar" value="dp" ${opsi === 'dp' ? 'checked' : ''}>
+          <span class="pay-opt__body"><b>Bayar DP dulu</b><em>${rp(DP_AMOUNT)}</em>
+            <small>Sisa ${rp(harga - DP_AMOUNT)} dilunasi paling lambat H-1 pemotretan, langsung dari dashboard (di booking yang sama).</small></span>
+        </label>` : ''}
+        <label class="pay-opt">
+          <input type="radio" name="opsiBayar" value="full" ${opsi === 'full' ? 'checked' : ''}>
+          <span class="pay-opt__body"><b>Bayar lunas sekarang</b><em>${rp(harga)}</em>
+            <small>Langsung beres, tidak ada pembayaran lagi.</small></span>
+        </label>
       </div>
-      <div class="pay-timer">Selesaikan dalam <b id="payClock">15:00</b></div>
-      <ol class="pay-steps">
-        <li><b>1</b> Buka aplikasi m-banking / e-wallet apa pun yang mendukung QRIS.</li>
-        <li><b>2</b> Pilih Scan QR, arahkan ke kode di atas.</li>
-        <li><b>3</b> Periksa nominal DP, lalu selesaikan pembayaran.</li>
-      </ol>
-      <p class="pay-demo-note">Catatan: ini QR contoh untuk demo tampilan, belum tersambung ke QRIS sungguhan — jangan dipakai untuk transaksi nyata. Setelah bayar, kirim juga bukti transfer ke WhatsApp kami ya.</p>
-      <button class="btn btn--primary btn--block" id="simPayBtn">Saya sudah bayar DP</button>
-      <div class="pay-status" id="payStatus" style="display:none;"><span class="spinner"></span> Memeriksa pembayaran…</div>
+      <div class="pay-amount"><span id="payAmountLabel"></span><b id="payAmountVal"></b></div>
+      <div class="summary-box">
+        <div class="line"><span>Paket</span><b>${pkg.name}</b></div>
+        <div class="line"><span>Jadwal</span><b>${booking.dateLabel}, ${booking.time}</b></div>
+      </div>
+      <p class="pay-demo-note">Mode uji coba (Sandbox): tidak ada uang sungguhan yang dipotong.</p>
+      <button class="btn btn--primary btn--block" id="payBtn"></button>
+      <div class="pay-status" id="payStatus" style="display:none;"><span class="spinner"></span> <span id="payStatusText"></span></div>
     `;
       card.querySelector('#backBtn').onclick = () => renderStep3();
+      const payBtn = card.querySelector('#payBtn');
 
-      try {
-        const demoPayload = `00020101021126QRIS-DEMO-AMORAGRADS0212${orderId}530336054${DP_AMOUNT}5802ID`;
-        new QRCode(document.getElementById('qrBox'), { text: demoPayload, width: 160, height: 160, colorDark: '#211B18', colorLight: '#ffffff' });
-      } catch (err) {
-        document.getElementById('qrBox').innerHTML = '<span style="color:#8A1F23; font-size:12px; padding:8px;">QR tidak tersedia</span>';
+      function tampil() {
+        const full = opsi === 'full';
+        card.querySelector('#payAmountLabel').textContent = full ? 'Total pembayaran (lunas)' : 'DP booking (sisanya dilunasi H-1)';
+        card.querySelector('#payAmountVal').textContent = rp(full ? harga : DP_AMOUNT);
+        payBtn.textContent = full ? 'Bayar lunas sekarang' : 'Bayar DP sekarang';
       }
+      card.querySelectorAll('input[name="opsiBayar"]').forEach(r => {
+        r.onchange = () => { opsi = r.value; booking.opsi = opsi; tampil(); };
+      });
+      tampil();
 
-      let secondsLeft = 15 * 60;
-      const clockEl = document.getElementById('payClock');
-      payTimerInterval = setInterval(() => {
-        secondsLeft--;
-        if (secondsLeft <= 0) { clearInterval(payTimerInterval); clockEl.textContent = 'Kedaluwarsa'; return; }
-        const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
-        const s = String(secondsLeft % 60).padStart(2, '0');
-        clockEl.textContent = `${m}:${s}`;
-      }, 1000);
-
-      document.getElementById('simPayBtn').onclick = () => {
-        document.getElementById('simPayBtn').disabled = true;
-        document.getElementById('payStatus').style.display = 'flex';
-        setTimeout(() => {
-          clearInterval(payTimerInterval);
-          saveBooking(pkg);
-          renderConfirm(pkg);
-        }, 1200);
+      payBtn.onclick = async () => {
+        payBtn.disabled = true;
+        if (!snapToken) {
+          try {
+            const r = await fetch('/app/api/bookings/', {
+              method: 'POST', credentials: 'same-origin', headers: csrfHeaders(),
+              body: JSON.stringify({ package: pkg.name, y: booking.dateParts.y, m: booking.dateParts.m,
+                                     d: booking.dateParts.d, time: booking.time,
+                                     name: booking.name, phone: booking.phone, opsi: opsi })
+            });
+            if (r.status === 401) { window.location.href = '/login/'; return; }
+            const data = await r.json();
+            if (!data.ok) { alert(data.error || 'Gagal membuat booking.'); payBtn.disabled = false; return; }
+            snapToken = data.token;
+            bookingDbId = data.id;
+            booking.confirmId = 'AG-' + data.id;
+            booking.opsiFinal = data.opsi;
+            booking.dibayar = data.amount;
+            booking.sisa = data.sisa;
+            card.querySelectorAll('input[name="opsiBayar"]').forEach(r => { r.disabled = true; });
+            const bb = card.querySelector('#backBtn');
+            if (bb) bb.style.display = 'none';
+          } catch (err) {
+            alert('Koneksi bermasalah. Coba lagi.');
+            payBtn.disabled = false;
+            return;
+          }
+        }
+        window.snap.pay(snapToken, {
+          onSuccess: () => cekBayar(pkg),
+          onPending: () => cekBayar(pkg),
+          onError: () => { alert('Pembayaran gagal. Coba lagi.'); payBtn.disabled = false; },
+          onClose: () => { payBtn.disabled = false; }
+        });
       };
+    }
+
+    async function cekBayar(pkg) {
+      const box = document.getElementById('payStatus');
+      const teks = document.getElementById('payStatusText');
+      const payBtn = document.getElementById('payBtn');
+      box.style.display = 'flex';
+      teks.textContent = 'Memeriksa pembayaran…';
+      try {
+        const r = await fetch('/app/api/bookings/' + bookingDbId + '/cek-bayar/', {
+          method: 'POST', credentials: 'same-origin', headers: csrfHeaders()
+        });
+        const data = await r.json();
+                if (data.ok && (data.status === 'partial' || data.status === 'paid')) { renderConfirm(pkg); return; }
+        if (data.status === 'failed') {
+          teks.textContent = 'Pembayaran gagal atau kedaluwarsa, booking dibatalkan. Silakan booking ulang.';
+          payBtn.style.display = 'none';
+          return;
+        }
+        teks.textContent = 'Pembayaran belum selesai. Selesaikan pembayaran, lalu klik tombol lagi.';
+      } catch (err) {
+        teks.textContent = 'Gagal memeriksa pembayaran. Coba klik tombol lagi.';
+      }
+      payBtn.disabled = false;
     }
 
     function saveBooking(pkg) {
@@ -1402,22 +1480,30 @@
     }
 
     function renderConfirm(pkg) {
+      const lunas = booking.opsiFinal === 'full';
+      const dibayar = booking.dibayar || DP_AMOUNT;
+      const sisa = booking.sisa || 0;
       const waText = encodeURIComponent(
-        "Halo Amora Grads, saya sudah bayar DP Rp" + DP_AMOUNT.toLocaleString('id-ID') +
+        "Halo Amora Grads, saya sudah bayar " + (lunas ? "lunas" : "DP") + " Rp" + dibayar.toLocaleString('id-ID') +
         " untuk paket " + pkg.name + " tanggal " + booking.dateLabel + " jam " + booking.time +
-        " a.n " + booking.name + ". Ini bukti transfernya (terlampir)."
+        " a.n " + booking.name + ". Kode booking: " + booking.confirmId + "."
       );
       card.innerHTML = `
       <div class="confirm-state">
         <div class="confirm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
-        <h3>DP tercatat, hampir selesai!</h3>
-        <p>${pkg.name} pada ${booking.dateLabel}, ${booking.time}. Tinggal satu langkah lagi: kirim bukti transfer DP ke WhatsApp kami biar jadwalnya kami kunci.</p>
+        <h3>${lunas ? 'Pembayaran lunas, jadwal terkunci!' : 'DP tercatat, hampir selesai!'}</h3>
+        <p>${pkg.name} pada ${booking.dateLabel}, ${booking.time}. ${lunas
+          ? 'Tinggal konfirmasi ke WhatsApp kami biar jadwalnya kami kunci.'
+          : 'Sisa ' + rp(sisa) + ' dilunasi paling lambat ' + batasLunasLabel() + ' lewat Dashboard, menu Riwayat booking, tombol Lunasi sekarang.'}</p>
         <div class="summary-box" style="text-align:left;">
           <div class="line"><span>Kode booking</span><b>${booking.confirmId}</b></div>
-          <div class="line"><span>DP dibayar</span><b>Rp${DP_AMOUNT.toLocaleString('id-ID')}</b></div>
+          <div class="line"><span>${lunas ? 'Total dibayar' : 'DP dibayar'}</span><b>${rp(dibayar)}</b></div>
+          ${lunas ? '' : `<div class="line"><span>Sisa tagihan</span><b>${rp(sisa)}</b></div>
+          <div class="line"><span>Batas pelunasan</span><b>${batasLunasLabel()}</b></div>`}
         </div>
         <div class="confirm-actions">
-          <a class="btn btn--primary btn--block" target="_blank" rel="noopener" href="https://wa.me/${WA_NUMBER}?text=${waText}">Kirim bukti transfer via WhatsApp</a>
+          <a class="btn btn--primary btn--block" target="_blank" rel="noopener" href="https://wa.me/${WA_NUMBER}?text=${waText}">Konfirmasi via WhatsApp</a>
+          ${lunas ? '' : '<a class="btn btn--ghost btn--block" href="/app/dashboard">Buka dashboard</a>'}
           <a class="btn btn--ghost btn--block" href="katalog.html">Kembali ke katalog</a>
         </div>
       </div>
