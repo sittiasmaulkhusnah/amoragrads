@@ -1,13 +1,33 @@
-{
+﻿{
   "version": 2,
   "builds": [
     {
       "src": "core/wsgi.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.12" }
+      "config": { "maxLambdaSize": "50mb", "runtime": "python3.12" }
+    },
+    {
+      "src": "static/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "media/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/(aset/.*|auth\\.js)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/media/(.*)",
+      "dest": "/media/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "core/wsgi.py"
