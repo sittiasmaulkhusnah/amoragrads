@@ -40,6 +40,7 @@ def serve_media_fallback(request, path):
     filename = Path(clean_path).name
 
     fallback_candidates = [
+        base_dir / 'static' / 'media' / clean_path,
         base_dir / 'media' / clean_path,
         aset_dir / filename,
         aset_dir / 'foto 1.png',
