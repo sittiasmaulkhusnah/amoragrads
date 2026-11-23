@@ -1,4 +1,4 @@
-from django.conf import settings
+﻿from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path
@@ -18,7 +18,7 @@ urlpatterns += [
     path('logout/', views.LogoutView, name='logout'),
 ]
 
-# Halaman frontend Amora Grads 
+# Halaman frontend Amora Grads
 urlpatterns += [
     path('', views.home, name='home'),
     path('index.html', views.home),
@@ -32,10 +32,9 @@ urlpatterns += [
     path('booking.html', views.booking_page, name='booking'),
     path('login.html', RedirectView.as_view(pattern_name='login')),
     path('profil.html', RedirectView.as_view(pattern_name='app:dashboard')),
-    # file statis frontend: folder aset/ dan auth.js (paket.js dibangkitkan dari database)
     re_path(r'^(?P<path>(?:aset/.+|auth\.js))$', serve,
             {'document_root': settings.BASE_DIR / 'static'}),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static')
