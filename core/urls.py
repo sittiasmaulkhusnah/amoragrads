@@ -1,11 +1,34 @@
-﻿from django.conf import settings
-from django.conf.urls.static import static
+from pathlib import Path
+from urllib.parse import unquote
+
+from django.conf import settings
 from django.contrib import admin
+from django.http import FileResponse, Http404
 from django.urls import include, path, re_path
 from django.views.generic import RedirectView
-from django.views.static import serve
 
 from app import views, views_konten
+
+
+def serve_static_aset(request, path):
+    clean_path = unquote(path).lstrip('/')
+    base_dir = Path(settings.BASE_DIR)
+    candidates = [
+        base_dir / 'static' / clean_path,
+        base_dir / clean_path,
+    ]
+    for file_path in candidates:
+        try:
+            resolved = file_path.resolve()
+            if resolved.is_file() and (
+                (base_dir / 'static').resolve() in resolved.parents
+                or base_dir.resolve() in resolved.parents
+            ):
+                return FileResponse(open(resolved, 'rb'))
+        except OSError:
+            continue
+    raise Http404('File not found')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,9 +55,7 @@ urlpatterns += [
     path('booking.html', views.booking_page, name='booking'),
     path('login.html', RedirectView.as_view(pattern_name='login')),
     path('profil.html', RedirectView.as_view(pattern_name='app:dashboard')),
-    re_path(r'^(?P<path>(?:aset/.+|auth\.js))$', serve,
-            {'document_root': settings.BASE_DIR / 'static'}),
+    path('auth.js', serve_static_aset, {'path': 'auth.js'}),
+    re_path(r'^static/(?P<path>.+)$', serve_static_aset),
+    re_path(r'^(?P<path>aset/.+)$', serve_static_aset),
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static')
