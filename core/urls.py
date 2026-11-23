@@ -10,24 +10,53 @@ from django.views.generic import RedirectView
 from app import views, views_konten
 
 
-def serve_static_aset(request, path):
-    clean_path = unquote(path).lstrip('/')
-    base_dir = Path(settings.BASE_DIR)
-    candidates = [
-        base_dir / 'static' / clean_path,
-        base_dir / clean_path,
-    ]
+def _find_file(candidates):
     for file_path in candidates:
         try:
             resolved = file_path.resolve()
-            if resolved.is_file() and (
-                (base_dir / 'static').resolve() in resolved.parents
-                or base_dir.resolve() in resolved.parents
-            ):
-                return FileResponse(open(resolved, 'rb'))
+            if resolved.is_file():
+                return resolved
         except OSError:
             continue
+    return None
+
+
+def serve_static_aset(request, path):
+    clean_path = unquote(path).lstrip('/')
+    base_dir = Path(settings.BASE_DIR)
+    resolved = _find_file([
+        base_dir / 'static' / clean_path,
+        base_dir / clean_path,
+    ])
+    if resolved:
+        return FileResponse(open(resolved, 'rb'))
     raise Http404('File not found')
+
+
+def serve_media_fallback(request, path):
+    clean_path = unquote(path).lstrip('/')
+    base_dir = Path(settings.BASE_DIR)
+    aset_dir = base_dir / 'static' / 'aset'
+    filename = Path(clean_path).name
+
+    fallback_candidates = [
+        base_dir / 'media' / clean_path,
+        aset_dir / filename,
+        aset_dir / 'foto 1.png',
+        aset_dir / 'foto 2.png',
+        aset_dir / 'foto 3.jpeg',
+    ]
+
+    if aset_dir.is_dir():
+        for ext in ('.png', '.jpg', '.jpeg', '.webp'):
+            matches = sorted(aset_dir.glob(f'*{ext}'))
+            if matches:
+                fallback_candidates.append(matches[0])
+
+    resolved = _find_file(fallback_candidates)
+    if resolved:
+        return FileResponse(open(resolved, 'rb'))
+    raise Http404('Media not found')
 
 
 urlpatterns = [
@@ -57,5 +86,6 @@ urlpatterns += [
     path('profil.html', RedirectView.as_view(pattern_name='app:dashboard')),
     path('auth.js', serve_static_aset, {'path': 'auth.js'}),
     re_path(r'^static/(?P<path>.+)$', serve_static_aset),
+    re_path(r'^media/(?P<path>.+)$', serve_media_fallback),
     re_path(r'^(?P<path>aset/.+)$', serve_static_aset),
 ]
