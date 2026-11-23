@@ -201,6 +201,129 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
   .footer__col--social .footer__social{ justify-content: flex-end; margin-bottom: 0; }
   .footer__copy{ grid-column: 1 / -1; }
 }
+
+/* ===== Detail ringkas ===== */
+.title-row{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+.rating-mini{ font-size:13px; font-weight:700; color:var(--red-dark); }
+.product__media .trust-grid{ margin-top:14px; gap:8px; }
+.product__media .trust-item{ padding:9px 10px; font-size:12px; }
+.product__media .dp-box{ margin-top:14px; padding:14px 16px; }
+.product__media .dp-box ul{ font-size:13px; line-height:1.6; }
+.cta-row{ margin-top:20px; }
+
+.desc{ margin-top: 0; font-size: 15px; line-height: 1.75; color: var(--ink-soft); max-width: 58ch; white-space: pre-line; }
+
+/* ===== Cara pembayaran ===== */
+.pay__intro{ font-size: 14px; color: var(--ink-soft); margin-bottom: 14px; }
+.pay__grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.pay__card{
+  display: flex; flex-direction: column; gap: 6px;
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-m);
+  padding: 16px; transition: border-color .2s ease, box-shadow .2s ease;
+}
+.pay__card:hover{ border-color: var(--red); box-shadow: 0 12px 20px -16px rgba(33,27,24,.4); }
+.pay__tag{
+  align-self: flex-start; font-size: 11.5px; font-weight: 800; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--red-dark); background: var(--rose);
+  padding: 4px 9px; border-radius: 999px;
+}
+.pay__amount{ font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--ink); line-height: 1.2; margin-top: 4px; }
+.pay__note{ font-size: 13px; font-weight: 600; color: var(--ink); }
+.pay__sub{ font-size: 13px; line-height: 1.6; color: var(--ink-soft); padding-top: 8px; margin-top: 4px; border-top: 1px dashed var(--line); }
+.pay__sub b{ color: var(--ink); }
+
+.cta-row{ margin-top: 24px; }
+
+/* ===== Pilihan cara bayar ===== */
+.paychoice{ border: 0; padding: 0; margin: 22px 0 0; min-width: 0; }
+.paychoice legend{ padding: 0; margin-bottom: 10px; font-size: 13px; font-weight: 700; color: var(--ink); }
+
+.po{ display: block; cursor: pointer; }
+.po + .po{ margin-top: 10px; }
+.po input{ position: absolute; opacity: 0; pointer-events: none; }
+
+.po__box{
+  position: relative; display: flex; flex-direction: column; gap: 3px;
+  padding: 14px 16px 14px 46px;
+  background: var(--white); border: 1.4px solid var(--line); border-radius: var(--radius-m);
+  transition: border-color .2s ease, background .2s ease;
+}
+.po__box::before{
+  content: ""; position: absolute; left: 16px; top: 16px;
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.6px solid var(--line); background: var(--white);
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.po:hover .po__box{ border-color: var(--red); }
+.po input:checked + .po__box{ border-color: var(--red); background: var(--rose); }
+.po input:checked + .po__box::before{
+  border-color: var(--red); background: var(--red);
+  box-shadow: inset 0 0 0 3.5px var(--white);
+}
+.po input:focus-visible + .po__box{ outline: 2px solid var(--red); outline-offset: 2px; }
+
+.po__top{ display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.po__top b{ font-size: 14.5px; font-weight: 700; }
+.po__top em{ font-style: normal; font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--red-dark); }
+.po__note{ font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+
+.cta-row{ margin-top: 18px; }
+.rating .stars + .score{ margin-left: 2px; }
+
+/* Tombol booking: satu tombol penuh */
+.cta-row{ justify-content: flex-start; }
+.cta-row .btn{ flex: 0 0 auto; padding-left: 32px; padding-right: 32px; }
+
+/* Empat kotak info: selebar kolom kanan, 2 x 2 rata */
+.trust-grid{ max-width: none; width: 100%; }
+@media (min-width: 900px){
+  .trust-grid{ max-width: none; }
+}
+
+/* Trust grid kembali di kolom kanan */
+.info .trust-grid{ max-width: none; width: 100%; margin-top: 22px; }
+
+.po-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.po{ display: flex; }
+.po + .po{ margin-top: 0; }
+.po__box{ flex: 1; padding: 40px 12px 12px; }
+.po__box::before{ left: 12px; top: 12px; }
+.po__top{ flex-direction: column; gap: 2px; }
+.po__top em{ font-size: 18px; }
+.po__note{ font-size: 12px; margin-top: 4px; }
+
+/* Kartu lebih lega karena sekarang lebar */
+.po__box{ padding: 16px 16px 16px 46px; }
+.po__box::before{ left: 16px; top: 18px; }
+.po__top{ flex-direction: row; align-items: baseline; justify-content: space-between; }
+.po__top em{ font-size: 18px; }
+.po__note{ font-size: 13px; margin-top: 2px; }
+
+@media (max-width: 520px){
+  .po-grid{ grid-template-columns: 1fr; }
+}
+
+@media (min-width: 900px){
+  .product__media .trust-grid,
+  .product__media .dp-box{ max-width:340px; margin-left:auto; margin-right:auto; }
+  .cta-row{ max-width:none; }
+}
+
+@media (min-width: 900px){
+  .frame{ zoom: 0.9; }
+}
+
+/* Pembayaran: baris penuh di bawah foto + kolom kanan */
+.product__pay{ margin-top: 28px; }
+.product__pay .paychoice{ margin: 0; max-width: none; }
+.product__pay .cta-row{ margin-top: 16px; max-width: none; justify-content: flex-start; }
+
+@media (min-width: 900px){
+  /* Kolom foto dibuat selebar fotonya, jadi tepi kiri foto = tepi kiri blok pembayaran */
+  .product{ grid-template-columns: 340px minmax(0, 1fr); max-width: 1000px; column-gap: 56px; }
+  .product__pay{ grid-column: 1 / -1; margin-top: 20px; }
+}
+
 </style>
 </head>
 <body>
@@ -254,28 +377,39 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
     chev:   '<svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>'
   };
 
-  /* Bagian yang tidak diisi di paket.js dibuat otomatis dari data dasar paket */
-  function dpBlock(p){
-    var id = encodeURIComponent(p.id);
-    if (typeof p.dp !== 'number') {   /* data lama tanpa info DP */
-      return '<div class="cta-row">' +
-        '<a href="booking.html?paket=' + id + '" class="btn btn--primary">Booking sekarang</a>' +
-        '<a href="' + waChatLink(p) + '" target="_blank" rel="noopener" class="btn btn--ghost">Chat kami</a></div>';
-    }
-    var f = function (n) { return 'Rp' + Number(n).toLocaleString('id-ID'); };
-    return '<div class="dp-box">' +
-        '<p class="dp-box__title">Cara pembayaran</p>' +
-        '<ul>' +
-          '<li>DP saat booking: <b>' + f(p.dp) + '</b>' + (p.dpPersen ? ' (' + p.dpPersen + '% dari harga)' : '') + '</li>' +
-          '<li>Sisa <b>' + f(p.sisaDp) + '</b> dilunasi paling lambat <b>H-1</b> sebelum sesi foto</li>' +
-          '<li>Atau <b>bayar lunas</b> ' + f(p.hargaInt) + ' sekaligus saat booking, tanpa pelunasan lagi</li>' +
-        '</ul></div>' +
-      '<div class="cta-row">' +
-        '<a href="booking.html?paket=' + id + '&bayar=dp" class="btn btn--primary">Booking + DP ' + f(p.dp) + '</a>' +
-        '<a href="booking.html?paket=' + id + '&bayar=lunas" class="btn btn--ghost">Bayar lunas</a>' +
-      '</div>' +
-      '<a class="chat-link" href="' + waChatLink(p) + '" target="_blank" rel="noopener">Tanya dulu lewat chat</a>';
+  var fRp = function (n) { return 'Rp' + Number(n).toLocaleString('id-ID'); };
+
+function payOption(val, title, amount, note, checked){
+  return '<label class="po">' +
+    '<input type="radio" name="bayar" value="' + val + '"' + (checked ? ' checked' : '') + '>' +
+    '<span class="po__box">' +
+      '<span class="po__top"><b>' + title + '</b><em>' + amount + '</em></span>' +
+      '<span class="po__note">' + note + '</span>' +
+    '</span></label>';
+}
+
+function payChoice(p){
+  if (typeof p.dp !== 'number') return '';
+  return '<fieldset class="paychoice">' +
+    '<legend>Pilih cara bayar</legend>' +
+    '<div class="po-grid">' +
+      payOption('dp', 'Bayar DP dulu', fRp(p.dp),
+        'Sisa ' + fRp(p.sisaDp) + ' dibayar paling lambat H-1 sebelum sesi foto.', true) +
+      payOption('lunas', 'Bayar lunas', fRp(p.hargaInt),
+        'Tidak ada tagihan lagi, tinggal datang di hari sesi.', false) +
+    '</div>' +
+  '</fieldset>';
+}
+
+function dpCta(p){
+  var id = encodeURIComponent(p.id);
+  if (typeof p.dp !== 'number') {
+    return '<div class="cta-row"><a href="booking.html?paket=' + id + '" class="btn btn--primary">Booking sekarang</a></div>';
   }
+  return '<div class="cta-row">' +
+    '<a id="bookBtn" href="booking.html?paket=' + id + '&bayar=dp" class="btn btn--primary">Booking DP</a>' +
+  '</div>';
+}
 
   function buildFaq(p){
     return p.faq || [
@@ -310,29 +444,40 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
       return '<details><summary>' + f.q + ICONS.chev + '</summary><div class="faq-body">' + f.a + '</div></details>';
     }).join('');
 
-    box.innerHTML =
-      '<div class="product">' +
-        '<div>' +
-          '<div class="gallery-main"><img id="mainImage" src="' + gallery[0] + '" alt="Paket ' + p.name + '"></div>' +
-          thumbs +
-        '</div>' +
-        '<div class="info">' +
-          '<p class="info__kicker">' + (p.kicker || 'Paket foto wisuda') + '</p>' +
-          '<h1>' + p.name + '</h1>' +
-          '<p class="subtitle">' + (p.subtitle || (p.duration + ', ' + p.photos + '.')) + '</p>' +
-          '<div class="rating"><span class="stars">★★★★★</span><span class="score">4.9</span><span class="count">dari klien yang sudah wisuda</span></div>' +
-          '<span class="price-new">' + (p.oldPrice ? '<s style="color:var(--ink-soft);font-size:.7em;font-weight:400">Rp' + p.oldPrice + '</s> ' : '') + 'Rp' + p.price + (p.diskon ? ' <small>(-' + p.diskon + '%)</small>' : '') + ' <small>/ sesi</small></span>' +
-          '<p class="desc">' + (p.long || p.desc) + '</p>' +
-          dpBlock(p) +
-          '<div class="trust-grid">' +
-            '<div class="trust-item">' + ICONS.user + p.people + '</div>' +
-            '<div class="trust-item">' + ICONS.clock + p.duration + '</div>' +
-            '<div class="trust-item">' + ICONS.pin + 'Spot bebas</div>' +
-            '<div class="trust-item">' + ICONS.camera + p.photos + '</div>' +
-          '</div>' +
-        '</div>' +
+box.innerHTML =
+  '<div class="product">' +
+    '<div class="product__media">' +
+      '<div class="gallery-main"><img id="mainImage" src="' + gallery[0] + '" alt="Paket ' + p.name + '"></div>' +
+      thumbs +
+    '</div>' +
+    '<div class="info">' +
+      '<p class="info__kicker">' + (p.kicker || 'Paket foto wisuda') + '</p>' +
+      '<h1>' + p.name + '</h1>' +
+      '<div class="rating"><span class="stars">★★★★★</span><span class="score">4.9</span><span class="count">dari klien yang sudah wisuda</span></div>' +
+      '<span class="price-new">' + (p.oldPrice ? '<s style="color:var(--ink-soft);font-size:.7em;font-weight:400">Rp' + p.oldPrice + '</s> ' : '') + 'Rp' + p.price + (p.diskon ? ' <small>(-' + p.diskon + '%)</small>' : '') + ' <small>/ sesi</small></span>' +
+      '<p class="desc">' + (p.long || p.desc) + '</p>' +
+      '<div class="trust-grid">' +
+        '<div class="trust-item">' + ICONS.user + p.people + '</div>' +
+        '<div class="trust-item">' + ICONS.clock + p.duration + '</div>' +
+        '<div class="trust-item">' + ICONS.pin + 'Spot bebas</div>' +
+        '<div class="trust-item">' + ICONS.camera + p.photos + '</div>' +
       '</div>' +
-      '<div class="faq"><h2>Pertanyaan umum</h2>' + faq + '</div>';
+    '</div>' +
+    '<div class="product__pay">' +
+      payChoice(p) +
+      dpCta(p) +
+    '</div>' +
+  '</div>' +
+  '<div class="faq"><h2>Pertanyaan umum</h2>' + faq + '</div>';
+
+box.addEventListener('change', function (e) {
+  if (e.target.name !== 'bayar') return;
+  var btn = document.getElementById('bookBtn');
+  var id = encodeURIComponent(p.id);
+  var lunas = e.target.value === 'lunas';
+  btn.href = 'booking.html?paket=' + id + '&bayar=' + (lunas ? 'lunas' : 'dp');
+  btn.textContent = lunas ? 'Booking Lunas' : 'Booking DP';
+});
 
     /* Ganti foto utama saat thumbnail diklik */
     box.addEventListener('click', function (e) {

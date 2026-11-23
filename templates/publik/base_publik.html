@@ -465,6 +465,112 @@ p{ margin:0; }
 .prose ul{ margin:0 0 1em; padding-left:1.3em; }
 .prose li{ margin:.25em 0; }
 .prose strong{ font-weight:700; color:var(--ink); }
+
+/* ===== Halaman artikel: filter sejajar kartu, 3 kolom, gambar landscape ===== */
+.art-card__img{ aspect-ratio:16 / 10 !important; }
+
+@media (min-width: 900px){
+  /* judul, filter, dan kartu: satu jalur yang sama */
+  .section__head,
+  .filter,
+  .art-grid,
+  .art-grid--list{
+    max-width:1180px;
+    margin-left:auto;
+    margin-right:auto;
+    padding-left:40px;
+    padding-right:40px;
+    box-sizing:border-box;
+  }
+
+  .filter{ align-items:center; margin-bottom:22px; }
+
+  /* 3 kolom, artikel ke-4 dan seterusnya turun ke bawah */
+  .art-grid,
+  .art-grid--list{
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+    justify-content:stretch !important;
+    gap:24px;
+    padding-top:4px;
+    padding-bottom:12px;
+  }
+}
+
+/* tablet: 2 kolom */
+@media (min-width: 600px) and (max-width: 899px){
+  .art-grid,
+  .art-grid--list{ grid-template-columns:repeat(2, minmax(0, 1fr)) !important; }
+}
+
+/* ===== Halaman detail artikel ===== */
+.detail{
+  max-width:1180px;
+  margin:0 auto;
+  padding:30px 40px 40px;
+  box-sizing:border-box;
+}
+.detail__back{
+  display:inline-block;
+  margin-bottom:18px;
+  font-size:14.5px;
+  font-weight:600;
+  color:var(--ink-soft);
+}
+.detail__back:hover{ color:var(--red-dark); }
+
+.detail__head{ margin-bottom:22px; }
+.detail__head .art-card__tag{ display:inline-block; margin-bottom:8px; }
+.detail__head h1{
+  font-size:40px;
+  line-height:1.2;
+  letter-spacing:-0.01em;
+  margin:0 0 12px;
+  max-width:24ch;
+}
+.detail__meta{ color:var(--ink-soft); font-size:14px; margin:0; }
+.detail__meta span{ margin:0 4px; }
+
+/* isi artikel: kartu putih */
+.detail__body{
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:var(--radius-m);
+  padding:40px 48px;
+  box-shadow:0 14px 30px rgba(33,27,24,0.06);
+  font-size:16.5px;
+  line-height:1.85;
+  overflow-wrap:anywhere;
+}
+.detail__body p{ margin:0 0 1.1em; }
+.detail__body h2, .detail__body h3{ margin:1.5em 0 .5em; line-height:1.3; }
+.detail__body ul, .detail__body ol{ margin:0 0 1.1em 1.4em; list-style:revert; }
+.detail__body img{ max-width:100%; height:auto; border-radius:var(--radius-s); }
+.detail__body blockquote{
+  border-left:3px solid var(--red);
+  margin:1.2em 0;
+  padding:.2em 1em;
+  color:var(--ink-soft);
+}
+
+/* artikel terkait: satu jalur dan 3 kolom */
+.detail__related .section__head{ max-width:1180px; margin:0 auto 20px; padding:0 40px; box-sizing:border-box; }
+.art-grid--related{ max-width:1180px; margin:0 auto; padding:4px 40px 12px; box-sizing:border-box; }
+
+@media (min-width:900px){
+  .art-grid--related{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:24px; }
+}
+
+@media (max-width:899px){
+  .detail{ padding:24px 20px 30px; }
+  .detail__head h1{ font-size:28px; max-width:none; }
+  .detail__body{ padding:24px 20px; }
+}
+
+@media (min-width: 900px){
+  .frame{ zoom: 0.9; }
+}
+
 </style>
 </head>
 <body>

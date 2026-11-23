@@ -6,6 +6,6 @@
     <h1>{{ hal.title }}</h1>
     <p class="page-meta">Diperbarui {{ hal.updated_at|date:"d F Y" }}</p>
     {% if hal.featured_image %}<img class="page-hero" src="{{ hal.featured_image.url }}" alt="{{ hal.title }}">{% endif %}
-    <div class="prose">{{ hal.content|linebreaks }}</div>
+    <div class="prose">{{ hal.content|format_konten }}</div>
   </article>
 {% endblock %}

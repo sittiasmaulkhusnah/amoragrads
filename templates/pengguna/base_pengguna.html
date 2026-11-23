@@ -219,6 +219,7 @@ p{ margin:0; }
 }
 
 @media (min-width: 900px){
+  body{ zoom: 0.9; }
   .nav{ max-width: var(--container-lg); margin-left:auto; margin-right:auto; padding: 26px 40px; }
   .nav__logo-img{ height: 32px; }
   .nav__burger, .menu-toggle-input{ display:none; }
@@ -316,7 +317,6 @@ p{ margin:0; }
     <a href="{% url 'app:dashboard' %}" class="{% if un == 'dashboard' or un == 'index' or un == 'checkout' %}on{% endif %}">Dashboard</a>
     <a href="{% url 'app:riwayat_pembayaran' %}" class="{% if un == 'riwayat_pembayaran' %}on{% endif %}">Riwayat Pembayaran</a>
     <a href="{% url 'app:profile_pengguna' %}" class="{% if un == 'profile_pengguna' %}on{% endif %}">Profil Saya</a>
-    <a href="booking.html">Booking Baru</a>
     <hr>
     <a href="{% url 'logout' %}" class="out">Keluar</a>
     {% endwith %}

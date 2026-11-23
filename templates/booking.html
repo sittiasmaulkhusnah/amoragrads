@@ -618,6 +618,14 @@
       flex-shrink: 0;
     }
 
+    .custom-time{ margin: -10px 0 24px; }
+    .custom-time input{
+      width: 100%; border: 1px solid var(--line); border-radius: var(--radius-s);
+      padding: 12px 14px; font-size: 14px; background: var(--cream); color: var(--ink); font-family: inherit;
+    }
+    .custom-time input:focus{ border-color: var(--red); }
+    .custom-time .hint{ font-size: 12px; color: var(--ink-soft); margin-top: 8px; line-height: 1.5; }
+
     /* Form & ringkasan */
     .form-row {
       margin-bottom: 18px;
@@ -1066,6 +1074,11 @@
         grid-column: 1 / -1;
       }
     }
+
+    @media (min-width: 900px){
+  .frame{ zoom: 0.9; }
+}
+
   </style>
 </head>
 
@@ -1139,7 +1152,11 @@
     function dpOf(pkg) { return typeof pkg.dp === 'number' ? pkg.dp : 50000; }
     function totalOf(pkg) { return typeof pkg.hargaInt === 'number' ? pkg.hargaInt : parseInt(String(pkg.price).replace(/\D/g, ''), 10); }
     function rp(n) { return 'Rp' + Number(n).toLocaleString('id-ID'); }
-    const TIME_SLOTS = ['09.00', '10.30', '12.00', '13.30', '15.00', '16.30'];
+    const TIME_SLOTS = ['06.00', '07.30', '09.00', '10.30', '12.00', '13.30', '15.00', '16.30', '18.00'];
+
+    function timeOk(t) {
+      return TIME_SLOTS.includes(t);
+    }
     const MONTH_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     const WEEKDAY_LABELS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
@@ -1195,26 +1212,29 @@
 
       drawCalendar();
 
-      const chips = card.querySelector('#timeChips');
-      TIME_SLOTS.forEach(t => {
-        const chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'chip' + (booking.time === t ? ' selected' : '');
-        chip.textContent = t;
-        chip.onclick = () => {
-          booking.time = t;
-          chips.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-          chip.classList.add('selected');
-          checkStep2();
-        };
-        chips.appendChild(chip);
-      });
+const chips = card.querySelector('#timeChips');
 
-      function checkStep2() {
-        card.querySelector('#toStep3').disabled = !(booking.dateParts && booking.time);
-      }
-      checkStep2();
-      card.querySelector('#toStep3').onclick = () => renderStep3();
+function checkStep2() {
+  card.querySelector('#toStep3').disabled = !(booking.dateParts && timeOk(booking.time));
+}
+
+TIME_SLOTS.forEach(t => {
+  const chip = document.createElement('button');
+  chip.type = 'button';
+  chip.className = 'chip' + (booking.time === t ? ' selected' : '');
+  chip.textContent = t;
+  chip.onclick = () => {
+    booking.time = t;
+    chips.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    chip.classList.add('selected');
+    checkStep2();
+  };
+  chips.appendChild(chip);
+});
+
+checkStep2();
+card.querySelector('#toStep3').onclick = () => renderStep3();
+
     }
 
     function drawCalendar() {
@@ -1293,7 +1313,7 @@
             booking.dateLabel = shortLabel;
             drawCalendar();
             const nextBtn = card.querySelector('#toStep3');
-            if (nextBtn) nextBtn.disabled = !(booking.dateParts && booking.time);
+            if (nextBtn) nextBtn.disabled = !(booking.dateParts && timeOk(booking.time));
           };
         }
         grid.appendChild(btn);
@@ -1323,8 +1343,10 @@
       const pkg = pkgById(booking.pkgId);
       const dp = dpOf(pkg), total = totalOf(pkg), sisa = total - dp;
       const dekat = hariKeSesi() <= 1;
-      const wajibLunas = dekat || dp <= 0 || dp >= total;
-      if (wajibLunas) booking.metode = 'lunas';
+      const bisaDp = dp > 0 && dp < total;
+      if (dekat || !bisaDp) booking.metode = 'lunas';
+      const lunas = booking.metode === 'lunas';
+
       card.innerHTML = `
       ${backLink('Ganti tanggal/jam')}
       <p class="step-eyebrow">Langkah 2 dari 2</p>
@@ -1333,34 +1355,16 @@
         <div class="line"><span>Paket</span><b>${pkg.name}</b></div>
         <div class="line"><span>Jadwal</span><b>${booking.dateLabel}, ${booking.time}</b></div>
         <div class="line"><span>Harga paket</span><b>${rp(total)}</b></div>
+        <div class="line"><span>Pembayaran</span><b>${lunas ? 'Lunas ' + rp(total) : 'DP ' + rp(dp)}</b></div>
+        ${lunas ? '' : `<div class="line"><span>Sisa pelunasan</span><b>${rp(sisa)} (paling lambat ${tglH1()})</b></div>`}
       </div>
+      ${dekat && bisaDp ? '<p class="err-inline" style="margin:-8px 0 18px">Sesi kurang dari 2 hari lagi, jadi pembayaran harus lunas.</p>' : ''}
       <div class="form-row"><label class="field-label">Nama lengkap</label><input type="text" id="custName" placeholder="Nama kamu" value="${booking.name || ''}"></div>
       <div class="form-row"><label class="field-label">Nomor WhatsApp</label><input type="tel" id="custPhone" placeholder="0812xxxxxxx" value="${booking.phone || ''}"></div>
-      <div class="form-row">
-        <label class="field-label">Cara pembayaran</label>
-        <div class="pay-opts">
-          <label class="pay-opt${wajibLunas ? ' is-off' : ''}" id="optDp"><input type="radio" name="metode" value="dp"${wajibLunas ? ' disabled' : ''}>
-            <span><b>Bayar DP dulu: ${rp(dp)}</b><small>Sisa ${rp(sisa)} dilunasi paling lambat H-1 sesi (${tglH1()}).</small></span></label>
-          <label class="pay-opt" id="optLunas"><input type="radio" name="metode" value="lunas">
-            <span><b>Bayar lunas sekarang: ${rp(total)}</b><small>Sekali bayar, tanpa pelunasan lagi nanti.</small></span></label>
-        </div>
-        ${dekat ? '<p class="err-inline">Sesi kurang dari 2 hari lagi, jadi pembayaran harus lunas.</p>' : ''}
-      </div>
       <p class="err-inline" id="bookErr" hidden></p>
-      <button class="btn btn--primary btn--block" id="confirmBtn"></button>
+      <button class="btn btn--primary btn--block" id="confirmBtn">${lunas ? 'Lanjut bayar lunas ' + rp(total) : 'Lanjut bayar DP ' + rp(dp)}</button>
     `;
       const btn = card.querySelector('#confirmBtn');
-      function perbarui() {
-        card.querySelectorAll('input[name=metode]').forEach(function (r) {
-          r.checked = (r.value === booking.metode);
-          r.parentNode.classList.toggle('is-on', r.checked);
-        });
-        btn.textContent = booking.metode === 'lunas' ? 'Lanjut bayar lunas ' + rp(total) : 'Lanjut bayar DP ' + rp(dp);
-      }
-      card.querySelectorAll('input[name=metode]').forEach(function (r) {
-        r.addEventListener('change', function () { booking.metode = r.value; perbarui(); });
-      });
-      perbarui();
       card.querySelector('#backBtn').onclick = () => renderStep2();
       btn.onclick = () => {
         const name = card.querySelector('#custName').value.trim();
@@ -1376,22 +1380,168 @@
       };
     }
 
-    // Membuat booking di server, lalu lanjut ke halaman checkout (ringkasan pesanan + bayar)
-    function kirimBooking(pkg, btn, err) {
-      btn.disabled = true; err.hidden = true;
+function getCsrfToken() {
       const m = document.cookie.match(/csrftoken=([^;]+)/);
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+
+    function ensureSnapScript(snapUrl, clientKey) {
+      return new Promise(function (resolve, reject) {
+        if (window.snap && typeof window.snap.pay === 'function') {
+          resolve();
+          return;
+        }
+        const s = document.createElement('script');
+        s.src = snapUrl || 'https://app.sandbox.midtrans.com/snap/snap.js';
+        if (clientKey) s.setAttribute('data-client-key', clientKey);
+        s.onload = resolve;
+        s.onerror = function () { reject(new Error('Gagal memuat Midtrans Snap.')); };
+        document.head.appendChild(s);
+      });
+    }
+
+    function cekStatusPembayaran(paymentId) {
+      return fetch('/app/api/payments/' + paymentId + '/cek/', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'X-CSRFToken': getCsrfToken() }
+      }).then(function (r) { return r.json(); }).catch(function () { return null; });
+    }
+
+    function renderBookingSelesai(paymentId, bookingId, status) {
+      const pkg = pkgById(booking.pkgId);
+      const isPaid = status === 'paid';
+      card.innerHTML = `
+        <div class="confirm-state">
+          <div class="confirm-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h3>${isPaid ? 'Pembayaran berhasil!' : 'Pesanan berhasil dibuat'}</h3>
+          <p>${isPaid
+            ? 'Terima kasih! Pembayaran untuk paket <b>' + pkg.name + '</b> pada <b>' + booking.dateLabel + ' (' + booking.time + ')</b> sudah kami terima.'
+            : 'Pesanan paket <b>' + pkg.name + '</b> pada <b>' + booking.dateLabel + ' (' + booking.time + ')</b> sudah tercatat dan menunggu penyelesaian pembayaranmu.'
+          }</p>
+          <div class="confirm-actions">
+            ${isPaid
+              ? `<a href="/app/invoice/${paymentId}/" class="btn btn--primary btn--block">Lihat Invoice</a>`
+              : `<button type="button" class="btn btn--primary btn--block" id="reopenSnapBtn">Selesaikan Pembayaran</button>`
+            }
+            <a href="/app/dashboard" class="btn btn--ghost btn--block">Ke Dashboard Saya</a>
+          </div>
+        </div>
+      `;
+      const reopenBtn = card.querySelector('#reopenSnapBtn');
+      if (reopenBtn) {
+        reopenBtn.onclick = function () {
+          bukaMidtransSnap(paymentId, bookingId, '/app/checkout/' + bookingId + '/');
+        };
+      }
+    }
+
+    function renderRetryPembayaran(paymentId, bookingId, checkoutUrl, pesan) {
+      card.innerHTML = `
+        <div class="confirm-state">
+          <p class="step-eyebrow">Menunggu Pembayaran</p>
+          <h3>Selesaikan pembayaranmu</h3>
+          <p>${pesan}</p>
+          <div class="confirm-actions">
+            <button type="button" class="btn btn--primary btn--block" id="retryPayBtn">Bayar Sekarang via Midtrans</button>
+            <a href="${checkoutUrl}" class="btn btn--ghost btn--block">Lihat Ringkasan Pesanan</a>
+          </div>
+        </div>
+      `;
+      card.querySelector('#retryPayBtn').onclick = function () {
+        bukaMidtransSnap(paymentId, bookingId, checkoutUrl);
+      };
+    }
+
+    async function bukaMidtransSnap(paymentId, bookingId, checkoutUrl) {
+      try {
+        const res = await fetch('/app/api/payments/' + paymentId + '/snap/', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'X-CSRFToken': getCsrfToken() }
+        });
+        const snapData = await res.json();
+
+        if (!snapData.ok) {
+          renderRetryPembayaran(paymentId, bookingId, checkoutUrl, snapData.error || 'Gagal memulai pembayaran Midtrans.');
+          return;
+        }
+        if (snapData.manual) {
+          window.location.href = checkoutUrl;
+          return;
+        }
+
+        await ensureSnapScript(snapData.snap_js, snapData.client_key);
+
+        window.snap.pay(snapData.token, {
+          onSuccess: async function () {
+            await cekStatusPembayaran(paymentId);
+            renderBookingSelesai(paymentId, bookingId, 'paid');
+          },
+          onPending: async function () {
+            await cekStatusPembayaran(paymentId);
+            renderBookingSelesai(paymentId, bookingId, 'pending');
+          },
+          onError: function () {
+            renderRetryPembayaran(paymentId, bookingId, checkoutUrl, 'Terjadi kendala saat memproses pembayaran. Pesananmu sudah tersimpan, silakan coba lagi.');
+          },
+          onClose: function () {
+            renderRetryPembayaran(paymentId, bookingId, checkoutUrl, 'Pop-up pembayaran ditutup sebelum selesai. Pesananmu sudah tersimpan, klik tombol di bawah untuk melanjutkan pembayaran.');
+          }
+        });
+      } catch (e) {
+        renderRetryPembayaran(paymentId, bookingId, checkoutUrl, 'Koneksi terganggu saat membuka Midtrans. Pesananmu sudah tersimpan, silakan coba lagi.');
+      }
+    }
+
+    // Membuat booking di server, lalu langsung memunculkan pop-up pembayaran Midtrans
+    function kirimBooking(pkg, btn, err) {
+      const labelAsli = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Memproses pesanan...';
+      err.hidden = true;
+
       fetch('/app/api/bookings/', {
-        method: 'POST', credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': m ? decodeURIComponent(m[1]) : '' },
-        body: JSON.stringify({ package: pkg.name, y: booking.dateParts.y, m: booking.dateParts.m, d: booking.dateParts.d,
-                               time: booking.time, name: booking.name, phone: booking.phone, metode: booking.metode })
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+        body: JSON.stringify({
+          package: pkg.name,
+          y: booking.dateParts.y,
+          m: booking.dateParts.m,
+          d: booking.dateParts.d,
+          time: booking.time,
+          name: booking.name,
+          phone: booking.phone,
+          metode: booking.metode
+        })
       }).then(function (r) { return r.json().then(function (j) { j.status = r.status; return j; }); })
         .then(function (j) {
-          if (j.ok) { window.location.href = j.checkout_url; return; }
+          if (j.ok) {
+            if (!j.payment_id) {
+              window.location.href = j.checkout_url;
+              return;
+            }
+            btn.textContent = 'Membuka pembayaran...';
+            bukaMidtransSnap(j.payment_id, j.id, j.checkout_url);
+            return;
+          }
           if (j.status === 401) { window.location.href = '/login/'; return; }
-          err.textContent = j.error || 'Booking gagal. Coba lagi.'; err.hidden = false; btn.disabled = false;
+          err.textContent = j.error || 'Booking gagal. Coba lagi.';
+          err.hidden = false;
+          btn.disabled = false;
+          btn.textContent = labelAsli;
         })
-        .catch(function () { err.textContent = 'Tidak bisa terhubung ke server.'; err.hidden = false; btn.disabled = false; });
+        .catch(function () {
+          err.textContent = 'Tidak bisa terhubung ke server.';
+          err.hidden = false;
+          btn.disabled = false;
+          btn.textContent = labelAsli;
+        });
     }
 
     const params = new URLSearchParams(location.search);
@@ -1419,6 +1569,10 @@
       if (!me.loggedIn) window.location.replace('/login/');
     });
   </script>
+
+  <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+        data-client-key="Mid-client-wSqlj83tFckAUKxd"></script>
+
 </body>
 
 </html>

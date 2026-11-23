@@ -273,7 +273,7 @@ def index(request):
         orders = [{
             'pkg': b.package.name,
             'date': tgl_booking(b),
-            'location': b.location,
+            'location': '' if b.location == 'Ditentukan via WhatsApp' else b.location,
             'price': rupiah(b.harga_total),
             'status': status_map.get(b.status, 'Terjadwal'),
             'id': b.pk,
@@ -340,8 +340,14 @@ def api_bookings(request):
         if not up.telp:
             up.telp = str(d['phone'])[:20]
             up.save()
-    return JsonResponse({'ok': True, 'id': b.pk, 'metode': b.metode_bayar,
-                         'checkout_url': f'/app/checkout/{b.pk}/'})
+    tagihan = b.tagihan_berikut
+    return JsonResponse({
+            'ok': True,
+            'id': b.pk,
+            'payment_id': tagihan.pk if tagihan else None,
+            'metode': b.metode_bayar,
+            'checkout_url': f'/app/checkout/{b.pk}/',
+        })
 
 
 def _booking_milik(request, pk):
