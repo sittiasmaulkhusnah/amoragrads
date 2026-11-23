@@ -1,0 +1,33 @@
+{% load konten_tags %}<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ p.no_invoice }}</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;color:#211B18;background:#F3ECE4;margin:0;padding:24px}
+.inv{max-width:720px;margin:0 auto;background:#fff;border:1px solid #E6DCD3;border-radius:14px;padding:32px}
+.top{display:flex;justify-content:space-between;gap:16px;border-bottom:2px solid #8A1F23;padding-bottom:16px;margin-bottom:20px}
+h1{margin:0;font-size:22px;color:#8A1F23}.muted{color:#6E6560;font-size:13px}
+table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #E6DCD3;font-size:14px}th{font-size:12px;text-transform:uppercase;color:#6E6560}
+.r{text-align:right}.tot td{font-weight:700;font-size:16px;border-bottom:0}
+.stamp{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;font-size:12px}
+.ok{background:#DDEFE0;color:#1f6b34}.wait{background:#FFF1D6;color:#8a5a00}.bad{background:#F8DCDC;color:#8A1F23}
+.btns{max-width:720px;margin:14px auto;text-align:center}.btns button{padding:10px 20px;border:0;border-radius:8px;background:#B3282D;color:#fff;font-weight:700;cursor:pointer}
+@media print{body{background:#fff;padding:0}.btns{display:none}.inv{border:0}}
+</style></head><body>
+<div class="inv">
+  <div class="top">
+    <div><h1>{% firstof ws.nama_web 'Amora Grads' %}</h1><div class="muted">{{ ws.alamat }}{% if ws.no_telp %}<br>WhatsApp {{ ws.no_telp }}{% endif %}{% if ws.email %}<br>{{ ws.email }}{% endif %}</div></div>
+    <div style="text-align:right"><b>{{ p.no_invoice }}</b><br><span class="muted">{{ p.created_at|date:"d F Y" }}</span><br>
+      <span class="stamp {% if p.sudah_bayar %}ok{% elif p.status == 'pending' %}wait{% else %}bad{% endif %}">{{ p.get_status_display|upper }}</span></div>
+  </div>
+  <div class="muted">Ditagihkan kepada</div>
+  <p style="margin:4px 0 0"><b>{{ b.customer.first_name }}</b><br>{{ b.customer.email }}{% if profil.telp %}<br>{{ profil.telp }}{% endif %}</p>
+  <table>
+    <tr><th>Deskripsi</th><th>Jadwal sesi</th><th class="r">Jumlah</th></tr>
+    <tr><td>{{ p.jenis_label }} paket <b>{{ b.package.name }}</b></td><td>{{ b.booking_date|date:"d F Y" }}, {{ b.booking_time|time:"H.i" }} WITA</td><td class="r">{{ p.amount|rupiah }}</td></tr>
+    <tr class="tot"><td colspan="2" class="r">Total {{ p.jenis_label }}</td><td class="r">{{ p.amount|rupiah }}</td></tr>
+  </table>
+  <p class="muted">Harga paket {{ b.harga_total|rupiah }} · Sudah dibayar {{ b.dibayar|rupiah }} · Sisa {{ b.sisa|rupiah }}</p>
+  {% if p.paid_at %}<p class="muted">Dibayar pada {{ p.paid_at|date:"d F Y H:i" }}{% if p.payment_method %} via {{ p.payment_method }}{% endif %}{% if p.order_id %} · Order {{ p.order_id }}{% endif %}</p>{% endif %}
+</div>
+<div class="btns"><button onclick="window.print()">Cetak / Simpan PDF</button></div>
+</body></html>

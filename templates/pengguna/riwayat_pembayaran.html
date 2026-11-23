@@ -1,0 +1,24 @@
+{% extends 'pengguna/base_pengguna.html' %}
+{% load konten_tags %}
+{% block title %}Riwayat Pembayaran{% endblock %}
+{% block content %}
+<h1 class="page__title">Riwayat Pembayaran</h1>
+<p class="page__sub">Semua tagihan dan pembayaranmu. Total yang sudah dibayar: <b>{{ total_dibayar }}</b>.</p>
+{% if daftar %}
+<div class="tbl-wrap"><table class="tbl" style="min-width:640px">
+  <tr><th>Invoice</th><th>Pesanan</th><th>Jenis</th><th>Jumlah</th><th>Status</th><th></th></tr>
+  {% for p in daftar %}
+  <tr>
+    <td><b>{{ p.no_invoice }}</b><br><span class="sub" style="font-size:12px;color:var(--ink-soft)">{{ p.created_at|date:"d M Y" }}</span></td>
+    <td>{{ p.booking.package.name }}<br><span style="font-size:12px;color:var(--ink-soft)">{{ p.booking.booking_date|date:"d M Y" }}</span></td>
+    <td>{{ p.jenis_label }}{% if p.due_date and not p.sudah_bayar %}<br><span style="font-size:12px;color:var(--ink-soft)">jatuh tempo {{ p.due_date|date:"d M Y" }}</span>{% endif %}</td>
+    <td><b>{{ p.amount|rupiah }}</b></td>
+    <td><span class="chip {% if p.sudah_bayar %}ok{% elif p.status == 'pending' %}wait{% elif p.status == 'cancelled' %}off{% else %}bad{% endif %}">{{ p.get_status_display }}</span>{% if p.paid_at %}<br><span style="font-size:12px;color:var(--ink-soft)">{{ p.paid_at|date:"d M Y H:i" }}</span>{% endif %}</td>
+    <td style="white-space:nowrap">{% if p.sudah_bayar %}<a href="{% url 'app:invoice' p.pk %}" target="_blank">Invoice</a>{% elif p.status != 'cancelled' and p.booking.status != 'cancelled' %}<a href="{% url 'app:checkout' p.booking.pk %}">Bayar</a>{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table></div>
+{% else %}
+<div class="sum"><p class="sub" style="margin:0">Belum ada pembayaran. Buat booking dulu lewat katalog.</p><div class="actions"><a class="btn btn--primary" href="/katalog.html">Lihat Katalog</a></div></div>
+{% endif %}
+{% endblock %}

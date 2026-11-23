@@ -1,4 +1,9 @@
+import os
+import uuid
+
 from django.contrib import messages
+from django.core.files.storage import default_storage
+from django.http import JsonResponse
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -10,9 +15,10 @@ from .form_konten import (ArticleForm, CategoryForm, HeroSlideForm, KerjaSamaFor
 from .models import Article, Category, HeroSlide, KerjaSama, Page, UserAdmin, WebSetting
 
 
-
+# ==========================================================
 # KELOLA KONTEN DI PANEL ADMIN (satu pola CRUD untuk lima jenis konten)
 # kolom: (judul kolom, atribut atau fungsi, jenis tampilan)
+# ==========================================================
 KONTEN = {
     'artikel': {
         'model': Article, 'form': ArticleForm, 'judul': 'Artikel', 'tunggal': 'artikel',
@@ -24,9 +30,8 @@ KONTEN = {
     },
     'kategori-artikel': {
         'model': Category, 'form': CategoryForm, 'judul': 'Kategori Artikel', 'tunggal': 'kategori artikel',
-        'info': 'Kelompok untuk mengatur artikel, misalnya Tips Wisuda atau Info & Promo. Kategori nonaktif tidak tampil di filter halaman Artikel.',
+        'info': 'Kelompok untuk mengatur artikel, misalnya Tips Wisuda atau Info & Promo.',
         'kolom': [('Nama', 'name', 'teks'), ('Slug', 'slug', 'teks'),
-                  ('Status', 'status', 'status'),
                   ('Jumlah artikel', lambda o: o.articles.count(), 'teks')],
         'gambar': None, 'penulis': False,
     },
@@ -83,7 +88,7 @@ def konten_list(request, jenis):
             elif jenis_sel == 'aktif':
                 jenis_sel, v = ('aktif' if v else 'nonaktif'), ('Aktif' if v else 'Nonaktif')
             elif jenis_sel == 'status':
-                jenis_sel = 'ok' if v in ('published', 'aktif') else 'off'
+                jenis_sel = 'ok' if v == 'published' else 'off'
             else:
                 jenis_sel = 'teks'
             sel.append({'v': v, 'j': jenis_sel})
@@ -143,20 +148,17 @@ def pengaturan_web(request):
             messages.success(request, 'Pengaturan website berhasil disimpan!')
             return redirect('app:pengaturan_web')
         messages.error(request, 'Gagal menyimpan. Periksa isian form.')
-    previews = {}
-    if obj.pk and obj.logo:
-        previews['logo'] = obj.logo.url
-    if obj.pk and obj.favicon:
-        previews['favicon'] = obj.favicon.url
+    previews = {'logo': obj.logo.url} if obj.pk and obj.logo else {}
     return render(request, 'admin_super/konten_form.html', {
         'title': 'Pengaturan Website', 'photo': _foto_admin(request), 'jenis': 'pengaturan',
-        'cfg': {'judul': 'Pengaturan Website', 'info': 'Data ini dipakai di footer, kontak, tombol WhatsApp, logo, dan favicon website.'},
+        'cfg': {'judul': 'Pengaturan Website', 'info': 'Data ini dipakai di footer, kontak, dan tombol WhatsApp website.'},
         'form': form, 'campos': [{'f': bf, 'preview': previews.get(bf.name)} for bf in form], 'pengaturan': True,
     })
 
 
-# HALAMAN artikel dan halaman statis
-
+# ==========================================================
+# HALAMAN PUBLIK: artikel dan halaman statis
+# ==========================================================
 def konteks_publik():
     """Data yang dipakai bersama oleh footer / kontak di halaman publik."""
     return {
@@ -174,7 +176,7 @@ def artikel_list(request):
     if q:
         artikel = artikel.filter(Q(title__icontains=q) | Q(content__icontains=q))
     ctx = konteks_publik()
-    ctx.update({'artikel': artikel, 'kategori_list': Category.objects.filter(status='aktif'),
+    ctx.update({'artikel': artikel, 'kategori_list': Category.objects.all(),
                 'kategori_aktif': kategori, 'q': q, 'judul_halaman': 'Artikel'})
     return render(request, 'publik/artikel_list.html', ctx)
 
@@ -196,3 +198,24 @@ def halaman_detail(request, slug):
     ctx = konteks_publik()
     ctx.update({'hal': hal, 'judul_halaman': hal.title})
     return render(request, 'publik/halaman_detail.html', ctx)
+
+
+@admin_required
+@require_POST
+def unggah_gambar_editor(request):
+    """Menerima gambar dari editor Summernote dan mengembalikan alamat filenya."""
+    berkas = request.FILES.get('file')
+    if not berkas:
+        return JsonResponse({'ok': False, 'error': 'Tidak ada file.'}, status=400)
+    if berkas.size > 3 * 1024 * 1024:
+        return JsonResponse({'ok': False, 'error': 'Ukuran gambar maksimal 3 MB.'}, status=400)
+    try:
+        from PIL import Image
+        gambar = Image.open(berkas)
+        gambar.verify()
+        ext = {'JPEG': 'jpg', 'PNG': 'png', 'GIF': 'gif', 'WEBP': 'webp'}[gambar.format]
+    except Exception:
+        return JsonResponse({'ok': False, 'error': 'File harus berupa gambar JPG, PNG, GIF, atau WEBP.'}, status=400)
+    berkas.seek(0)
+    nama = default_storage.save(os.path.join('artikel', 'isi', f'{uuid.uuid4().hex}.{ext}'), berkas)
+    return JsonResponse({'ok': True, 'url': default_storage.url(nama)})

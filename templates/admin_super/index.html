@@ -1,4 +1,5 @@
 {% extends 'dashboard_base.html' %}
+{% load konten_tags %}
 {% block content %}
 <div class="card hello">
   <span class="av big">{% if photo %}<img src="{{ photo.url }}" alt="">{% else %}{{ request.user.first_name|default:"A"|slice:":1"|upper }}{% endif %}</span>
@@ -19,13 +20,15 @@
   <div class="card stat"><small>Halaman</small><b>{{ total_halaman }}</b></div>
   <div class="card stat"><small>Total Booking</small><b>{{ total_booking }}</b></div>
   <div class="card stat"><small>Menunggu Pembayaran</small><b>{{ menunggu }}</b></div>
-  <div class="card stat"><small>DP / Pembayaran Diterima</small><b>{{ diterima }}</b></div>
+  <div class="card stat"><small>Pembayaran Diterima</small><b>{{ diterima }}</b></div>
+  <div class="card stat"><small>Pelunasan Menunggu</small><b>{{ pelunasan_menunggu }}</b><span class="sub">{{ pelunasan_nominal }}</span></div>
+  <div class="card stat"><small>Lewat Jatuh Tempo</small><b>{{ pelunasan_lewat }}</b><span class="sub">pelunasan belum dibayar</span></div>
 </div>
 
 <h3>Booking terbaru</h3>
 <div class="tablewrap">
 <table>
-  <tr><th>#</th><th>Pelanggan</th><th>Paket</th><th>Jadwal</th><th>Status</th><th>Pembayaran</th><th>Ubah</th></tr>
+  <tr><th>#</th><th>Pelanggan</th><th>Paket</th><th>Jadwal</th><th>Status</th><th>Pembayaran</th><th>Ubah status</th></tr>
   {% for r in rows %}
   <tr>
     <td>{{ r.b.pk }}</td>
@@ -33,12 +36,11 @@
     <td>{{ r.b.package.name }}</td>
     <td>{{ r.tgl }}</td>
     <td><span class="badge {{ r.b.status }}">{{ r.b.get_status_display }}</span></td>
-    <td>{% if r.pay %}<span class="badge {{ r.pay.status }}">{{ r.pay.get_status_display }}</span>{% else %}-{% endif %}</td>
+    <td><span class="chip {% if r.b.status_bayar == 'lunas' %}ok{% elif r.b.status_bayar == 'dp' %}wait{% else %}off{% endif %}">{{ r.b.status_bayar_label }}</span><br><span class="sub">{{ r.b.dibayar|rupiah }} / {{ r.b.harga_total|rupiah }}</span></td>
     <td>
       <form method="post" action="{% url 'app:booking_status' r.b.pk %}" style="display:flex;gap:6px;flex-wrap:wrap">
         {% csrf_token %}
         <select name="status">{% for v,l in status_choices %}<option value="{{ v }}" {% if v == r.b.status %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
-        <select name="pay_status">{% for v,l in pay_choices %}<option value="{{ v }}" {% if r.pay and v == r.pay.status %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
         <button class="btn btn--primary">Simpan</button>
       </form>
     </td>
@@ -48,4 +50,5 @@
   {% endfor %}
 </table>
 </div>
+<p class="sub" style="margin-top:10px">Pembayaran dikelola di menu <a href="{% url 'app:pembayaran_list' %}"><b>Kelola Pembayaran</b></a>.</p>
 {% endblock %}

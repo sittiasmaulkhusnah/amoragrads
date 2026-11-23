@@ -17,6 +17,7 @@ from django.views.decorators.http import require_POST
 from .form_pengguna import LoginForm, RegisterForm
 from .models import (Article, Booking, HeroSlide, KategoriPaket, KerjaSama, Package, Payment, Page,
                      UserAdmin, UserPengguna, WebSetting)
+from . import payments
 from .views_konten import konteks_publik
 from .roles import ROLE_ADMIN, ROLE_PENGGUNA
 
@@ -30,17 +31,57 @@ def rupiah(n):
     return 'Rp ' + f'{n:,}'.replace(',', '.')
 
 
+def tanggal_pendek(d):
+    return f'{d.day} {BULAN[d.month - 1]} {d.year}'
+
+
+def info_bayar(b):
+    """Ringkasan pembayaran satu booking untuk dashboard pengguna."""
+    berikut = b.tagihan_berikut if b.status != 'cancelled' else None
+    label = url = catatan = ''
+    if berikut:
+        label = {'dp': 'Bayar DP', 'pelunasan': 'Bayar Pelunasan', 'lunas': 'Bayar Lunas'}[berikut.jenis]
+        url = f'/app/checkout/{b.pk}/'
+    if b.status == 'cancelled':
+        catatan = 'Dibatalkan'
+    elif b.status_bayar == 'lunas':
+        catatan = 'Lunas'
+    elif b.status_bayar == 'dp':
+        pel = b.payment_set.filter(jenis='pelunasan').exclude(status__in=['paid', 'partial', 'cancelled']).first()
+        catatan = 'DP dibayar' + (f' · pelunasan {rupiah(pel.amount)} paling lambat {tanggal_pendek(pel.due_date)}'
+                                  if pel and pel.due_date else f' · sisa {rupiah(b.sisa)}')
+    else:
+        catatan = 'Menunggu pembayaran ' + ('lunas' if b.metode_bayar == 'lunas' else 'DP')
+    return {'status_bayar': b.status_bayar, 'sisa': b.sisa, 'sisa_rp': rupiah(b.sisa),
+            'bayar_label': label, 'bayar_url': url, 'catatan_bayar': catatan}
+
+
+def jumlah_keranjang(user):
+    """Jumlah booking yang masih punya tagihan belum dibayar (isi 'keranjang')."""
+    n = 0
+    for b in Booking.objects.filter(customer=user, status__in=STATUS_BISA_UBAH).prefetch_related('payment_set'):
+        if b.tagihan_berikut:
+            n += 1
+    return n
+
 def tgl_booking(b):
     return f'{b.booking_date.day} {BULAN[b.booking_date.month - 1]} {b.booking_date.year} · {b.booking_time:%H.%M}'
 
 
-# Halaman frontend
+# ======================= Halaman frontend (desain milik sendiri) =======================
+SLIDE_BAWAAN = [   # dipakai kalau belum ada Hero Slide aktif di panel admin
+    {'badge_text': 'Studio foto wisuda & momen kelulusan', 'judul': 'Abadikan momen', 'judul_highlight': 'kelulusanmu.',
+     'deskripsi': 'Amora Grads bantu kamu mengabadikan hari kelulusan dengan hasil yang natural, hangat, dan tetap kamu banget.',
+     'tombol_teks': 'Booking sekarang', 'tombol_url': '/katalog.html', 'banner': None},
+]
+
+
 @ensure_csrf_cookie
 def home(request):
     ctx = konteks_publik()
     ctx.update({
-        'hero_slides': HeroSlide.objects.filter(is_active=True),
-        'artikel_terbaru' : Article.objects.filter(status='published').order_by('-created_at')[:3],
+        'hero_slides': list(HeroSlide.objects.filter(is_active=True)) or SLIDE_BAWAAN,
+        'artikel_terbaru': Article.objects.filter(status='published').select_related('category')[:3],
         'mitra': KerjaSama.objects.all(),
     })
     return render(request, 'index.html', ctx)
@@ -79,6 +120,11 @@ def paket_untuk_frontend():
             'desc': p.deskripsi,
             'img': p.featured_image.url if p.featured_image else 'aset/logo.png',
             'kategori': p.kategori.nama_kategori if p.kategori else '',
+            'hargaInt': p.harga_akhir,
+            'dp': p.dp_amount,
+            'dpPersen': p.dp_persen,
+            'dpLabel': p.dp_label,
+            'sisaDp': p.sisa_setelah_dp,
         }
         if p.kicker:
             item['kicker'] = p.kicker
@@ -122,7 +168,7 @@ def booking_page(request):
     return render(request, 'booking.html', konteks_publik())
 
 
-# Login, Register, Logout
+# ======================= Login, Register, Logout =======================
 @ensure_csrf_cookie
 def loginView(request):
     if request.user.is_authenticated:
@@ -187,10 +233,12 @@ def index(request):
         bookings = Booking.objects.select_related('customer', 'package').order_by('-created_at')
         diterima = Payment.objects.filter(status__in=['partial', 'paid']).aggregate(s=Sum('amount'))['s'] or 0
         rows = []
-        for b in bookings[:30]:
-            p = b.payment_set.first()
+        for b in bookings.prefetch_related('payment_set')[:30]:
             ph = UserPengguna.objects.filter(user=b.customer).first()
-            rows.append({'b': b, 'pay': p, 'tgl': tgl_booking(b), 'telp': ph.telp if ph else ''})
+            rows.append({'b': b, 'tgl': tgl_booking(b), 'telp': ph.telp if ph else ''})
+        pelunasan = Payment.objects.filter(jenis='pelunasan', status__in=['pending', 'failed', 'expired']
+                                           ).exclude(booking__status='cancelled')
+        lewat = pelunasan.filter(due_date__lt=timezone.localdate())
         return render(request, 'admin_super/index.html', {
             'title': 'Dashboard Admin',
             'photo': useradmin.photo if useradmin and useradmin.photo else None,
@@ -204,6 +252,9 @@ def index(request):
             'total_artikel': Article.objects.count(),
             'total_halaman': Page.objects.count(),
             'diterima': rupiah(diterima),
+            'pelunasan_menunggu': pelunasan.count(),
+            'pelunasan_nominal': rupiah(pelunasan.aggregate(s=Sum('amount'))['s'] or 0),
+            'pelunasan_lewat': lewat.count(),
             'rows': rows,
             'status_choices': Booking.STATUS_CHOICES,
             'pay_choices': Payment.STATUS_CHOICES,
@@ -223,13 +274,15 @@ def index(request):
             'pkg': b.package.name,
             'date': tgl_booking(b),
             'location': b.location,
-            'price': rupiah(b.package.harga_akhir),
+            'price': rupiah(b.harga_total),
             'status': status_map.get(b.status, 'Terjadwal'),
             'id': b.pk,
             'raw_date': b.booking_date.isoformat(),
             'raw_time': f'{b.booking_time:%H.%M}',
             'bisa_ubah': b.status in STATUS_BISA_UBAH and b.booking_date >= timezone.localdate(),
-        } for b in Booking.objects.filter(customer=user).select_related('package').order_by('-created_at')]
+            **info_bayar(b),
+        } for b in Booking.objects.filter(customer=user).select_related('package')
+            .prefetch_related('payment_set').order_by('-created_at')]
         return render(request, 'pengguna/index.html', {
             'title': 'Dashboard',
             'nama': user.first_name or user.username,
@@ -244,7 +297,7 @@ def index(request):
     return redirect('login')
 
 
-# API kecil untuk frontend
+# ======================= API kecil untuk frontend =======================
 @ensure_csrf_cookie
 def api_me(request):
     u = request.user
@@ -277,16 +330,18 @@ def api_bookings(request):
         return JsonResponse({'ok': False, 'error': 'Tanggal sudah lewat.'}, status=400)
     if Booking.objects.filter(booking_date=tgl, booking_time=waktu).exclude(status='cancelled').exists():
         return JsonResponse({'ok': False, 'error': 'Jadwal itu sudah terisi.'}, status=409)
+    metode = 'lunas' if d.get('metode') == 'lunas' else 'dp'
     b = Booking.objects.create(customer=request.user, package=paket, booking_date=tgl,
-                               booking_time=waktu, location='Ditentukan via WhatsApp')
-    Payment.objects.create(booking=b, amount=int(d.get('dp') or 50000), payment_method='QRIS',
-                           transaction_id=str(d.get('order_id') or '')[:150])
+                               booking_time=waktu, location='Ditentukan via WhatsApp',
+                               total_harga=paket.harga_akhir, metode_bayar=metode)
+    payments.buat_tagihan(b, metode)
     if d.get('phone'):
         up, _ = UserPengguna.objects.get_or_create(user=request.user)
         if not up.telp:
             up.telp = str(d['phone'])[:20]
             up.save()
-    return JsonResponse({'ok': True, 'id': b.pk})
+    return JsonResponse({'ok': True, 'id': b.pk, 'metode': b.metode_bayar,
+                         'checkout_url': f'/app/checkout/{b.pk}/'})
 
 
 def _booking_milik(request, pk):
@@ -305,6 +360,7 @@ def api_booking_batal(request, pk):
         return JsonResponse({'ok': False, 'error': 'Booking ini tidak bisa dibatalkan.'}, status=400)
     b.status = 'cancelled'
     b.save()
+    payments.batalkan_tagihan(b)
     return JsonResponse({'ok': True})
 
 
@@ -336,4 +392,5 @@ def api_booking_reschedule(request, pk):
         return JsonResponse({'ok': False, 'error': 'Jadwal itu sudah terisi. Pilih tanggal atau jam lain.'}, status=409)
     b.booking_date, b.booking_time = tgl, waktu
     b.save()
+    payments.sinkron_jatuh_tempo(b)
     return JsonResponse({'ok': True})

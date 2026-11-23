@@ -1,0 +1,105 @@
+{% extends 'pengguna/base_pengguna.html' %}
+{% load konten_tags %}
+{% block title %}Ringkasan Pesanan{% endblock %}
+{% block content %}
+<h1 class="page__title">Ringkasan Pesanan</h1>
+<p class="page__sub">Periksa pesananmu, lalu lanjutkan ke pembayaran.</p>
+
+<div class="sum">
+  <h3>{{ b.package.name }}</h3>
+  <p class="sub">{{ b.booking_date|date:"l, d F Y" }} · {{ b.booking_time|time:"H.i" }} WITA · {{ b.package.peserta }} · {{ b.package.duration_minutes }} menit</p>
+  <div class="totals" style="border-top:0;padding-top:0;margin-top:0">
+    <div><span>Harga paket</span><span>{{ b.harga_total|rupiah }}</span></div>
+    <div><span>Cara bayar</span><span>{% if b.metode_bayar == 'lunas' %}Bayar lunas sekaligus{% else %}DP dulu, lunasi H-1{% endif %}</span></div>
+  </div>
+</div>
+
+<div class="sum">
+  <h3>Rincian pembayaran</h3>
+  <p class="sub">{% if b.metode_bayar == 'dp' and pelunasan %}DP dibayar sekarang. Sisanya dilunasi paling lambat {{ pelunasan.due_date|date:"d F Y" }} (H-1 sesi foto).{% else %}Satu kali pembayaran untuk seluruh harga paket.{% endif %}</p>
+  {% for p in payments %}
+  <div class="payrow">
+    <div class="l"><b>{{ p.jenis_label }}</b><span>{% if p.due_date %}Jatuh tempo {{ p.due_date|date:"d M Y" }}{% else %}Dibayar saat booking{% endif %}{% if p.paid_at %} · dibayar {{ p.paid_at|date:"d M Y H:i" }}{% endif %}</span></div>
+    <div><b>{{ p.amount|rupiah }}</b> <span class="chip {% if p.sudah_bayar %}ok{% elif p.status == 'pending' %}wait{% else %}bad{% endif %}">{{ p.get_status_display }}</span>
+      {% if p.sudah_bayar %}<a href="{% url 'app:invoice' p.pk %}" target="_blank" style="font-size:12.5px;margin-left:6px">Invoice</a>{% endif %}</div>
+  </div>
+  {% endfor %}
+  <div class="totals">
+    <div><span>Total harga</span><span>{{ b.harga_total|rupiah }}</span></div>
+    <div><span>Sudah dibayar</span><span>{{ b.dibayar|rupiah }}</span></div>
+    <div class="big"><span>Sisa tagihan</span><span>{{ b.sisa|rupiah }}</span></div>
+  </div>
+
+  <p class="msg" id="payMsg" hidden></p>
+
+  {% if berikut %}
+    {% if berikut.jenis == 'pelunasan' and hari_ke_sesi <= 2 %}<div class="callout">Pelunasan jatuh tempo {% if hari_ke_sesi <= 1 %}hari ini atau besok{% else %}dalam 2 hari{% endif %}. Segera selesaikan agar sesi fotomu tetap aman.</div>{% endif %}
+    <div class="actions">
+      <button type="button" class="btn btn--primary" id="btnBayar" data-id="{{ berikut.pk }}">Bayar {{ berikut.jenis_label }} {{ berikut.amount|rupiah }}</button>
+      {% if bisa_lunas %}<button type="button" class="btn btn--ghost" id="btnLunas" data-id="{{ b.pk }}">Langsung lunasi {{ b.harga_total|rupiah }}</button>{% endif %}
+      {% if berikut.order_id %}<button type="button" class="btn btn--ghost" id="btnCek" data-id="{{ berikut.pk }}">Saya sudah bayar, cek status</button>{% endif %}
+    </div>
+    {% if not mid.enabled %}<p class="sub" style="margin:12px 0 0;font-size:13px">Pembayaran online belum diaktifkan admin. Bayar lewat WhatsApp, lalu admin akan menandai pembayaranmu sebagai lunas.</p>{% endif %}
+    <div class="callout" id="manualBox" {% if mid.enabled %}hidden{% endif %} style="margin-top:12px">Konfirmasi pembayaran lewat WhatsApp admin. <a href="{{ wa_url }}" target="_blank" rel="noopener" class="btn btn--primary" style="margin-left:6px;padding:7px 14px">Hubungi via WhatsApp</a></div>
+  {% else %}
+    <div class="callout ok">Pembayaran sudah lunas. Terima kasih! Sampai jumpa di sesi fotomu.</div>
+    <div class="actions"><a class="btn btn--primary" href="{% url 'app:dashboard' %}">Ke Dashboard</a><a class="btn btn--ghost" href="{% url 'app:riwayat_pembayaran' %}">Riwayat Pembayaran</a></div>
+  {% endif %}
+</div>
+{{ mid|json_script:"mid-data" }}
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  var mid = JSON.parse(document.getElementById('mid-data').textContent);
+  var msg = document.getElementById('payMsg');
+  function csrf(){ var m = document.cookie.match(/csrftoken=([^;]+)/); return m ? decodeURIComponent(m[1]) : ''; }
+  function post(url, data){
+    return fetch(url, { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json','X-CSRFToken':csrf()}, body: JSON.stringify(data || {}) })
+      .then(function(r){ return r.json(); });
+  }
+  function tampil(t, err){ msg.textContent = t; msg.className = 'msg ' + (err ? 'error' : 'success'); msg.hidden = false; }
+  function cek(id, senyap){
+    return post('/app/api/payments/' + id + '/cek/').then(function(r){
+      if(!r.ok){ if(!senyap){ tampil(r.error || 'Gagal memeriksa status.', true); } return; }
+      if(r.status === 'paid'){ window.location.reload(); }
+      else if(!senyap){ tampil('Pembayaran belum kami terima (status: ' + (r.midtrans || r.status) + '). Coba lagi beberapa saat.', true); }
+    });
+  }
+  function muatSnap(url, key){
+    return new Promise(function(ok, gagal){
+      if(window.snap){ return ok(); }
+      var s = document.createElement('script'); s.src = url; s.setAttribute('data-client-key', key);
+      s.onload = ok; s.onerror = function(){ gagal(new Error('Gagal memuat Midtrans. Periksa koneksi internet.')); };
+      document.head.appendChild(s);
+    });
+  }
+  var btn = document.getElementById('btnBayar');
+  if(btn){ btn.addEventListener('click', function(){
+    var id = btn.getAttribute('data-id'); btn.disabled = true; msg.hidden = true;
+    post('/app/api/payments/' + id + '/snap/').then(function(r){
+      if(!r.ok){ throw new Error(r.error || 'Gagal memulai pembayaran.'); }
+      if(r.manual){ document.getElementById('manualBox').hidden = false; btn.disabled = false; return; }
+      return muatSnap(r.snap_js, r.client_key).then(function(){
+        window.snap.pay(r.token, {
+          onSuccess: function(){ cek(id); },
+          onPending: function(){ cek(id); },
+          onError:   function(){ tampil('Pembayaran gagal. Silakan coba lagi.', true); btn.disabled = false; },
+          onClose:   function(){ btn.disabled = false; cek(id, true); }
+        });
+      });
+    }).catch(function(e){ tampil(e.message, true); btn.disabled = false; });
+  }); }
+  var cekBtn = document.getElementById('btnCek');
+  if(cekBtn){ cekBtn.addEventListener('click', function(){ cek(cekBtn.getAttribute('data-id')); }); }
+  var lunas = document.getElementById('btnLunas');
+  if(lunas){ lunas.addEventListener('click', function(){
+    if(!confirm('Ganti ke pembayaran lunas sekaligus?')){ return; }
+    post('/app/api/bookings/' + lunas.getAttribute('data-id') + '/lunas/').then(function(r){
+      if(r.ok){ window.location.reload(); } else { tampil(r.error || 'Gagal mengubah cara bayar.', true); }
+    });
+  }); }
+})();
+</script>
+{% endblock %}

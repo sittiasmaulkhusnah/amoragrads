@@ -55,11 +55,6 @@ def booking_status(request, pk):
     if st in dict(Booking.STATUS_CHOICES):
         b.status = st
         b.save()
-    ps = request.POST.get('pay_status')
-    pay = b.payment_set.first()
-    if pay and ps in dict(Payment.STATUS_CHOICES):
-        pay.status = ps
-        pay.save()
     messages.success(request, 'Status booking diperbarui.')
     return redirect('app:dashboard')
 
@@ -117,7 +112,9 @@ def kategori_paket_hapus(request, pk):
     return redirect('app:kategori_paket_list')
 
 
+# ==========================================
 # KELOLA PAKET
+# ==========================================
 @admin_required
 def paket_list(request):
     return render(request, 'admin_super/paket_list.html', {

@@ -69,7 +69,7 @@
       var sc = statusClassMap[o.status] || "";
       var actionBtns = "";
       if(o.status === "Terjadwal" && o.bisa_ubah){
-        actionBtns = '<button data-act="reschedule" data-id="' + o.id + '">Reschedule</button><button data-act="batal" data-id="' + o.id + '">Batalkan</button><button class="primary" data-go="index.html#kontak">Hubungi Admin</button>';
+        actionBtns = '<button data-act="reschedule" data-id="' + o.id + '">Reschedule</button><button data-act="batal" data-id="' + o.id + '">Batalkan</button>' + (o.bayar_url ? '<button class="primary" data-go="' + o.bayar_url + '">' + o.bayar_label + '</button>' : '<button class="primary" data-go="index.html#kontak">Hubungi Admin</button>');
       } else if(o.status === "Selesai"){
         actionBtns = '<button data-go="booking.html">Booking Lagi</button><button class="primary" data-go="index.html#kontak">Beri Ulasan</button>';
       } else if(o.status === "Terjadwal"){
@@ -83,6 +83,7 @@
           '<div class="detail">' +
             '<p class="pkg">' + o.pkg + '</p>' +
             '<p class="meta">' + o.date + ' &middot; ' + o.location + '</p>' +
+            (o.catatan_bayar ? '<p class="meta" style="margin-top:4px;color:var(--red-dark);font-weight:600">' + o.catatan_bayar + '</p>' : '') +
           '</div>' +
           '<div class="status ' + sc + '">' + o.status + '</div>' +
         '</div>' +

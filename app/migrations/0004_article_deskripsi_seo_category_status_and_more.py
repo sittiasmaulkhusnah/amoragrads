@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='heroslide',
             name='badge_icon',
-            field=models.ImageField(blank=True, max_length=255, null=True, upload_to=app.models.rename_hero_icon, verbose_name='Ikon badge (opsional)'),
+            field=models.ImageField(blank=True, max_length=255, null=True, upload_to='hero_icons/', verbose_name='Ikon badge (opsional)'),
         ),
         migrations.AddField(
             model_name='package',

@@ -38,13 +38,13 @@ class PaketForm(forms.ModelForm):
     class Meta:
         model = Package
         fields = ['name', 'slug', 'kategori', 'badge', 'peserta', 'duration_minutes', 'price',
-                  'harga_potongan', 'stok', 'hasil', 'deskripsi', 'subtitle', 'kicker', 'deskripsi_lengkap',
+                  'harga_potongan', 'dp_tipe', 'dp_nilai', 'hasil', 'deskripsi', 'subtitle', 'kicker', 'deskripsi_lengkap',
                   'featured_image', 'status']
         labels = {
             'name': 'Nama paket', 'slug': 'Slug / URL (opsional)', 'badge': 'Label (opsional)',
             'peserta': 'Jumlah orang', 'duration_minutes': 'Durasi (menit)', 'price': 'Harga (Rp)',
-            'harga_potongan': 'Harga potongan (Rp, opsional)', 'stok': 'Stok / kuota slot',
-            'hasil': 'Hasil yang didapat',
+            'harga_potongan': 'Harga potongan (Rp, opsional)',
+            'dp_tipe': 'Jenis DP', 'dp_nilai': 'Besar DP (Rp atau %)', 'hasil': 'Hasil yang didapat',
             'deskripsi': 'Deskripsi singkat', 'subtitle': 'Subjudul', 'kicker': 'Kicker (teks kecil di atas judul)',
             'deskripsi_lengkap': 'Deskripsi lengkap', 'featured_image': 'Foto utama (cover)', 'status': 'Status',
         }
@@ -55,8 +55,8 @@ class PaketForm(forms.ModelForm):
             'peserta': forms.TextInput(attrs={'placeholder': 'Contoh: 1 Orang'}),
             'price': forms.NumberInput(attrs={'min': 0, 'step': 1000, 'placeholder': '400000'}),
             'harga_potongan': forms.NumberInput(attrs={'min': 0, 'step': 1000, 'placeholder': 'Kosongkan jika tidak diskon'}),
-            'stok': forms.NumberInput(attrs={'min': 0, 'placeholder': '0'}),
             'duration_minutes': forms.NumberInput(attrs={'min': 1, 'placeholder': '60'}),
+            'dp_nilai': forms.NumberInput(attrs={'min': 0, 'step': 1000, 'placeholder': '50000 atau 30'}),
             'hasil': forms.TextInput(attrs={'placeholder': 'Contoh: 25 Foto Edit'}),
             'deskripsi': forms.Textarea(attrs={'rows': 3}),
             'deskripsi_lengkap': forms.Textarea(attrs={'rows': 5}),
@@ -68,4 +68,10 @@ class PaketForm(forms.ModelForm):
         harga, potongan = data.get('price'), data.get('harga_potongan')
         if harga and potongan and potongan >= harga:
             self.add_error('harga_potongan', 'Harga potongan harus lebih kecil dari harga awal.')
+        tipe, nilai = data.get('dp_tipe'), data.get('dp_nilai')
+        if tipe == 'persen' and nilai is not None and not (1 <= nilai <= 100):
+            self.add_error('dp_nilai', 'DP persen harus antara 1 dan 100.')
+        akhir = potongan if (potongan and harga and potongan < harga) else harga
+        if tipe == 'nominal' and nilai and akhir and nilai > akhir:
+            self.add_error('dp_nilai', 'DP tidak boleh lebih besar dari harga paket.')
         return data

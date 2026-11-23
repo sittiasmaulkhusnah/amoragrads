@@ -1,0 +1,41 @@
+{% extends 'dashboard_base.html' %}
+{% load konten_tags %}
+{% block content %}
+<div class="stats">
+  <div class="card stat"><small>Pembayaran diterima</small><b>{{ diterima }}</b></div>
+  <div class="card stat"><small>Tagihan belum dibayar</small><b>{{ belum_bayar }}</b></div>
+  <div class="card stat"><small>Lewat jatuh tempo</small><b>{{ lewat_tempo }}</b><span class="sub">tagihan</span></div>
+</div>
+<h3>Daftar Pembayaran</h3>
+<p class="sub">Pembayaran lewat Midtrans tercatat otomatis. Untuk pembayaran manual (transfer atau tunai), ubah statusnya menjadi Lunas di sini.</p>
+<form method="get" class="filters">
+  <select name="status"><option value="">Semua status</option>{% for v,l in status_choices %}<option value="{{ v }}" {% if v == f_status %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+  <select name="jenis"><option value="">Semua jenis</option>{% for v,l in jenis_choices %}<option value="{{ v }}" {% if v == f_jenis %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+  <input type="text" name="q" value="{{ q }}" placeholder="Cari nama, email, paket, order">
+  <button class="btn btn--primary">Terapkan</button>
+  <a class="btn" href="{% url 'app:pembayaran_list' %}">Reset</a>
+</form>
+<div class="tablewrap">
+<table style="min-width:980px">
+  <tr><th>Invoice</th><th>Pelanggan</th><th>Paket</th><th>Jenis</th><th>Jumlah</th><th>Jatuh tempo</th><th>Status</th><th>Metode</th><th>Ubah</th></tr>
+  {% for p in daftar %}
+  <tr>
+    <td><a href="{% url 'app:invoice' p.pk %}" target="_blank"><b>{{ p.no_invoice }}</b></a>{% if p.order_id %}<br><span class="sub">{{ p.order_id }}</span>{% endif %}</td>
+    <td>{{ p.booking.customer.first_name }}<br><span class="sub">{{ p.booking.customer.email }}</span></td>
+    <td>{{ p.booking.package.name }}<br><span class="sub">{{ p.booking.booking_date|date:"d M Y" }}</span></td>
+    <td>{{ p.jenis_label }}</td>
+    <td><b>{{ p.amount|rupiah }}</b></td>
+    <td>{% if p.due_date %}{{ p.due_date|date:"d M Y" }}{% if p.due_date < hari_ini and not p.sudah_bayar and p.status != 'cancelled' %}<br><span class="chip bad">lewat</span>{% endif %}{% else %}-{% endif %}</td>
+    <td><span class="chip {% if p.status == 'paid' or p.status == 'partial' %}ok{% elif p.status == 'pending' %}wait{% elif p.status == 'failed' or p.status == 'expired' %}bad{% else %}off{% endif %}">{{ p.get_status_display }}</span>{% if p.paid_at %}<br><span class="sub">{{ p.paid_at|date:"d M Y H:i" }}</span>{% endif %}</td>
+    <td>{{ p.payment_method|default:"-" }}</td>
+    <td>
+      <form method="post" action="{% url 'app:pembayaran_status' p.pk %}" style="display:flex;gap:6px">{% csrf_token %}
+        <select name="status"><option value="paid">Lunas</option><option value="pending">Menunggu</option><option value="failed">Gagal</option><option value="cancelled">Dibatalkan</option></select>
+        <button class="btn sm btn--primary">OK</button>
+      </form>
+    </td>
+  </tr>
+  {% empty %}<tr><td colspan="9" class="empty">Belum ada pembayaran.</td></tr>{% endfor %}
+</table>
+</div>
+{% endblock %}

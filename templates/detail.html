@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* TOKENS (sama dengan index.html) */
+/* ============ TOKENS (sama dengan index.html) ============ */
 :root{
   --cream: #FAF6F1;
   --cream-2: #F3ECE4;
@@ -50,7 +50,7 @@ p{ margin:0; }
 
 .frame{ max-width: var(--container); margin: 0 auto; background: var(--cream); min-height: 100vh; box-shadow: 0 0 60px rgba(33,27,24,0.08); overflow: hidden; }
 
-/* NAV (sama dengan index.html) */
+/* ============ NAV (sama dengan index.html) ============ */
 .nav{ display:flex; align-items:center; justify-content:space-between; padding: 18px 20px; position: relative; z-index: 20; }
 .nav__logo{ display:flex; align-items:center; }
 .nav__logo-img{ height: 28px; width: auto; display: block; }
@@ -86,7 +86,7 @@ p{ margin:0; }
 .btn--ghost{ border-color: var(--red); color: var(--red-dark); }
 .btn--ghost:hover{ background: var(--red); color: var(--white); }
 
-/* PRODUCT */
+/* ============ PRODUCT ============ */
 .product{ padding: 18px 20px 0; }
 
 .gallery-main{
@@ -119,8 +119,13 @@ p{ margin:0; }
 .price-new small{ font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--ink-soft); }
 .desc{ margin-top: 16px; font-size: 14.5px; line-height: 1.65; color: var(--ink-soft); }
 
-.cta-row{ display:flex; gap: 12px; margin-top: 22px; }
-.cta-row .btn{ flex:1; }
+.cta-row{ display:flex; flex-wrap:wrap; gap: 12px; margin-top: 18px; }
+.cta-row .btn{ flex:1 1 150px; }
+.dp-box{ margin-top: 20px; padding: 16px 18px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-card, 16px); }
+.dp-box__title{ margin: 0 0 8px; font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--red-dark); }
+.dp-box ul{ margin: 0; padding-left: 18px; list-style: disc; font-size: 14px; line-height: 1.65; color: var(--ink-soft); }
+.dp-box li b{ color: var(--ink); }
+.chat-link{ display:inline-block; margin-top: 12px; font-size: 13.5px; font-weight: 700; color: var(--red-dark); text-decoration: underline; }
 
 .trust-grid{ margin-top: 22px; display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .trust-item{ display:flex; align-items:center; gap: 8px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-s); padding: 11px 12px; font-size: 12.5px; font-weight: 600; transition: border-color .2s ease; }
@@ -143,7 +148,7 @@ details[open] .chev{ transform: rotate(180deg); }
 .faq-body{ max-height:0; overflow:hidden; font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; transition: max-height .35s ease, padding-top .35s ease; }
 details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
 
-/* FOOTER */
+/* ============ FOOTER (sama dengan index.html) ============ */
 .footer{ padding: 40px 20px 28px; margin-top: 44px; }
 .footer__brand{ display:flex; align-items:center; margin-bottom: 10px; }
 .footer__brand .nav__logo-img{ height: 34px; }
@@ -157,7 +162,7 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
 .footer__social svg{ width: 17px; height: 17px; }
 .footer__copy{ font-size: 12px; color: var(--ink-soft); padding-top: 24px; border-top: 1px solid var(--line); }
 
-/* DESKTOP */
+/* ============ DESKTOP ============ */
 @media (min-width: 900px){
   .frame{ max-width: none; box-shadow: none; }
   .nav, .footer{ max-width: var(--container-lg); margin-left: auto; margin-right: auto; }
@@ -179,7 +184,8 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
   .info h1{ font-size: 32px; }
   .price-new{ font-size: 30px; }
   .desc{ font-size: 15px; max-width: 44ch; }
-  .cta-row{ max-width: 400px; }
+  .cta-row{ max-width: 460px; }
+  .dp-box{ max-width: 460px; }
   .trust-grid{ max-width: 420px; }
   .notfound{ max-width: var(--container-lg); margin: 0 auto; padding: 60px 40px; }
 
@@ -249,6 +255,28 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
   };
 
   /* Bagian yang tidak diisi di paket.js dibuat otomatis dari data dasar paket */
+  function dpBlock(p){
+    var id = encodeURIComponent(p.id);
+    if (typeof p.dp !== 'number') {   /* data lama tanpa info DP */
+      return '<div class="cta-row">' +
+        '<a href="booking.html?paket=' + id + '" class="btn btn--primary">Booking sekarang</a>' +
+        '<a href="' + waChatLink(p) + '" target="_blank" rel="noopener" class="btn btn--ghost">Chat kami</a></div>';
+    }
+    var f = function (n) { return 'Rp' + Number(n).toLocaleString('id-ID'); };
+    return '<div class="dp-box">' +
+        '<p class="dp-box__title">Cara pembayaran</p>' +
+        '<ul>' +
+          '<li>DP saat booking: <b>' + f(p.dp) + '</b>' + (p.dpPersen ? ' (' + p.dpPersen + '% dari harga)' : '') + '</li>' +
+          '<li>Sisa <b>' + f(p.sisaDp) + '</b> dilunasi paling lambat <b>H-1</b> sebelum sesi foto</li>' +
+          '<li>Atau <b>bayar lunas</b> ' + f(p.hargaInt) + ' sekaligus saat booking, tanpa pelunasan lagi</li>' +
+        '</ul></div>' +
+      '<div class="cta-row">' +
+        '<a href="booking.html?paket=' + id + '&bayar=dp" class="btn btn--primary">Booking + DP ' + f(p.dp) + '</a>' +
+        '<a href="booking.html?paket=' + id + '&bayar=lunas" class="btn btn--ghost">Bayar lunas</a>' +
+      '</div>' +
+      '<a class="chat-link" href="' + waChatLink(p) + '" target="_blank" rel="noopener">Tanya dulu lewat chat</a>';
+  }
+
   function buildFaq(p){
     return p.faq || [
       { q: "Untuk berapa orang paket ini?", a: "Paket " + p.name + " untuk " + p.people + ". Kalau jumlah orangnya berbeda, chat kami untuk tanya paket yang paling cocok." },
@@ -295,10 +323,7 @@ details[open] .faq-body{ max-height: 200px; padding-top: 10px; }
           '<div class="rating"><span class="stars">★★★★★</span><span class="score">4.9</span><span class="count">dari klien yang sudah wisuda</span></div>' +
           '<span class="price-new">' + (p.oldPrice ? '<s style="color:var(--ink-soft);font-size:.7em;font-weight:400">Rp' + p.oldPrice + '</s> ' : '') + 'Rp' + p.price + (p.diskon ? ' <small>(-' + p.diskon + '%)</small>' : '') + ' <small>/ sesi</small></span>' +
           '<p class="desc">' + (p.long || p.desc) + '</p>' +
-          '<div class="cta-row">' +
-            '<a href="booking.html?paket=' + encodeURIComponent(p.id) + '" class="btn btn--primary">Booking sekarang</a>' +
-            '<a href="' + waChatLink(p) + '" target="_blank" rel="noopener" class="btn btn--ghost">Chat kami</a>' +
-          '</div>' +
+          dpBlock(p) +
           '<div class="trust-grid">' +
             '<div class="trust-item">' + ICONS.user + p.people + '</div>' +
             '<div class="trust-item">' + ICONS.clock + p.duration + '</div>' +

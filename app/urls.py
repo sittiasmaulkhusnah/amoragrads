@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views, views_admin, views_konten, views_pengguna
+from . import views, views_admin, views_konten, views_pembayaran, views_pengguna
 
 urlpatterns = [
     path('profile/admin', views_admin.profile_admin, name='profile_admin'),
@@ -16,11 +16,21 @@ urlpatterns = [
     path('paket/edit/<int:pk>/', views_admin.paket_edit, name='paket_edit'),
     path('paket/hapus/<int:pk>/', views_admin.paket_hapus, name='paket_hapus'),
     path('paket/<int:paket_pk>/media/hapus/<uuid:media_uuid>/', views_admin.paket_media_hapus, name='paket_media_hapus'),
+    path('konten/upload-gambar/', views_konten.unggah_gambar_editor, name='konten_upload_gambar'),
     path('konten/<str:jenis>/', views_konten.konten_list, name='konten_list'),
     path('konten/<str:jenis>/tambah/', views_konten.konten_form, name='konten_tambah'),
     path('konten/<str:jenis>/<uuid:pk>/edit/', views_konten.konten_form, name='konten_edit'),
     path('konten/<str:jenis>/<uuid:pk>/hapus/', views_konten.konten_hapus, name='konten_hapus'),
     path('pengaturan/', views_konten.pengaturan_web, name='pengaturan_web'),
+    path('checkout/<int:pk>/', views_pembayaran.checkout, name='checkout'),
+    path('riwayat-pembayaran/', views_pembayaran.riwayat_pembayaran, name='riwayat_pembayaran'),
+    path('invoice/<int:pk>/', views_pembayaran.invoice, name='invoice'),
+    path('pembayaran-admin/', views_pembayaran.pembayaran_admin, name='pembayaran_list'),
+    path('pembayaran-admin/<int:pk>/status/', views_pembayaran.pembayaran_admin_status, name='pembayaran_status'),
+    path('api/payments/<int:pk>/snap/', views_pembayaran.api_bayar_snap, name='api_bayar_snap'),
+    path('api/payments/<int:pk>/cek/', views_pembayaran.api_bayar_cek, name='api_bayar_cek'),
+    path('api/bookings/<int:pk>/lunas/', views_pembayaran.api_ubah_lunas, name='api_ubah_lunas'),
+    path('api/midtrans/notifikasi/', views_pembayaran.api_midtrans_notifikasi, name='api_midtrans_notifikasi'),
     path('api/me/', views.api_me, name='api_me'),
     path('api/bookings/', views.api_bookings, name='api_bookings'),
     path('api/bookings/<int:pk>/batal/', views.api_booking_batal, name='api_booking_batal'),

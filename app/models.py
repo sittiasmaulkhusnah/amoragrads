@@ -66,6 +66,10 @@ class UserPengguna(models.Model):
         return f"Pengguna {self.user}"
 
 
+def rp(n):
+    return 'Rp ' + f'{int(n or 0):,}'.replace(',', '.')
+
+
 # ===================== KATALOG PAKET (setara "produk" di materi dosen) =====================
 def _slug_unik(model, dasar, pk=None, maks=100):
     dasar = (slugify(dasar) or 'paket')[:maks - 8]
@@ -128,7 +132,6 @@ class Package(models.Model):
     duration_minutes = models.PositiveIntegerField()
     hasil = models.CharField(max_length=100, blank=True)
     edited_photo_count = models.PositiveIntegerField(default=0)
-    stok = models.PositiveIntegerField(default=0)  # BARU (slide Products)
     deskripsi = models.TextField(blank=True)
     subtitle = models.CharField(max_length=200, blank=True)
     kicker = models.CharField(max_length=120, blank=True)
@@ -137,6 +140,9 @@ class Package(models.Model):
     faq_json = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_PAKET, default='Tersedia')
     urutan = models.PositiveSmallIntegerField(default=0)
+    DP_TIPE = [('nominal', 'Nominal (Rp)'), ('persen', 'Persen (%)')]
+    dp_tipe = models.CharField(max_length=10, choices=DP_TIPE, default='nominal')
+    dp_nilai = models.PositiveIntegerField(default=50000)
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     updated_at = models.DateTimeField(default=timezone.now, editable=False)
 
@@ -165,6 +171,30 @@ class Package(models.Model):
         if self.harga_potongan and 0 < self.harga_potongan < self.price:
             return self.harga_potongan
         return self.price
+
+    @property
+    def dp_amount(self):
+        """Nominal DP yang harus dibayar saat booking (dari harga akhir paket)."""
+        total = self.harga_akhir
+        if self.dp_tipe == 'persen':
+            nilai = round(total * min(self.dp_nilai, 100) / 100)
+        else:
+            nilai = self.dp_nilai
+        return max(0, min(int(nilai), total))
+
+    @property
+    def dp_persen(self):
+        return round(self.dp_amount * 100 / self.harga_akhir) if self.harga_akhir else 0
+
+    @property
+    def sisa_setelah_dp(self):
+        return self.harga_akhir - self.dp_amount
+
+    @property
+    def dp_label(self):
+        if self.dp_tipe == 'persen':
+            return f"{min(self.dp_nilai, 100)}% ({rp(self.dp_amount)})"
+        return rp(self.dp_amount)
 
     @staticmethod
     def _rp(n):
@@ -222,6 +252,9 @@ class Booking(models.Model):
     booking_date = models.DateField()
     booking_time = models.TimeField()
     location = models.CharField(max_length=255)
+    METODE_CHOICES = [('dp', 'DP dulu, lunasi H-1'), ('lunas', 'Bayar lunas')]
+    metode_bayar = models.CharField(max_length=10, choices=METODE_CHOICES, default='dp')
+    total_harga = models.PositiveIntegerField(default=0)
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -232,6 +265,39 @@ class Booking(models.Model):
     def __str__(self):
         return f"Booking #{self.pk}"
 
+    @property
+    def harga_total(self):
+        return self.total_harga or self.package.harga_akhir
+
+    @property
+    def dibayar(self):
+        """Total pembayaran yang sudah diterima (status paid / partial lama)."""
+        return sum(p.amount for p in self.payment_set.all() if p.sudah_bayar)
+
+    @property
+    def sisa(self):
+        return max(0, self.harga_total - self.dibayar)
+
+    @property
+    def status_bayar(self):
+        if self.dibayar <= 0:
+            return 'belum'
+        return 'lunas' if self.sisa == 0 else 'dp'
+
+    @property
+    def status_bayar_label(self):
+        return {'belum': 'Belum bayar', 'dp': 'DP dibayar', 'lunas': 'Lunas'}[self.status_bayar]
+
+    @property
+    def tagihan_berikut(self):
+        """Pembayaran berikutnya yang harus dibayar (DP dulu, lalu pelunasan)."""
+        if self.status in ('cancelled',):
+            return None
+        urut = {'dp': 0, 'lunas': 0, 'pelunasan': 1}
+        belum = [p for p in self.payment_set.all() if p.status in ('pending', 'failed', 'expired')]
+        belum.sort(key=lambda p: (urut.get(p.jenis, 9), p.pk))
+        return belum[0] if belum else None
+
 
 # MODEL 8: Pembayaran
 class Payment(models.Model):
@@ -241,7 +307,10 @@ class Payment(models.Model):
         ('partial', 'DP Dibayar'),
         ('paid', 'Lunas'),
         ('failed', 'Gagal'),
+        ('expired', 'Kedaluwarsa'),
+        ('cancelled', 'Dibatalkan'),
     ]
+    JENIS_CHOICES = [('dp', 'DP'), ('pelunasan', 'Pelunasan'), ('lunas', 'Lunas')]
 
     booking = models.ForeignKey(
         Booking,
@@ -256,12 +325,32 @@ class Payment(models.Model):
     )
     transaction_id = models.CharField(max_length=150, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    jenis = models.CharField(max_length=10, choices=JENIS_CHOICES, default='dp')
+    due_date = models.DateField(null=True, blank=True)
+    order_id = models.CharField(max_length=60, blank=True, db_index=True)
+    snap_token = models.CharField(max_length=100, blank=True)
+    snap_at = models.DateTimeField(null=True, blank=True)
+    midtrans_status = models.CharField(max_length=30, blank=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Payment #{self.pk}"
 
+    @property
+    def sudah_bayar(self):
+        return self.status in ('paid', 'partial')
 
-# KONTEN WEBSITE 
+    @property
+    def jenis_label(self):
+        return dict(self.JENIS_CHOICES).get(self.jenis, self.jenis)
+
+    @property
+    def no_invoice(self):
+        return f"INV-{self.created_at:%Y%m%d}-{self.pk:05d}"
+
+
+
+# ===================== KONTEN WEBSITE (Progres III) =====================
 def _rename(folder, prefix):
     def fn(instance, filename):
         ext = filename.split('.')[-1]
@@ -282,25 +371,16 @@ def rename_hero_banner(instance, filename):
     return _rename('hero_slides/', 'slide')(instance, filename)
 
 
-def rename_hero_icon(instance, filename):
-    return _rename('hero_slides/icon/', 'icon')(instance, filename)
-
-
 def rename_mitra_logo(instance, filename):
     return _rename('mitra/', 'mitra')(instance, filename)
 
 
 # MODEL 9: Kategori Artikel
 class Category(models.Model):
-    STATUS_CHOICES = (
-        ('aktif', 'Aktif'),
-        ('nonaktif', 'Nonaktif'),
-    )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     description = models.TextField(blank=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='aktif')  # BARU
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -331,8 +411,6 @@ class Article(models.Model):
                                blank=True, related_name='articles')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True,
                                  related_name='articles')
-    deskripsi_seo = models.CharField(max_length=300, blank=True,
-                                     help_text='Meta description untuk SEO/GEO')  # BARU
     content = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
     featured_image = models.ImageField(upload_to=rename_article_image, max_length=255, blank=True, null=True)
@@ -354,15 +432,13 @@ class Article(models.Model):
         return self.title
 
 
-# MODEL 11: Halaman statis 
+# MODEL 11: Halaman (halaman statis yang isinya diubah lewat panel admin)
 class Page(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,
                                blank=True, related_name='pages')
-    deskripsi = models.CharField(max_length=300, blank=True,
-                                 help_text='Meta description untuk SEO')  # BARU
     content = models.TextField()
     featured_image = models.ImageField(upload_to=rename_page_image, max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -393,13 +469,14 @@ class WebSetting(models.Model):
     email = models.EmailField(blank=True)
     jam_operasional = models.CharField(max_length=200, blank=True)
     logo = models.ImageField(upload_to='web_setting/logo/', max_length=255, blank=True, null=True)
-    favicon = models.ImageField(upload_to='web_setting/favicon/', max_length=255, blank=True, null=True)  # BARU
     link_instagram = models.URLField(blank=True)
     link_tiktok = models.URLField(blank=True)
-    link_twitter = models.URLField(blank=True)  # BARU
     link_facebook = models.URLField(blank=True)
     link_youtube = models.URLField(blank=True)
     link_maps = models.URLField(blank=True)
+    midtrans_server_key = models.CharField(max_length=200, blank=True)
+    midtrans_client_key = models.CharField(max_length=200, blank=True)
+    midtrans_production = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Pengaturan Website'
@@ -434,14 +511,12 @@ class KerjaSama(models.Model):
         return self.nama_kerjasama
 
 
-# MODEL 14: Hero Slide 
+# MODEL 14: Hero Slide (slide utama di beranda)
 class HeroSlide(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     judul = models.CharField(max_length=200, verbose_name='Judul slide')
     judul_highlight = models.CharField(max_length=200, blank=True, verbose_name='Judul (bagian berwarna)')
     badge_text = models.CharField(max_length=100, blank=True, verbose_name='Teks kecil di atas judul')
-    badge_icon = models.ImageField(upload_to=rename_hero_icon, max_length=255, blank=True, null=True,
-                                   verbose_name='Ikon badge (opsional)')  # BARU
     deskripsi = models.TextField(verbose_name='Deskripsi')
     tombol_teks = models.CharField(max_length=100, default='Booking sekarang', verbose_name='Teks tombol')
     tombol_url = models.CharField(max_length=200, default='/katalog.html', verbose_name='Tujuan tombol',

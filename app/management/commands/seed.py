@@ -101,11 +101,11 @@ class Command(BaseCommand):
 
         if not HeroSlide.objects.exists():
             HeroSlide.objects.create(
-                judul='Abadikan momen kelulusanmu.', badge_text='Studio foto wisuda & momen kelulusan',
+                judul='Abadikan momen', judul_highlight='kelulusanmu.', badge_text='Studio foto wisuda & momen kelulusan',
                 deskripsi='Amora Grads bantu kamu mengabadikan hari kelulusan dengan hasil yang natural, hangat, dan tetap kamu banget.',
                 tombol_teks='Booking sekarang', tombol_url='/katalog.html', urutan=1)
             HeroSlide.objects.create(
-                judul='Pilih paket yang pas untuk harimu.', badge_text='Dari sesi solo sampai bersama sahabat',
+                judul='Pilih paket yang pas', judul_highlight='untuk harimu.', badge_text='Dari sesi solo sampai bersama sahabat',
                 deskripsi='Semua paket sudah termasuk hasil edit. Lihat pilihan paketnya dan amankan jadwal sesimu.',
                 tombol_teks='Lihat katalog', tombol_url='/katalog.html', urutan=2)
 

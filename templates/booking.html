@@ -11,7 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <style>
-    /* TOKENS (sama dengan index.html, katalog.html, detail.html) */
+    /* ============ TOKENS (sama dengan index.html, katalog.html, detail.html) ============ */
     :root {
       --cream: #FAF6F1;
       --cream-2: #F3ECE4;
@@ -106,7 +106,7 @@
       overflow: hidden;
     }
 
-    /* NAV (sama dengan katalog.html & detail.html) */
+    /* ============ NAV (sama dengan katalog.html & detail.html) ============ */
     .nav {
       display: flex;
       align-items: center;
@@ -222,7 +222,7 @@
       color: var(--white);
     }
 
-    /* BUTTONS */
+    /* ============ BUTTONS ============ */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -288,7 +288,7 @@
       height: 14px;
     }
 
-    /* BOOKING PAGE */
+    /* ============ BOOKING PAGE ============ */
     .booking-head {
       padding: 24px 20px 8px;
     }
@@ -416,7 +416,7 @@
       color: var(--white);
     }
 
-    /* Kalender */
+    /* ============ Kalender ============ */
     .cal-card {
       border: 1px solid var(--line);
       border-radius: var(--radius-m);
@@ -638,7 +638,16 @@
       border-color: var(--red);
     }
 
-    .summary-box {
+    .pay-opts{ display:grid; gap:10px; }
+.pay-opt{ display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--white); cursor:pointer; }
+.pay-opt input[type=radio]{ width:18px; height:18px; flex:0 0 18px; padding:0; margin:2px 0 0; accent-color:var(--red); }
+.pay-opt > span{ flex:1; min-width:0; }
+.pay-opt b{ display:block; font-size:14px; }
+.pay-opt small{ display:block; color:var(--ink-soft); font-size:12.5px; line-height:1.45; margin-top:2px; }
+.pay-opt.is-on{ border-color:var(--red); background:#fff7f6; }
+.pay-opt.is-off{ opacity:.5; cursor:not-allowed; }
+.err-inline{ color:var(--red-dark); font-weight:600; font-size:13.5px; margin:10px 0 0; }
+.summary-box {
       background: var(--cream-2);
       border-radius: var(--radius-s);
       padding: 16px;
@@ -845,7 +854,7 @@
       }
     }
 
-    /* FOOTER */
+    /* ============ FOOTER (sama dengan katalog.html & detail.html) ============ */
     .footer {
       padding: 40px 20px 28px;
       margin-top: 44px;
@@ -925,7 +934,7 @@
       border-top: 1px solid var(--line);
     }
 
-    /* DESKTOP  */
+    /* ============ DESKTOP ============ */
     @media (min-width: 900px) {
       .frame {
         max-width: none;
@@ -1072,7 +1081,7 @@
 
   <div class="frame">
 
-    <!-- NAV -->
+    <!-- NAV (sama dengan katalog.html & detail.html) -->
     <header class="nav">
       <a href="index.html" class="nav__logo">
         <img src="aset/logo.png" alt="Amora Grads" class="nav__logo-img">
@@ -1116,8 +1125,20 @@
   <script src="paket.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
+    /* =========================================================
+       BOOKING FLOW — paket ditentukan dari link "Booking sekarang"
+       di halaman detail (?paket=id-paket), jadi di sini pelanggan
+       langsung mulai dari Langkah 1: tanggal & jam.
+       Langkah 1: tanggal & jam, Langkah 2: data diri, lalu bayar DP
+       via QRIS, lalu konfirmasi.
+       Aturan tanggal penuh di bawah ini contoh saja — ganti dengan
+       data ketersediaan asli (API/DB) kalau sudah ada sistemnya.
+    ========================================================= */
 
-    const DP_AMOUNT = 50000; // sesuai Terms & Conditions: booking minimal DP 50K
+    // DP dan harga diambil dari data paket (diatur admin di Kelola Paket)
+    function dpOf(pkg) { return typeof pkg.dp === 'number' ? pkg.dp : 50000; }
+    function totalOf(pkg) { return typeof pkg.hargaInt === 'number' ? pkg.hargaInt : parseInt(String(pkg.price).replace(/\D/g, ''), 10); }
+    function rp(n) { return 'Rp' + Number(n).toLocaleString('id-ID'); }
     const TIME_SLOTS = ['09.00', '10.30', '12.00', '13.30', '15.00', '16.30'];
     const MONTH_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     const WEEKDAY_LABELS = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
@@ -1133,7 +1154,7 @@
     }
 
     const card = document.getElementById('bookingCard');
-    let booking = { pkgId: null, dateParts: null, dateLabel: null, time: null, name: '', phone: '' };
+    let booking = { pkgId: null, dateParts: null, dateLabel: null, time: null, name: '', phone: '', metode: 'dp' };
     let calState = null;
     let revealedFullDates = new Set();
     let payTimerInterval = null;
@@ -1288,144 +1309,94 @@
       };
     }
 
+    function hariKeSesi() {
+      var t = new Date(); t.setHours(0, 0, 0, 0);
+      var d = booking.dateParts;
+      return Math.round((new Date(d.y, d.m, d.d) - t) / 86400000);
+    }
+    function tglH1() {
+      var d = booking.dateParts;
+      return new Date(d.y, d.m, d.d - 1).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' });
+    }
+
     function renderStep3() {
       const pkg = pkgById(booking.pkgId);
+      const dp = dpOf(pkg), total = totalOf(pkg), sisa = total - dp;
+      const dekat = hariKeSesi() <= 1;
+      const wajibLunas = dekat || dp <= 0 || dp >= total;
+      if (wajibLunas) booking.metode = 'lunas';
       card.innerHTML = `
       ${backLink('Ganti tanggal/jam')}
       <p class="step-eyebrow">Langkah 2 dari 2</p>
-      <h2 class="step-title">Data diri</h2>
+      <h2 class="step-title">Data diri &amp; pembayaran</h2>
       <div class="summary-box">
         <div class="line"><span>Paket</span><b>${pkg.name}</b></div>
         <div class="line"><span>Jadwal</span><b>${booking.dateLabel}, ${booking.time}</b></div>
-        <div class="line"><span>Harga paket</span><b>Rp${pkg.price}</b></div>
+        <div class="line"><span>Harga paket</span><b>${rp(total)}</b></div>
       </div>
       <div class="form-row"><label class="field-label">Nama lengkap</label><input type="text" id="custName" placeholder="Nama kamu" value="${booking.name || ''}"></div>
       <div class="form-row"><label class="field-label">Nomor WhatsApp</label><input type="tel" id="custPhone" placeholder="0812xxxxxxx" value="${booking.phone || ''}"></div>
-      <button class="btn btn--primary btn--block" id="confirmBtn">Lanjut ke pembayaran DP</button>
+      <div class="form-row">
+        <label class="field-label">Cara pembayaran</label>
+        <div class="pay-opts">
+          <label class="pay-opt${wajibLunas ? ' is-off' : ''}" id="optDp"><input type="radio" name="metode" value="dp"${wajibLunas ? ' disabled' : ''}>
+            <span><b>Bayar DP dulu: ${rp(dp)}</b><small>Sisa ${rp(sisa)} dilunasi paling lambat H-1 sesi (${tglH1()}).</small></span></label>
+          <label class="pay-opt" id="optLunas"><input type="radio" name="metode" value="lunas">
+            <span><b>Bayar lunas sekarang: ${rp(total)}</b><small>Sekali bayar, tanpa pelunasan lagi nanti.</small></span></label>
+        </div>
+        ${dekat ? '<p class="err-inline">Sesi kurang dari 2 hari lagi, jadi pembayaran harus lunas.</p>' : ''}
+      </div>
+      <p class="err-inline" id="bookErr" hidden></p>
+      <button class="btn btn--primary btn--block" id="confirmBtn"></button>
     `;
+      const btn = card.querySelector('#confirmBtn');
+      function perbarui() {
+        card.querySelectorAll('input[name=metode]').forEach(function (r) {
+          r.checked = (r.value === booking.metode);
+          r.parentNode.classList.toggle('is-on', r.checked);
+        });
+        btn.textContent = booking.metode === 'lunas' ? 'Lanjut bayar lunas ' + rp(total) : 'Lanjut bayar DP ' + rp(dp);
+      }
+      card.querySelectorAll('input[name=metode]').forEach(function (r) {
+        r.addEventListener('change', function () { booking.metode = r.value; perbarui(); });
+      });
+      perbarui();
       card.querySelector('#backBtn').onclick = () => renderStep2();
-      card.querySelector('#confirmBtn').onclick = () => {
+      btn.onclick = () => {
         const name = card.querySelector('#custName').value.trim();
         const phone = card.querySelector('#custPhone').value.trim();
+        const err = card.querySelector('#bookErr');
         if (!name || !phone) {
-          card.querySelector('#confirmBtn').textContent = 'Lengkapi nama & nomor WhatsApp dulu ya';
+          err.textContent = 'Lengkapi nama dan nomor WhatsApp dulu ya.'; err.hidden = false;
           return;
         }
         booking.name = name;
         booking.phone = phone;
-        renderPayment(pkg);
+        kirimBooking(pkg, btn, err);
       };
     }
 
-    function renderPayment(pkg) {
-      clearInterval(payTimerInterval);
-      const orderId = 'AG-DP-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-      booking.orderId = orderId;
-
-      card.innerHTML = `
-      ${backLink('Kembali')}
-      <p class="step-eyebrow">Pembayaran DP</p>
-      <h2 class="step-title">Bayar DP dengan QRIS</h2>
-      <div class="pay-amount"><span>DP booking (sisanya dilunasi H-1)</span><b>Rp${DP_AMOUNT.toLocaleString('id-ID')}</b></div>
-      <div class="qris-card">
-        <div class="qris-brand">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" fill="white"/><rect x="14" y="3" width="7" height="7" rx="1" fill="white"/><rect x="3" y="14" width="7" height="7" rx="1" fill="white"/><rect x="14" y="14" width="3" height="3" fill="white"/><rect x="18" y="18" width="3" height="3" fill="white"/><rect x="14" y="18" width="3" height="3" fill="white"/><rect x="18" y="14" width="3" height="3" fill="white"/></svg>
-          <span>QRIS</span>
-        </div>
-        <div class="qr-box" id="qrBox"></div>
-        <p class="qris-merchant">Amora Grads · Makassar</p>
-      </div>
-      <div class="pay-timer">Selesaikan dalam <b id="payClock">15:00</b></div>
-      <ol class="pay-steps">
-        <li><b>1</b> Buka aplikasi m-banking / e-wallet apa pun yang mendukung QRIS.</li>
-        <li><b>2</b> Pilih Scan QR, arahkan ke kode di atas.</li>
-        <li><b>3</b> Periksa nominal DP, lalu selesaikan pembayaran.</li>
-      </ol>
-      <p class="pay-demo-note">Catatan: ini QR contoh untuk demo tampilan, belum tersambung ke QRIS sungguhan — jangan dipakai untuk transaksi nyata. Setelah bayar, kirim juga bukti transfer ke WhatsApp kami ya.</p>
-      <button class="btn btn--primary btn--block" id="simPayBtn">Saya sudah bayar DP</button>
-      <div class="pay-status" id="payStatus" style="display:none;"><span class="spinner"></span> Memeriksa pembayaran…</div>
-    `;
-      card.querySelector('#backBtn').onclick = () => renderStep3();
-
-      try {
-        const demoPayload = `00020101021126QRIS-DEMO-AMORAGRADS0212${orderId}530336054${DP_AMOUNT}5802ID`;
-        new QRCode(document.getElementById('qrBox'), { text: demoPayload, width: 160, height: 160, colorDark: '#211B18', colorLight: '#ffffff' });
-      } catch (err) {
-        document.getElementById('qrBox').innerHTML = '<span style="color:#8A1F23; font-size:12px; padding:8px;">QR tidak tersedia</span>';
-      }
-
-      let secondsLeft = 15 * 60;
-      const clockEl = document.getElementById('payClock');
-      payTimerInterval = setInterval(() => {
-        secondsLeft--;
-        if (secondsLeft <= 0) { clearInterval(payTimerInterval); clockEl.textContent = 'Kedaluwarsa'; return; }
-        const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
-        const s = String(secondsLeft % 60).padStart(2, '0');
-        clockEl.textContent = `${m}:${s}`;
-      }, 1000);
-
-      document.getElementById('simPayBtn').onclick = () => {
-        document.getElementById('simPayBtn').disabled = true;
-        document.getElementById('payStatus').style.display = 'flex';
-        setTimeout(() => {
-          clearInterval(payTimerInterval);
-          saveBooking(pkg);
-          renderConfirm(pkg);
-        }, 1200);
-      };
-    }
-
-    function saveBooking(pkg) {
-      try {
-        const id = 'AG-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-        const record = {
-          id, package: pkg.name, when: `${booking.dateLabel}, ${booking.time}`,
-          name: booking.name, phone: booking.phone, dp: DP_AMOUNT, orderId: booking.orderId
-        };
-        const existing = JSON.parse(localStorage.getItem('amora_bookings') || '[]');
-        existing.push(record);
-        localStorage.setItem('amora_bookings', JSON.stringify(existing));
-        booking.confirmId = id;
-        // simpan juga ke database Django
-        fetch('/app/api/bookings/', {
-          method: 'POST', credentials: 'same-origin',
-          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '' },
-          body: JSON.stringify({ package: pkg.name, y: booking.dateParts.y, m: booking.dateParts.m, d: booking.dateParts.d,
-                                 time: booking.time, name: booking.name, phone: booking.phone, dp: DP_AMOUNT, order_id: booking.orderId || id })
-        }).then(function (r) {
-          if (r.status === 401) window.location.href = '/login/';
-          else if (r.status === 409) alert('Maaf, jadwal itu baru saja terisi. Hubungi admin lewat WhatsApp ya.');
-        }).catch(function () {});
-      } catch (err) {
-        booking.confirmId = 'AG-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-      }
-    }
-
-    function renderConfirm(pkg) {
-      const waText = encodeURIComponent(
-        "Halo Amora Grads, saya sudah bayar DP Rp" + DP_AMOUNT.toLocaleString('id-ID') +
-        " untuk paket " + pkg.name + " tanggal " + booking.dateLabel + " jam " + booking.time +
-        " a.n " + booking.name + ". Ini bukti transfernya (terlampir)."
-      );
-      card.innerHTML = `
-      <div class="confirm-state">
-        <div class="confirm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg></div>
-        <h3>DP tercatat, hampir selesai!</h3>
-        <p>${pkg.name} pada ${booking.dateLabel}, ${booking.time}. Tinggal satu langkah lagi: kirim bukti transfer DP ke WhatsApp kami biar jadwalnya kami kunci.</p>
-        <div class="summary-box" style="text-align:left;">
-          <div class="line"><span>Kode booking</span><b>${booking.confirmId}</b></div>
-          <div class="line"><span>DP dibayar</span><b>Rp${DP_AMOUNT.toLocaleString('id-ID')}</b></div>
-        </div>
-        <div class="confirm-actions">
-          <a class="btn btn--primary btn--block" target="_blank" rel="noopener" href="https://wa.me/${WA_NUMBER}?text=${waText}">Kirim bukti transfer via WhatsApp</a>
-          <a class="btn btn--ghost btn--block" href="katalog.html">Kembali ke katalog</a>
-        </div>
-      </div>
-    `;
+    // Membuat booking di server, lalu lanjut ke halaman checkout (ringkasan pesanan + bayar)
+    function kirimBooking(pkg, btn, err) {
+      btn.disabled = true; err.hidden = true;
+      const m = document.cookie.match(/csrftoken=([^;]+)/);
+      fetch('/app/api/bookings/', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': m ? decodeURIComponent(m[1]) : '' },
+        body: JSON.stringify({ package: pkg.name, y: booking.dateParts.y, m: booking.dateParts.m, d: booking.dateParts.d,
+                               time: booking.time, name: booking.name, phone: booking.phone, metode: booking.metode })
+      }).then(function (r) { return r.json().then(function (j) { j.status = r.status; return j; }); })
+        .then(function (j) {
+          if (j.ok) { window.location.href = j.checkout_url; return; }
+          if (j.status === 401) { window.location.href = '/login/'; return; }
+          err.textContent = j.error || 'Booking gagal. Coba lagi.'; err.hidden = false; btn.disabled = false;
+        })
+        .catch(function () { err.textContent = 'Tidak bisa terhubung ke server.'; err.hidden = false; btn.disabled = false; });
     }
 
     const params = new URLSearchParams(location.search);
     const initialPkg = pkgById(params.get('paket'));
+    booking.metode = params.get('bayar') === 'lunas' ? 'lunas' : 'dp';
     if (initialPkg) {
       booking.pkgId = initialPkg.id;
       renderStep2();
