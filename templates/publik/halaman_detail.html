@@ -1,4 +1,5 @@
 {% extends 'publik/base_publik.html' %}
+{% load konten_tags %}
 {% block meta_desc %}{% firstof hal.deskripsi hal.content|striptags|truncatechars:150 %}{% endblock %}
 {% block title %}{{ hal.title }}{% endblock %}
 {% block content %}
